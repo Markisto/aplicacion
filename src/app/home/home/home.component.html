@@ -1,0 +1,67 @@
+<header>
+  <nav class="navbar navbar-primary bg-primario" >
+    <div class="container-fluid text-poppins-medium" [ngClass]="{'justify-content-center': ruta == '/home/inicio'}">
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar"
+        aria-controls="offcanvasDarkNavbar" aria-label="Toggle navigation"
+        [ngClass]="{'d-none': ruta == '/home/inicio'}">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <a class="navbar-brand" style="color: #E7E5E4;">{{page}}</a>
+      <div class="offcanvas offcanvas-start " style="background-color: #2B6284;" tabindex="-1" id="offcanvasDarkNavbar"
+        aria-labelledby="offcanvasDarkNavbarLabel">
+        <div class="offcanvas-header ">
+          <div class="text-center">
+          </div>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
+            aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+          <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                style="font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif ;">
+                Pedidos
+              </a>
+              <ul class="dropdown-menu dropdown-menu-dark">
+                <li><a class="dropdown-item" data-bs-dismiss="offcanvas" routerLink="agregar_pedido">Agregar</a>
+                </li>
+                <li><a class="dropdown-item" data-bs-dismiss="offcanvas" routerLink="pedidos">Consultar</a>
+                </li>
+              </ul>
+            </li>
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li class="nav-item ">
+              <a class="nav-link " data-bs-dismiss="offcanvas" routerLink="clientes">Clientes</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-dismiss="offcanvas" routerLink="medicos">Médicos</a>
+            </li>
+
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<main >
+  <div class="container" style="height: 85vh;
+
+	border: 1px solid #ddd;
+	background: #f1f1f1;
+	overflow-y: scroll;">
+    <router-outlet></router-outlet>
+  </div>
+
+</main>
+<footer class="bg-body-secondary text-center text-lg-start">
+  <div class="text-center p-2">
+   <img src="assets/img/lebenmedik.png" style="height: 2rem;" alt="logo" class="img-fluid" >
+  </div>
+</footer>
