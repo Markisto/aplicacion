@@ -1,5 +1,5 @@
 <header>
-  <nav class="navbar navbar-primary bg-primario" >
+  <nav class="navbar navbar-primary bg-primario">
     <div class="container-fluid text-poppins-medium" [ngClass]="{'justify-content-center': ruta == '/home/inicio'}">
 
       <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar"
@@ -8,40 +8,39 @@
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <a class="navbar-brand" style="color: #E7E5E4;">{{page}}</a>
-      <div class="offcanvas offcanvas-start " style="background-color: #2B6284;" tabindex="-1" id="offcanvasDarkNavbar"
+      <a class="navbar-brand">{{page}}</a>
+      <div class="offcanvas offcanvas-start bg-primario" tabindex="-1" id="offcanvasDarkNavbar"
         aria-labelledby="offcanvasDarkNavbarLabel">
-        <div class="offcanvas-header ">
-          <div class="text-center">
+        <div class="offcanvas-header p-1">
+          <div class="row w-100">
+            <div class="col-2 ">
+              <button type="button" class="btn" data-bs-dismiss="offcanvas" aria-label="Close"><i class="bi bi-caret-left-fill text-light h1"></i></button>
+            </div>
+            <div class="col-10 text-center align-self-center">
+              <span class="text-poppins-regular h2 text-light">Menú</span>
+            </div>
           </div>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
-            aria-label="Close"></button>
         </div>
+
         <div class="offcanvas-body">
           <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"
-                style="font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif ;">
-                Pedidos
-              </a>
-              <ul class="dropdown-menu dropdown-menu-dark">
-                <li><a class="dropdown-item" data-bs-dismiss="offcanvas" routerLink="agregar_pedido">Agregar</a>
-                </li>
-                <li><a class="dropdown-item" data-bs-dismiss="offcanvas" routerLink="pedidos">Consultar</a>
-                </li>
-              </ul>
-            </li>
-
-            <li>
-              <hr class="dropdown-divider">
+            
+            <li class="nav-item ">
+             <button class="btn btn-lg text-light text-poppins-regular  " style="font-size: x-large;" data-bs-dismiss="offcanvas" routerLink="pedidos"><i class="bi bi-list-check"></i> Pedidos</button>
             </li>
 
             <li class="nav-item ">
-              <a class="nav-link " data-bs-dismiss="offcanvas" routerLink="clientes">Clientes</a>
+              <button class="btn btn-lg text-light text-poppins-regular  " style="font-size: x-large;" data-bs-dismiss="offcanvas" routerLink="pedidos"><i class="bi bi-person-check-fill"></i> Clientes</button>
             </li>
             <li class="nav-item">
-              <a class="nav-link" data-bs-dismiss="offcanvas" routerLink="medicos">Médicos</a>
+              <button class="btn btn-lg text-light text-poppins-regular  " style="font-size: x-large;" data-bs-dismiss="offcanvas" routerLink="pedidos"><mat-icon>stethoscope_check</mat-icon> Médicos</button>
             </li>
+            <li class="nav-item">
+              <button class="btn btn-lg text-light text-poppins-regular  " style="font-size: x-large;" data-bs-dismiss="offcanvas" routerLink="pedidos"><i class="bi bi-calendar-date-fill"></i>Visitas</button>
+            </li>
+            <li class="nav-item">
+              <button class="btn btn-lg text-light text-poppins-regular  " style="font-size: x-large;" data-bs-dismiss="offcanvas" routerLink="pedidos"><i class="bi bi-list-check"></i> Reportes</button>
+            </li> 
 
           </ul>
 
@@ -50,7 +49,7 @@
     </div>
   </nav>
 </header>
-<main >
+<main>
   <div class="container" style="height: 85vh;
 
 	border: 1px solid #ddd;
@@ -62,6 +61,6 @@
 </main>
 <footer class="bg-body-secondary text-center text-lg-start">
   <div class="text-center p-2">
-   <img src="assets/img/lebenmedik.png" style="height: 2rem;" alt="logo" class="img-fluid" >
+    <img src="assets/img/lebenmedik.png" style="height: 2rem;" alt="logo" class="img-fluid">
   </div>
 </footer>
