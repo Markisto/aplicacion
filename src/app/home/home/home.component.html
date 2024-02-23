@@ -5,7 +5,8 @@
       <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar"
         aria-controls="offcanvasDarkNavbar" aria-label="Toggle navigation"
         [ngClass]="{'d-none': ruta == '/home/inicio'}">
-        <span class="navbar-toggler-icon"></span>
+        <span >
+        <img src="assets/img/menu-de-puntos (1).png" style="height: 2rem;" alt="logo" class="img-fluid"></span>
       </button>
 
       <a class="navbar-brand">{{page}}</a>
@@ -36,7 +37,7 @@
               <button class="btn btn-lg text-light text-poppins-regular  " style="font-size: x-large;" data-bs-dismiss="offcanvas" routerLink="pedidos"><mat-icon>stethoscope_check</mat-icon> Médicos</button>
             </li>
             <li class="nav-item">
-              <button class="btn btn-lg text-light text-poppins-regular  " style="font-size: x-large;" data-bs-dismiss="offcanvas" routerLink="pedidos"><i class="bi bi-calendar-date-fill"></i>Visitas</button>
+              <button class="btn btn-lg text-light text-poppins-regular  " style="font-size: x-large;" data-bs-dismiss="offcanvas" routerLink="pedidos"><i class="bi bi-calendar-date-fill"></i> Visitas</button>
             </li>
             <li class="nav-item">
               <button class="btn btn-lg text-light text-poppins-regular  " style="font-size: x-large;" data-bs-dismiss="offcanvas" routerLink="pedidos"><i class="bi bi-list-check"></i> Reportes</button>

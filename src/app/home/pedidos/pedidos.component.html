@@ -1,180 +1,275 @@
 <div class="container-fluid">
   <div class="row py-4">
     <div class="col-6">
-      <button class="btn bg-primario text-light w-100">Nuevo</button>
+      <button class="btn bg-primario text-light w-100" (click)="vista = 'nuevo'">Nuevo</button>
     </div>
     <div class="col-6">
-      <button class="btn bg-secundario text-light w-100">Buscar</button>
+      <button class="btn bg-secundario text-light w-100" (click)="vista = 'consulta'">Buscar</button>
     </div>
   </div>
 
-  <div class="row">
-    <p>Nuevo Pedido:</p>
-    <div class="col-12 mb-2">
-      <div class="form-group">
-        <select class="form-select border-secundario border-2" aria-placeholder="select "   >
-          <option value="0">Seleccionar Responsable..</option>
-          <option value="1">One</option>
-          <option value="2">Two</option>
-          <option value="3">Three</option>
-        </select>
+  <div [ngClass]="{'d-none': vista != 'nuevo'}">
+    <div class="row">
+      <p class="text-terciario" style="font-size: medium;">Nuevo Pedido:</p>
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <select class="form-select border-secundario border-2" aria-placeholder="select ">
+            <option value="0">Seleccionar Responsable..</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+          </select>
 
+        </div>
       </div>
-    </div>
-    <div class="col-12 mb-2">
-      <div class="form-group">
-        <select class="form-select border-secundario border-2" aria-label="Default select example">
-          <option selected>Open this select menu</option>
-          <option value="1">One</option>
-          <option value="2">Two</option>
-          <option value="3">Three</option>
-        </select>
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <select class="form-select border-secundario border-2" aria-label="Default select example">
+            <option selected>Seleccionar Tipo de Cliente...</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+          </select>
 
+        </div>
       </div>
-    </div>
-    <div class="col-12 mb-2">
-      <div class="form-group">
-        <select class="form-select border-secundario border-2" aria-label="Default select example">
-          <option selected>Open this select menu</option>
-          <option value="1">One</option>
-          <option value="2">Two</option>
-          <option value="3">Three</option>
-        </select>
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <select class="form-select border-secundario border-2" aria-label="Default select example">
+            <option selected>Seleccionar Sucursal...</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+          </select>
 
+        </div>
       </div>
-    </div>
-    <div class="col-12 mb-2">
-      <div class="form-group">
-        <select class="form-select border-secundario border-2" aria-label="Default select example">
-          <option selected>Open this select menu</option>
-          <option value="1">One</option>
-          <option value="2">Two</option>
-          <option value="3">Three</option>
-        </select>
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <select class="form-select border-secundario border-2" aria-label="Default select example">
+            <option selected>Seleccionar Tipo de Pago...</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+          </select>
+        </div>
       </div>
-    </div>
-    <div class="col-12 mb-2 ">
-      <div class="form-group">
-        <select class="form-select border-secundario border-2" aria-label="Default select example">
-          <option selected>Open this select menu</option>
-          <option value="1">One</option>
-          <option value="2">Two</option>
-          <option value="3">Three</option>
-        </select>
+      <div class="col-12 mb-2 ">
+        <div class="form-group">
+          <select class="form-select border-secundario border-2" aria-label="Default select example">
+            <option selected>Seleccionar Tipo Cliente ..</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+          </select>
 
+        </div>
       </div>
-    </div>
-    <div class="col-12 mb-2">
-      <div class="form-group">
-        <div class="form-check ">
-          <input class="form-check-input border-secundario border-2 h6" type="checkbox" value="" id="flexCheckDefault">
-          <label class="form-check-label" for="flexCheckDefault">
-            Default checkbox
-          </label>
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <div class="form-check ">
+            <input class="form-check-input border-secundario border-2 h6" type="checkbox" value=""
+              id="flexCheckDefault">
+            <label class="form-check-label" for="flexCheckDefault">
+              Factura
+            </label>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="col-8">
-      <div class="form-group">
-        <select class="form-select" aria-label="Default select example">
-          <option selected>Open this select menu</option>
-          <option value="1">One</option>
-          <option value="2">Two</option>
-          <option value="3">Three</option>
-        </select>
+    <div class="row">
+      <div class="col-12 mb-2">
+        <button class="btn bg-primario text-light w-100">Agregar producto</button>
       </div>
     </div>
-    <div class="col-4">
-      <div class="form-group">
-        <input type="number" class="form-control" placeholder="Cantidad">
+    <div class="row">
+      <div class="col-12">
+        <table class="table table-borderless" style="color:#2B8B92 ;">
+          <thead>
+            <tr>
+              <th scope="col">Producto</th>
+              <th scope="col">Cantidad</th>
+              <th scope="col">Precio</th>
+              <th scope="col">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Producto 1</td>
+              <td>2</td>
+              <td>100</td>
+              <td>200</td>
+            </tr>
+            <tr>
+              <td>Producto 2</td>
+              <td>3</td>
+              <td>200</td>
+              <td>600</td>
+            </tr>
+            <tr>
+              <td>Producto 3</td>
+              <td>1</td>
+              <td>300</td>
+              <td>300</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
-  </div>
+    <div class="row">
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <select class="form-select border-secundario border-2" aria-label="Default select example">
+            <option selected>Seleccionar Tipo Envio...</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+          </select>
 
-
-
-
-  <div class="row">
-    <div class="col-12">
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">Producto</th>
-            <th scope="col">Cantidad</th>
-            <th scope="col">Precio</th>
-            <th scope="col">Subtotal</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Producto 1</td>
-            <td>2</td>
-            <td>100</td>
-            <td>200</td>
-          </tr>
-          <tr>
-            <td>Producto 2</td>
-            <td>3</td>
-            <td>200</td>
-            <td>600</td>
-          </tr>
-          <tr>
-            <td>Producto 3</td>
-            <td>1</td>
-            <td>300</td>
-            <td>300</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-12">
-      <button class="btn btn-primary">Agregar producto</button>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-12">
-      <div class="form-group">
-        <select class="form-select" aria-label="Default select example">
-          <option selected>Open this select menu</option>
-          <option value="1">One</option>
-          <option value="2">Two</option>
-          <option value="3">Three</option>
-        </select>
+        </div>
+      </div>
+      <div class="col-12 mb-2">
+        <div class="row g-3 align-items-center">
+          <div class="col-4">
+            <label for="inputPassword6" class="col-form-label">Fecha de Envío</label>
+          </div>
+          <div class="col-8">
+            <input type="date" id="inputPassword6" class="form-control  border-secundario border-2"
+              aria-describedby="passwordHelpInline">
+          </div>
+        </div>
 
       </div>
     </div>
-    <div class="col-12">
-      <div class="form-group">
-        <select class="form-select" aria-label="Default select example">
-          <option selected>Open this select menu</option>
-          <option value="1">One</option>
-          <option value="2">Two</option>
-          <option value="3">Three</option>
-        </select>
+    <div class="row">
+      <div class="col-12">
+        <div class="card bg-primario">
+          <div class="card-body text-light p-0">
+            <p class="d-flex justify-content-between p-0"><span class="h5">Total de pedidos:</span> <span>Productos:
+                <span>13</span></span> </p>
+            <p class="d-flex justify-content-between p-0"><span class="h5">Importe: </span> <span
+                class="h2">$8,723.00</span></p>
+          </div>
+        </div>
+        <div class="col-12 mb-2 pt-2">
 
+          <blockquote class="blockquote mb-2 text-poppins-light text-terciario text-center" style="font-size: small;">
+            <b style="font-size: medium;">ATENCIÓN</b>
+            <br>
+            Los pedidos con envío local realizados antes de las 10:45, se enviarán el mismo día.
+          </blockquote>
+        </div>
       </div>
+
     </div>
   </div>
-  <div class="row">
-    <div class="col-12">
-      <div class="card">
-        <div class="card-body">
-          <p>Total de pedidos</p>
-          <p>Pedidos</p>
+
+  <!-- Consulta -->
+  <div [ngClass]="{'d-none': vista != 'consulta'}">
+
+    <div class="row">
+      <p class="text-terciario" style="font-size: medium;">Consultar Pedido:</p>
+
+
+      <div class="col-6 mb-2">
+        <div class="form-group">
+          <input type="date" id="inputpassword" class="form-control border-secundario border-2 " placeholder="Fecha" />
+        </div>
       </div>
+
+
+
+
+      <div class="col-6 mb-2">
+        <div class="form-group">
+          <select class="form-select border-secundario border-2" aria-label="Default select example">
+            <option selected>Status</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+          </select>
+
+        </div>
+      </div>
+
+
+      <div class="col-12 mb-2 text-center">
+        <button class="btn bg-primario text-light w-75">Buscar</button>
+      </div>
+
     </div>
-    <div class="col-12">
-      <blockquote class="blockquote">
-        <b>ATENCIÓN</b>
-        <br>
-        Los pedidos con envío local realizados antes de las 10:45, se enviarán el mismo día.
-      </blockquote>
+
+
+    <div class="row">
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <select class="form-select border-secundario border-2" aria-label="Default select example">
+            <option selected>Seleccionar Pedido...</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+          </select>
+
+        </div>
+      </div>
+
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <div class="card bg-primario">
+          <div class="card-body text-light p-0">
+            <p class="d-flex justify-content-between p-0"><span class="h5">Total de pedidos:</span> <span>Productos:
+                <span>13</span></span> </p>
+            <p class="d-flex justify-content-between p-0"><span class="h5">Importe: </span> <span
+                class="h2">$8,723.00</span></p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-12">
+        <table class="table table-borderless" style="color:#2B8B92 ;">
+          <thead>
+            <tr>
+              <th scope="col">Producto</th>
+              <th scope="col">Cantidad</th>
+              <th scope="col">Precio</th>
+              <th scope="col">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Producto 1</td>
+              <td>2</td>
+              <td>100</td>
+              <td>200</td>
+            </tr>
+            <tr>
+              <td>Producto 2</td>
+              <td>3</td>
+              <td>200</td>
+              <td>600</td>
+            </tr>
+            <tr>
+              <td>Producto 3</td>
+              <td>1</td>
+              <td>300</td>
+              <td>300</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="col-12">
+        <div class="card bg-primario">
+          <div class="card-body text-light p-0">
+            <p class="d-flex justify-content-between p-0"><span class="h5">Total de pedidos:</span> <span>Productos:
+                <span>13</span></span> </p>
+            <p class="d-flex justify-content-between p-0"><span class="h5">Importe: </span> <span
+                class="h2">$8,723.00</span></p>
+          </div>
+        </div>
+      </div>
+    
     </div>
   </div>
 
