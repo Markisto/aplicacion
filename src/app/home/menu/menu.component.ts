@@ -15,6 +15,8 @@ export class MenuComponent {
   constructor(private router: Router) { }
 
   Navegar(menu : string){
+    console.log("ruta");
+    console.log(menu);  
     this.router.navigate([`home/${menu}`]);
   }
 
