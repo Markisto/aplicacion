@@ -252,40 +252,42 @@
       </div>
 
       <div class="row">
-        <p class="text-terciario" style="font-size: medium;">Facturacion:</p>
+        <p class="text-terciario" style="font-size: medium;">Pacientes:</p>
+        <div class="col-12 mb-2">
+            <div class="form-group">
+                <label >Fecha de Recompra</label>
+              <input type="date" class="form-select border-secundario border-2" aria-label="Default select example" placeholder="Plazo de Pago...">         
+            </div>
+        </div>
       </div>
 
       <div class="row">
+        <p class="text-terciario" style="font-size: medium;">Pacientes:</p>
+        <div class="col-12 mb-2">
+            <div class="form-group">
+                <label >Fecha de Recompra</label>
+              <input type="date" class="form-select border-secundario border-2" aria-label="Default select example" placeholder="Plazo de Pago...">         
+            </div>
+        </div>
         <div class="col-12">
-          <table class="table table-borderless" style="color:#2B8B92 ;">
+          <table class="" style="color:#2B8B92 ;" id="table_new_paciente"  data-mobile-responsive="true">
             <thead>
               <tr>
-                <th scope="col">Producto</th>
-                <th scope="col">Cantidad</th>
-                <th scope="col">Precio</th>
-                <th scope="col">Subtotal</th>
+                <th data-field="nombre_paciente">Nombre del Paciente: </th>
+                <th >Edad en Años</th>
+                <th >Edad en Meses</th>
+                <th >Fecha de Nacimiento</th>
+                <th >Receta</th>
+                <th >Dosis</th>
+                <th >Cartucho</th>
+                <th >Cubre</th>
+                <th >Compra</th>
+                <th >Cubre Total</th>
+                <th >Presentacion</th>
+                <th >Precio</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td>Producto 1</td>
-                <td>2</td>
-                <td>100</td>
-                <td>200</td>
-              </tr>
-              <tr>
-                <td>Producto 2</td>
-                <td>3</td>
-                <td>200</td>
-                <td>600</td>
-              </tr>
-              <tr>
-                <td>Producto 3</td>
-                <td>1</td>
-                <td>300</td>
-                <td>300</td>
-              </tr>
-            </tbody>
+          
           </table>
         </div>
       </div>
@@ -316,7 +318,7 @@
       </div>
       <div class="row">
         <div class="col-12">
-          <div class="card bg-primario">
+          <div class="card bg-primario" style="background-color: #2B8B92;">
             <div class="card-body text-light p-0">
               <p class="d-flex justify-content-between p-0"><span class="h5">Total de pedidos:</span> <span>Productos:
                   <span>13</span></span> </p>
