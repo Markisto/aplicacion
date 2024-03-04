@@ -12,11 +12,11 @@
       </div>
       <form>
         <div class="form-floating mb-4">
-          <input type="text" class="form-control form-control-sm border-primary rounded-4" id="inputuser" placeholder="name@example.com">
+          <input type="text" class="form-control form-control-sm border-primary rounded-4"  [(ngModel)]="cve_usuario" name="user" id="inputuser" placeholder="name@example.com">
           <label for="inputuser">Usuario</label>
         </div>
         <div class="form-floating mb-4">
-          <input type="password" id="inputpassword" class="form-control form-control-sm border-primary rounded-4" placeholder="Password" />
+          <input type="password" id="inputpassword" class="form-control form-control-sm border-primary rounded-4" [(ngModel)]="password" name="pass" placeholder="Password" />
           <label class="form-label" for="inputpassword">Password</label>
         </div>
 
@@ -37,7 +37,7 @@
         </div>
 
         <div class="d-grid gap-2">
-          <button type="button" class="btn  rounded-4  mb-4" style="background-color:#2B6284; color: antiquewhite;" (click)="login()">Entrar</button>
+          <button type="button" class="btn  rounded-4  mb-4 bg-primario text-light" (click)="login()">Entrar</button>
         </div>
 
 

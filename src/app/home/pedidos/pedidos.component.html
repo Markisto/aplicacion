@@ -12,13 +12,13 @@
     <div class="row">
       <p class="text-terciario" style="font-size: medium;">Nuevo Pedido:</p>
       <div class="col-12 mb-2">
-        <div class="form-group">
-          <select class="form-select border-secundario border-2" aria-placeholder="select ">
-            <option value="0">Seleccionar Responsable..</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
-          </select>
+        <div class="form-group">     
+          <ng-select class="border-secundario-ng" [items]="responsables"  #responsableSelect
+          bindLabel="nombre" bindValue="cve_responsable" [selectOnTab]="true" [searchable]="true" [clearable]="true"
+          [virtualScroll]="true" 
+            [multiple]="false" [closeOnSelect]="true" [hideSelected]="true"
+          placeholder="Seleccionar Responsable.."  (keyup)="buscar_responsable($event)" >
+          </ng-select>
 
         </div>
       </div>
@@ -26,9 +26,8 @@
         <div class="form-group">
           <select class="form-select border-secundario border-2" aria-label="Default select example">
             <option selected>Seleccionar Tipo de Cliente...</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
+            <option value="{{item.Cve_Tipo_Cte}}" *ngFor="let item of tipo_cliente">{{item.Descripcion}}</option>
+          
           </select>
 
         </div>
@@ -37,9 +36,8 @@
         <div class="form-group">
           <select class="form-select border-secundario border-2" aria-label="Default select example">
             <option selected>Seleccionar Sucursal...</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
+            <option value="{{item.Cve_Sucursal}}" *ngFor="let item of sucursales">{{item.Descripcion}}</option>
+          
           </select>
 
         </div>
@@ -48,19 +46,17 @@
         <div class="form-group">
           <select class="form-select border-secundario border-2" aria-label="Default select example">
             <option selected>Seleccionar Tipo de Pago...</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
+            <option value="{{item.Cve_Tipo_Pago}}" *ngFor="let item of tipo_pago">{{item.Descripcion}}</option>           
           </select>
         </div>
       </div>
       <div class="col-12 mb-2 ">
         <div class="form-group">
           <select class="form-select border-secundario border-2" aria-label="Default select example">
-            <option selected>Seleccionar Tipo Cliente ..</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
+            <option selected>Nuevo/Recompra ..</option>
+            <option value="1">Cliente Nuevo</option>
+            <option value="2">Recompra</option>
+          
           </select>
 
         </div>

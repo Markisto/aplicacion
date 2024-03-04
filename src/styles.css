@@ -108,3 +108,18 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   border-color: #47BACD;
   --bs-border-opacity: 1;
 }
+
+
+.ng-select.border-secundario-ng{
+  border:solid 2px #47BACD;
+  --bs-border-opacity: 1; 
+  border-radius: 5px;
+  color : #000;
+}
+
+.ng-select.border-primario-ng{
+  border:solid 2px #2B8B92;
+  --bs-border-opacity: 1; 
+  border-radius: 5px;
+  color : #000;
+}
