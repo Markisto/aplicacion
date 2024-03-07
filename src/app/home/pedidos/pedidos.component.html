@@ -1,7 +1,7 @@
 <div class="container-fluid">
   <div class="row py-4">
     <div class="col-6">
-      <button class=" btn-primario text-light w-100" (click)="vista = 'nuevo'">Nuevo</button>
+      <button class=" btn-primario text-light w-100" (click)="Nuevo_Pedido()">Nuevo</button>
     </div>
     <div class="col-6">
       <button class="btn-secundario text-light w-100" (click)="vista = 'consulta'">Buscar</button>
@@ -12,6 +12,7 @@
     <div class="row">
       <p class="text-terciario" style="font-size: medium;">Nuevo Pedido:</p>
       <div class="col-12 mb-2">
+        <label class="text-terciario" >Seleccionar Responsable</label>
         <div class="form-group">     
           <ng-select class="border-secundario-ng" [items]="responsables"  #responsableSelect
           bindLabel="nombre" bindValue="cve_responsable" [selectOnTab]="true" [searchable]="true" [clearable]="true"
@@ -24,17 +25,16 @@
       </div>
       <div class="col-12 mb-2">
         <div class="form-group">
-          <select class="form-select border-secundario border-2" aria-label="Default select example">
-            <option selected>Seleccionar Tipo de Cliente...</option>
-            <option value="{{item.Cve_Tipo_Cte}}" *ngFor="let item of tipo_cliente">{{item.Descripcion}}</option>
-          
+          <label class="text-terciario" >Seleccionar Tipo de Cliente</label>
+          <select class="form-select border-secundario border-2" aria-label="Default select example">            
+            <option value="{{item.Cve_Tipo_Cte}}" *ngFor="let item of tipo_cliente">{{item.Descripcion}}</option>          
           </select>
-
         </div>
       </div>
       <div class="col-12 mb-2">
         <div class="form-group">
-          <select class="form-select border-secundario border-2" aria-label="Default select example" [(ngModel)]="sucursal_select">
+          <label class="text-terciario" >Seleccionar Sucursal</label>
+          <select class="form-select border-secundario border-2" aria-label="Default select example" [(ngModel)]="nuevo_pedido.cve_sucursal"> 
             <option selected>Seleccionar Sucursal...</option>
             <option value="{{item.Cve_Sucursal}}" *ngFor="let item of sucursales">{{item.Descripcion}}</option>
           
@@ -44,7 +44,8 @@
       </div>
       <div class="col-12 mb-2">
         <div class="form-group">
-          <select class="form-select border-secundario border-2" aria-label="Default select example">
+          <label class="text-terciario" >Seleccionar Tipo Pago</label>
+          <select class="form-select border-secundario border-2" aria-label="Default select example" [(ngModel)]="nuevo_pedido.tipo_pago">            
             <option selected>Seleccionar Tipo de Pago...</option>
             <option value="{{item.Cve_Tipo_Pago}}" *ngFor="let item of tipo_pago">{{item.Descripcion}}</option>           
           </select>
@@ -52,7 +53,8 @@
       </div>
       <div class="col-12 mb-2 ">
         <div class="form-group">
-          <select class="form-select border-secundario border-2" aria-label="Default select example">
+          <label class="text-terciario" >Nuevo/Recompra</label>
+          <select class="form-select border-secundario border-2" aria-label="Default select example" [(ngModel)]="nuevo_pedido.nuevo_recompra">
             <option selected>Nuevo/Recompra ..</option>
             <option value="1">Cliente Nuevo</option>
             <option value="2">Recompra</option>
@@ -64,9 +66,9 @@
       <div class="col-12 mb-2">
         <div class="form-group">
           <div class="form-check ">
-            <input class="form-check-input border-secundario border-2 h6" type="checkbox" value=""
-              id="flexCheckDefault">
-            <label class="form-check-label" for="flexCheckDefault">
+            <input class="form-check-input border-secundario border-2 h6" type="checkbox" value="" [(ngModel)]="nuevo_pedido.factura" [disabled]="nuevo_pedido.rfc == ''" #checkfactura id="checkfactura">
+            
+            <label class="form-check-label" for="checkfactura">
               Factura
             </label>
           </div>
@@ -103,11 +105,10 @@
     <div class="row">
       <div class="col-12 mb-2">
         <div class="form-group">
-          <select class="form-select border-secundario border-2" aria-label="Default select example">
+          <label class="text-terciario" >Seleccionar Tipo Envio</label>
+          <select class="form-select border-secundario border-2" aria-label="Default select example" [(ngModel)]="nuevo_pedido.tipo_envio">
             <option selected>Seleccionar Tipo Envio...</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
+           <option value="{{item.Descripcion}}" *ngFor="let item of tipo_envio">{{item.Cve_Tipo_Envio}}</option>
           </select>
 
         </div>
@@ -115,14 +116,21 @@
       <div class="col-12 mb-2">
         <div class="row g-3 align-items-center">
           <div class="col-4">
-            <label for="inputPassword6" class="col-form-label">Fecha de Envío</label>
+            <label for="inputPassword6" class="col-form-label text-terciario">Fecha de Envío</label>
           </div>
           <div class="col-8">
             <input type="date" id="inputPassword6" class="form-control  border-secundario border-2"
-              aria-describedby="passwordHelpInline">
+              aria-describedby="passwordHelpInline" [(ngModel)]="nuevo_pedido.fecha_envio">
           </div>
         </div>
 
+      </div>
+      <div class="col-12 mb-2" [ngClass]="{'d-none': mostrar_envio == false}">
+        <div class="form-group">
+          <label class="text-terciario" >Costo de Envio</label>
+          <input type="number" class="form-control border-secundario border-2" [(ngModel)]="nuevo_pedido.costo_envio">
+
+        </div>
       </div>
     </div>
     <div class="row">
@@ -145,6 +153,11 @@
         </div>
       </div>
 
+    </div>
+    <div class="row">
+      <div class="col-12 mb-2">
+        <button class="btn bg-primario text-light w-100" Guardar_Pedido()>Guardar</button>
+      </div>
     </div>
   </div>
 
@@ -280,10 +293,17 @@
     
             </div>
           </div>
+          
           <div class="col-12">
             <label for="inputPassword6" class="col-form-label">Precio Minimo Venta</label>
             <input type="number" class="form-control" [(ngModel)]="producto_select.precio_minimo_venta_base">            
           </div>
+
+          <div class="col-12">
+            <label for="inputPassword6" class="col-form-label">Existencia</label>
+            <input type="number" class="form-control" [disabled]="true" [(ngModel)]="producto_select.existencia">            
+          </div>
+
           <div class="col-12">
             <label for="inputCantidad" class="col-form-label">Cantidad</label>
             <input type="number" class="form-control" id="inputCantidad" onFocus="this.select()" [(ngModel)]="producto_select.cantidad">
@@ -293,7 +313,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="Cerra_Modal()">Close</button>
-        <button type="button" class="btn btn-primary" (click)="Agregar_Producto()">Agregar</button>
+        <button type="button" class="btn btn-primary" (click)="Agregar_Producto()" [disabled]="producto_select.existencia <= 0">Agregar</button>
       </div>
     </div>
   </div>

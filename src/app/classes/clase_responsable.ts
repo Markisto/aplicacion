@@ -2,6 +2,7 @@ export class C_Responsable{
     cve_responsable : string = "";
     nombre : string ="";
     razon_social : string = "";
+    rfc : string = "";
     calle_no : string = "";
     colonia : string = "";
     del_municipio : string = "";
@@ -13,4 +14,5 @@ export class C_Responsable{
     cve_tipo_cte : string = "";
     c_uso_cfdi : string = "";
     c_regimen_fiscal : string = "";
+    cubre = 0;
 }

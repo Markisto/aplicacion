@@ -10,6 +10,7 @@ import { C_Responsable } from '../../classes/clase_responsable';
 import { Observable } from 'rxjs';
 import bootstrap from '../../../main.server';
 import { C_Productos } from '../../classes/clase_productos';
+import { C_Pedido } from '../../classes/clase_pedido';
 
 
 @Component({
@@ -21,9 +22,10 @@ import { C_Productos } from '../../classes/clase_productos';
 })
 export class PedidosComponent implements OnInit{
 
-  user = new C_Usuario("","","","");
+  user = new C_Usuario("","","","","");
   @ViewChild('responsableSelect') respo! : ElementRef ;
   @ViewChild('modal') modal! : ElementRef ;
+  @ViewChild('checkfactura') checkfactura! : ElementRef ;
 
   constructor(private router : Router, private service : PedidosService) { }
   ngOnInit(): void {
@@ -39,16 +41,29 @@ export class PedidosComponent implements OnInit{
 
   responsables : C_Responsable[] = [];
   responsable_select: C_Responsable | any;
-  vista = 'consulta';
+  vista = 'nuevo';
   sucursales : any[] = [];
   tipo_pago : any[] = [];
   tipo_cliente : any[] = [];  
   productos : C_Productos[] = []
-  sucursal_select = this.user.cve_sucursal;
+  
   producto_select : C_Productos = new C_Productos();
   productos_pedir : C_Productos[] = [];
   num_productos = 0;
   costo_total = 0;
+  tipo_envio : any[] = [];  
+  nuevo_pedido = new C_Pedido(0);
+
+  mostrar_envio = false;
+
+  Nuevo_Pedido(){
+    this.nuevo_pedido.cve_folio = 1;
+    this.nuevo_pedido.cve_vendedor = this.user.cve_usuario;
+    this.nuevo_pedido.cve_usuario = this.user.nombre_sesion ;
+    this.nuevo_pedido.cve_sucursal = this.user.cve_sucursal;
+    this.vista = 'nuevo'    
+  }
+
   obtener_sucursales(){
     this.service.Obtener_Sucursales().subscribe({
       next: (res: any) => {
@@ -56,7 +71,7 @@ export class PedidosComponent implements OnInit{
         if(res.code == 0){
           this.sucursales = res.data;          
         }
-        this.sucursal_select = this.user.cve_sucursal;
+        this.nuevo_pedido.cve_sucursal = this.user.cve_sucursal;
       },
       error: (err) => {
         Swal.fire({
@@ -73,8 +88,23 @@ export class PedidosComponent implements OnInit{
     console.log("cambio de responsable");
     console.log($event);
     let valor = $event;
-    this.responsable_select = valor;    
+    this.responsable_select = valor; 
+
+    this.nuevo_pedido.cve_compañia = this.responsable_select.cve_compañia;
+    this.nuevo_pedido.cve_cliente = this.responsable_select.cve_responsable;
+    this.nuevo_pedido.rfc = this.responsable_select.rfc;
+    this.nuevo_pedido.razon_social = this.responsable_select.razon_social;
+    if(this.nuevo_pedido.rfc == undefined || this.nuevo_pedido.rfc == ""){
+      this.nuevo_pedido.factura = false;      
+      this.checkfactura.nativeElement.checked = false;
+    }else{
+      this.nuevo_pedido.factura = true;
+      this.checkfactura.nativeElement.checked = true;
+    }
+      
   }
+
+
 
   buscar_responsable($event : any){
     let valor = $event.target.value;
@@ -90,6 +120,7 @@ export class PedidosComponent implements OnInit{
               responsable.cve_responsable = data[i].Cve_Cliente;
               responsable.nombre = data[i].Nombre_Cte;
               responsable.razon_social = data[i].Razon_Social;
+              responsable.rfc = data[i].RFC;
               responsable.calle_no = data[i].Calle_No;
               responsable.colonia = data[i].Colonia;
               responsable.del_municipio = data[i].Del_Municipio;
@@ -99,8 +130,9 @@ export class PedidosComponent implements OnInit{
               responsable.telefono_2 = data[i].Telefono_2;
               responsable.cve_clase_cte = data[i].Cve_Clase_Cte;
               responsable.cve_tipo_cte = data[i].Cve_Tipo_Cte;
-              responsable.c_uso_cfdi = data[i].C_UsoCFDI;
-              responsable.c_regimen_fiscal = data[i].C_RegimenFiscal;
+              responsable.c_uso_cfdi = data[i].c_UsoCFDI;
+              responsable.c_regimen_fiscal = data[i].c_RegimenFiscal;
+              responsable.cubre = data[i].Cubre;
               respons.push(responsable);
             }
 
@@ -132,7 +164,7 @@ export class PedidosComponent implements OnInit{
 
    
     if(valor.length > 3){
-      this.service.Buscar_Productos(valor,this.sucursal_select,this.responsable_select.cve_clase_cte).subscribe({
+      this.service.Buscar_Productos(valor,this.nuevo_pedido.cve_sucursal,this.responsable_select.cve_clase_cte).subscribe({
         next: (res: any) => {
           if(res.code == 0){
             let data = res.data;
@@ -140,9 +172,10 @@ export class PedidosComponent implements OnInit{
               let producto = new C_Productos();
               producto.cve_producto = data[i].Cve_Producto;
               producto.descripcion = data[i].Descripcion;                   
-              producto.existencia = data[i].Existencia;
+              producto.existencia = Number(data[i].existencia)  >= 0 ? Number(data[i].existencia) : 0;
               producto.precio_minimo_venta_base = data[i].precio_minimo_venta;
-              producto.pantalla = data[i].Descripcion + "* Disponible" + data[i].Existencia ;
+              producto.pantalla = data[i].Descripcion + "* Disponible" + data[i].existencia ;
+              producto.cobrar_envio = data[i].envio;
            
               
               products.push(producto);
@@ -210,9 +243,27 @@ export class PedidosComponent implements OnInit{
     });
   }
 
+  obtener_tipo_envio(){
+    this.service.Obtener_Tipo_Envtio().subscribe({
+      next: (res: any) => {
+        if(res.code == 0){
+          this.tipo_envio = res.data;
+        }
+      },
+      error: (err) => {
+        Swal.fire({
+          title: 'Error!',
+          text: err.message,
+          icon: 'error',
+          confirmButtonText: 'Aceptar'
+        });
+      }
+    });
+  }
+
   Abrir_Modal(){
     
-    if(this.sucursal_select == ""){
+    if(this.nuevo_pedido.cve_sucursal == ""){
       Swal.fire({
         title: 'Error!',
         text: "Debes seleccionar una sucursal",
@@ -258,8 +309,21 @@ export class PedidosComponent implements OnInit{
     for(let i = 0; i < this.productos_pedir.length; i++){
       this.costo_total += Number(this.productos_pedir[i].precio_minimo_venta_base) * Number(this.productos_pedir[i].cantidad);
     }
+    this.validar_envio();
     this.Cerra_Modal();
   }
 
+
+  validar_envio(){
+    let productos_envio = this.productos_pedir.filter((producto) => producto.cobrar_envio == "si" && producto.cantidad == 1 );
+    if(productos_envio.length > 0 || this.responsable_select.cubre < 25){
+      this.mostrar_envio = true;
+    }
+  }
+
+
+  Guardar_Pedido(){
+    
+  }
 
 }

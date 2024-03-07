@@ -11,7 +11,7 @@ import { C_Usuario } from '../../classes/clase_usuario';
 })
 export class MenuComponent implements OnInit {
 
-  user = new C_Usuario("","","","");
+  user = new C_Usuario("","","","","");
 
   
   constructor(private router: Router) { }

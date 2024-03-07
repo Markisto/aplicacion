@@ -64,6 +64,19 @@ export class PedidosService {
     )
   }
 
+  Obtener_Tipo_Envtio(){
+    let res =  this.http.post(`${this.url}pedidos.php`, {"evento":"obtener_tipo_envio"});
+    return res
+    .pipe(
+      tap((res: any) => {
+        return res;
+      }),
+      catchError((err) => {
+        return throwError(() => err);
+      })
+    )
+  }
+
   Buscar_Productos(descripcion : string, cve_sucursal : string, tipo_cliente : string){
     let res =  this.http.post(`${this.url}pedidos.php`, {"evento":"buscar_productos", "descripcion": descripcion, "cve_sucursal": cve_sucursal, "tipo_cliente": tipo_cliente});
     return res

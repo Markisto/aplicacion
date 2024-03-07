@@ -35,7 +35,7 @@ export class LoginComponent {
       next: (res : any) => {
         if(res.code == 0){
           let data = res.data;
-          let user = new C_Usuario(data.token, data.Cve_Vendedor, data.Nombre, data.Cve_Sucursal);
+          let user = new C_Usuario(data.token, data.Cve_Vendedor, data.Nombre, data.Cve_Sucursal,data.Usuario);
           sessionStorage.setItem('user', JSON.stringify(user));
           this.router.navigate(['home']);
         }else{
