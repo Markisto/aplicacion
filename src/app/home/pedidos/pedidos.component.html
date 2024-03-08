@@ -13,10 +13,10 @@
       <p class="text-terciario" style="font-size: medium;">Nuevo Pedido:</p>
       <div class="col-12 mb-2">
         <label class="text-terciario" >Seleccionar Responsable</label>
-        <div class="form-group">     
+        <div class="form-group">
           <ng-select class="border-secundario-ng" [items]="responsables"  #responsableSelect
           bindLabel="nombre" bindValue="cve_responsable" [selectOnTab]="true" [searchable]="true" [clearable]="true"
-          [virtualScroll]="true" 
+          [virtualScroll]="true"
             [multiple]="false" [closeOnSelect]="true" [hideSelected]="true" (change)="cambio_responsable($event)"
           placeholder="Seleccionar Responsable.."  (keyup)="buscar_responsable($event)" >
           </ng-select>
@@ -26,27 +26,27 @@
       <div class="col-12 mb-2" [ngClass]="{'d-none': (responsable_select.nombre_paciente_1 == '' && responsable_select.nombre_paciente_2 == '') }">
         <div class="form-group">
           <label class="text-terciario" >Seleccionar Paciente</label><br>
-         
-          <input type="radio" #p1 class="form-check-input border-secundario border-2" value="p1" [ngClass]="{'d-none': responsable_select.nombre_paciente_1 ==''}" value="1" name="paciente" (change)="establece_paciente($event)" > {{responsable_select.nombre_paciente_1}}<br>
-          <input type="radio" #p2 class="form-check-input border-secundario border-2" value="p2" [ngClass]="{'d-none': responsable_select.nombre_paciente_2 ==''}" value="2" name="paciente" (change)="establece_paciente($event)" > {{responsable_select.nombre_paciente_2}}
-        
+
+          <input type="radio" #p1 id="p1" class="form-check-input border-secundario border-2" value="p1" [ngClass]="{'d-none': responsable_select.nombre_paciente_1 ==''}" value="1" name="paciente" (change)="establece_paciente('p1')" > <label for="p1">{{responsable_select.nombre_paciente_1}}</label> <br>
+          <input type="radio" #p2 id="p2" class="form-check-input border-secundario border-2" value="p2" [ngClass]="{'d-none': responsable_select.nombre_paciente_2 ==''}" value="2" name="paciente" (change)="establece_paciente('p2')" ><label for="p2">{{responsable_select.nombre_paciente_2}}</label>
+
         </div>
       </div>
       <div class="col-12 mb-2">
         <div class="form-group">
           <label class="text-terciario" >Seleccionar Tipo de Cliente</label>
-          <select class="form-select border-secundario border-2" aria-label="Default select example">            
-            <option value="{{item.Cve_Tipo_Cte}}" *ngFor="let item of tipo_cliente">{{item.Descripcion}}</option>          
+          <select class="form-select border-secundario border-2" aria-label="Default select example" [(ngModel)]="nuevo_pedido.tipo_cliente">
+            <option value="{{item.Cve_Tipo_Cte}}" *ngFor="let item of tipo_cliente">{{item.Descripcion}}</option>
           </select>
         </div>
       </div>
       <div class="col-12 mb-2">
         <div class="form-group">
           <label class="text-terciario" >Seleccionar Sucursal</label>
-          <select class="form-select border-secundario border-2" aria-label="Default select example" [(ngModel)]="nuevo_pedido.cve_sucursal"> 
+          <select class="form-select border-secundario border-2" aria-label="Default select example" [(ngModel)]="nuevo_pedido.cve_sucursal">
             <option selected>Seleccionar Sucursal...</option>
             <option value="{{item.Cve_Sucursal}}" *ngFor="let item of sucursales">{{item.Descripcion}}</option>
-          
+
           </select>
 
         </div>
@@ -54,9 +54,9 @@
       <div class="col-12 mb-2">
         <div class="form-group">
           <label class="text-terciario" >Seleccionar Tipo Pago</label>
-          <select class="form-select border-secundario border-2" aria-label="Default select example" [(ngModel)]="nuevo_pedido.tipo_pago">            
+          <select class="form-select border-secundario border-2" aria-label="Default select example" [(ngModel)]="nuevo_pedido.tipo_pago">
             <option selected>Seleccionar Tipo de Pago...</option>
-            <option value="{{item.Cve_Tipo_Pago}}" *ngFor="let item of tipo_pago">{{item.Descripcion}}</option>           
+            <option value="{{item.Cve_Tipo_Pago}}" *ngFor="let item of tipo_pago">{{item.Descripcion}}</option>
           </select>
         </div>
       </div>
@@ -64,19 +64,16 @@
         <div class="form-group">
           <label class="text-terciario" >Nuevo/Recompra</label>
           <select class="form-select border-secundario border-2" aria-label="Default select example" [(ngModel)]="nuevo_pedido.nuevo_recompra">
-            <option selected>Nuevo/Recompra ..</option>
             <option value="1">Cliente Nuevo</option>
             <option value="2">Recompra</option>
-          
           </select>
-
         </div>
       </div>
       <div class="col-12 mb-2">
         <div class="form-group">
           <div class="form-check ">
             <input class="form-check-input border-secundario border-2 h6" type="checkbox" value="" [(ngModel)]="nuevo_pedido.factura" [disabled]="nuevo_pedido.rfc == ''" #checkfactura id="checkfactura">
-            
+
             <label class="form-check-label" for="checkfactura">
               Factura
             </label>
@@ -117,7 +114,7 @@
           <label class="text-terciario" >Seleccionar Tipo Envio</label>
           <select class="form-select border-secundario border-2" aria-label="Default select example" [(ngModel)]="nuevo_pedido.tipo_envio">
             <option selected>Seleccionar Tipo Envio...</option>
-           <option value="{{item.Descripcion}}" *ngFor="let item of tipo_envio">{{item.Cve_Tipo_Envio}}</option>
+           <option value="{{item.Cve_Tipo_Envio}}" *ngFor="let item of tipo_envio">{{item.Descripcion}}</option>
           </select>
 
         </div>
@@ -231,7 +228,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="col-12">
         <table class="table table-borderless" style="color:#2B8B92 ;">
           <thead>
@@ -275,15 +272,16 @@
           </div>
         </div>
       </div>
-    
+
     </div>
   </div>
 
 </div>
 
 
-<div class="modal" tabindex="-1" #modal>
+<div class="modal" style="background-color: rgba(10, 10, 10, 0.86);" tabindex="-1" #modal>
   <div class="modal-dialog modal-dialog-centered">
+
     <div class="modal-content">
       <div class="modal-header py-1 px-2 bg-primario text-light ">
         <h4 class="modal-title">Busacar Producto</h4>
@@ -292,25 +290,25 @@
       <div class="modal-body">
         <div class="row">
           <div class="col-12 mb-2">
-            <div class="form-group">     
+            <div class="form-group">
               <ng-select class="border-secundario-ng" [items]="productos"  #responsableSelect
               bindLabel="pantalla" bindValue="cve_producto" [selectOnTab]="true" [searchable]="true" [clearable]="true"
-              [virtualScroll]="true" 
+              [virtualScroll]="true"
                 [multiple]="false" [closeOnSelect]="true" [hideSelected]="true"
               placeholder="Buscar Productos.."  (keyup)="Buscar_Producto($event)" (change)="Producto_select($event)" >
               </ng-select>
-    
+
             </div>
           </div>
-          
+
           <div class="col-12">
             <label for="inputPassword6" class="col-form-label">Precio Minimo Venta</label>
-            <input type="number" class="form-control" [(ngModel)]="producto_select.precio_minimo_venta_base">            
+            <input type="number" class="form-control" [(ngModel)]="producto_select.precio_minimo_venta_base">
           </div>
 
           <div class="col-12">
             <label for="inputPassword6" class="col-form-label">Existencia</label>
-            <input type="number" class="form-control" [disabled]="true" [(ngModel)]="producto_select.existencia">            
+            <input type="number" class="form-control" [disabled]="true" [(ngModel)]="producto_select.existencia">
           </div>
 
           <div class="col-12">

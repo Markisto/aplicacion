@@ -39,21 +39,22 @@ export class PedidosComponent implements OnInit{
     this.obtener_sucursales();
     this.obtener_tipo_pago();
     this.obtener_tipo_cliente();
+    this.obtener_tipo_envio();
   }
 
   responsables : C_Responsable[] = [];
   responsable_select: C_Responsable = new C_Responsable();
-  vista = 'nuevo';
+  vista = '';
   sucursales : any[] = [];
   tipo_pago : any[] = [];
-  tipo_cliente : any[] = [];  
+  tipo_cliente : any[] = [];
   productos : C_Productos[] = []
-  
+
   producto_select : C_Productos = new C_Productos();
   productos_pedir : C_Productos[] = [];
   num_productos = 0;
   costo_total = 0;
-  tipo_envio : any[] = [];  
+  tipo_envio : any[] = [];
   nuevo_pedido = new C_Pedido(0);
 
   mostrar_envio = false;
@@ -63,7 +64,7 @@ export class PedidosComponent implements OnInit{
     this.nuevo_pedido.cve_vendedor = this.user.cve_usuario;
     this.nuevo_pedido.cve_usuario = this.user.nombre_sesion ;
     this.nuevo_pedido.cve_sucursal = this.user.cve_sucursal;
-    this.vista = 'nuevo'    
+    this.vista = 'nuevo'
   }
 
   obtener_sucursales(){
@@ -71,7 +72,7 @@ export class PedidosComponent implements OnInit{
       next: (res: any) => {
         console.log(res);
         if(res.code == 0){
-          this.sucursales = res.data;          
+          this.sucursales = res.data;
         }
         this.nuevo_pedido.cve_sucursal = this.user.cve_sucursal;
       },
@@ -92,7 +93,7 @@ export class PedidosComponent implements OnInit{
     let valor = $event;
     console.log("valor respon");
     console.log(valor);
-    this.responsable_select = valor; 
+    this.responsable_select = valor;
 
     this.nuevo_pedido.cve_compañia = this.responsable_select.cve_compania;
     this.nuevo_pedido.cve_cliente = this.responsable_select.cve_responsable;
@@ -100,13 +101,13 @@ export class PedidosComponent implements OnInit{
     this.nuevo_pedido.razon_social = this.responsable_select.razon_social;
 
     if(this.nuevo_pedido.rfc == undefined || this.nuevo_pedido.rfc == ""){
-      this.nuevo_pedido.factura = false;      
+      this.nuevo_pedido.factura = false;
       this.checkfactura.nativeElement.checked = false;
     }else{
       this.nuevo_pedido.factura = true;
       this.checkfactura.nativeElement.checked = true;
     }
-    
+
     if(this.responsable_select.nombre_paciente_1 == "" && this.responsable_select.nombre_paciente_2 == ""){
       this.nuevo_pedido.paciente_select = "";
       this.nuevo_pedido.cubre_select = "";
@@ -127,19 +128,19 @@ export class PedidosComponent implements OnInit{
   }
 
 
-  establece_paciente($event : any){
+  establece_paciente(paciente : string){
     console.log("establece paciente");
-    console.log($event);
+    console.log(paciente);
 
-    let valor = $event.target.value;
-    if(valor == "p1"){
+
+    if(paciente == "p1"){
       this.nuevo_pedido.paciente_select = this.responsable_select.nombre_paciente_1;
       this.nuevo_pedido.cubre_select = this.responsable_select.cubre_1;
-    }else if(valor == "p2"){
+    }else if(paciente == "p2"){
       this.nuevo_pedido.paciente_select = this.responsable_select.nombre_paciente_2;
       this.nuevo_pedido.cubre_select = this.responsable_select.cubre_2;
     }
-    
+
     console.log("paciente select: ");
     console.log(this.nuevo_pedido.paciente_select);
     console.log("cubre select: ");
@@ -156,7 +157,7 @@ export class PedidosComponent implements OnInit{
         next: (res: any) => {
           if(res.code == 0){
             let data = res.data;
-           
+
             for(let i = 0; i < data.length; i++){
               let responsable = new C_Responsable();
               responsable.cve_responsable = data[i].Cve_Cliente;
@@ -182,11 +183,11 @@ export class PedidosComponent implements OnInit{
             }
 
             this.responsables = [...respons];
-                                              
+
           }else{
             this.responsables = [...respons];
           }
-          
+
         },
         error: (err) => {
           Swal.fire({
@@ -200,14 +201,11 @@ export class PedidosComponent implements OnInit{
     }
   }
 
-
-
-
   Buscar_Producto($event:any){
     let valor = $event.target.value;
     let products : C_Productos[] = [];
 
-   
+
     if(valor.length > 3){
       this.service.Buscar_Productos(valor,this.nuevo_pedido.cve_sucursal,this.responsable_select.cve_clase_cte).subscribe({
         next: (res: any) => {
@@ -216,22 +214,22 @@ export class PedidosComponent implements OnInit{
             for(let i = 0; i < data.length; i++){
               let producto = new C_Productos();
               producto.cve_producto = data[i].Cve_Producto;
-              producto.descripcion = data[i].Descripcion;                   
+              producto.descripcion = data[i].Descripcion;
               producto.existencia = Number(data[i].existencia)  >= 0 ? Number(data[i].existencia) : 0;
               producto.precio_minimo_venta_base = data[i].precio_minimo_venta;
               producto.pantalla = data[i].Descripcion + "* Disponible" + data[i].existencia ;
               producto.cobrar_envio = data[i].envio;
-           
-              
+
+
               products.push(producto);
             }
 
             this.productos = [...products];
-                                              
+
           }else{
             this.productos = [...products];
           }
-          
+
         },
         error: (err) => {
           Swal.fire({
@@ -249,7 +247,7 @@ export class PedidosComponent implements OnInit{
   Producto_select($event:any){
     let valor = $event;
     this.producto_select = valor;
-    
+
   }
 
   obtener_tipo_pago(){
@@ -307,7 +305,7 @@ export class PedidosComponent implements OnInit{
   }
 
   Abrir_Modal(){
-    
+
     if(this.nuevo_pedido.cve_sucursal == ""){
       Swal.fire({
         title: 'Error!',
@@ -326,10 +324,10 @@ export class PedidosComponent implements OnInit{
         confirmButtonText: 'Aceptar'
       });
       return;
-    } 
+    }
 
 
-  
+
     this.modal.nativeElement.style.display = "block";
   }
   Cerra_Modal(){
@@ -349,7 +347,7 @@ export class PedidosComponent implements OnInit{
       });
       return;
     }
-    this.productos_pedir.push(this.producto_select);    
+    this.productos_pedir.push(this.producto_select);
     this.num_productos = this.productos_pedir.length;
     for(let i = 0; i < this.productos_pedir.length; i++){
       this.costo_total += Number(this.productos_pedir[i].precio_minimo_venta_base) * Number(this.productos_pedir[i].cantidad);
@@ -361,14 +359,146 @@ export class PedidosComponent implements OnInit{
 
   validar_envio(){
     let productos_envio = this.productos_pedir.filter((producto) => producto.cobrar_envio == "si" && producto.cantidad == 1 );
-    if(productos_envio.length > 0){
+    if(productos_envio.length > 0 && Number(this.nuevo_pedido.cubre_select) < 25){
       this.mostrar_envio = true;
     }
   }
 
 
   Guardar_Pedido(){
-    
+    if(this.productos_pedir.length == 0){
+      Swal.fire({
+        title: 'Error!',
+        text: "Debes agregar al menos un producto",
+        icon: 'error',
+        confirmButtonText: 'Aceptar'
+      });
+      return;
+    }
+
+    if(this.nuevo_pedido.cve_cliente == ""){
+      Swal.fire({
+        title: 'Error!',
+        text: "Debes seleccionar un cliente",
+        icon: 'error',
+        confirmButtonText: 'Aceptar'
+      });
+      return;
+    }
+
+    if(this.nuevo_pedido.tipo_cliente == ""){
+      Swal.fire({
+        title: 'Error!',
+        text: "Debes seleccionar un tipo de cliente",
+        icon: 'error',
+        confirmButtonText: 'Aceptar'
+      });
+      return;
+    }
+
+    if(this.nuevo_pedido.cve_sucursal == ""){
+      Swal.fire({
+        title: 'Error!',
+        text: "Debes seleccionar una sucursal",
+        icon: 'error',
+        confirmButtonText: 'Aceptar'
+      });
+      return;
+    }
+
+    if(this.nuevo_pedido.tipo_pago == ""){
+      Swal.fire({
+        title: 'Error!',
+        text: "Debes seleccionar un tipo de pago",
+        icon: 'error',
+        confirmButtonText: 'Aceptar'
+      });
+      return;
+    }
+
+    if(this.nuevo_pedido.nuevo_recompra == ""){
+      Swal.fire({
+        title: 'Error!',
+        text: "Seleccione si es un nuevo cliente o recompra",
+        icon: 'error',
+        confirmButtonText: 'Aceptar'
+      });
+      return;
+    }
+
+    if(this.nuevo_pedido.fecha_envio == ""){
+      Swal.fire({
+        title: 'Error!',
+        text: "Debes seleccionar la fecha de envio",
+        icon: 'error',
+        confirmButtonText: 'Aceptar'
+      });
+      return;
+    }
+
+    if(this.mostrar_envio == true && this.nuevo_pedido.costo_envio == -1){
+      Swal.fire({
+        title: 'Error!',
+        text: "Debe establecer el costo de envio",
+        icon: 'error',
+        confirmButtonText: 'Aceptar'
+      });
+      return;
+    }
+
+    if(this.nuevo_pedido.cve_vendedor == ""){
+      Swal.fire({
+        title: 'Error!',
+        text: "Error con el usuario",
+        icon: 'error',
+        confirmButtonText: 'Aceptar'
+      });
+      return;
+    }
+
+    this.nuevo_pedido.productos_pedir = this.productos_pedir;
+
+    console.log("Esto es lo que se envia ");
+    console.log(this.nuevo_pedido);
+    this.service.Guardar_Pedido(this.nuevo_pedido).subscribe({
+      next: (res: any) => {
+        if(res.code == 0){
+          Swal.fire({
+            title: 'Exito!',
+            text: res.message,
+            icon: 'success',
+            confirmButtonText: 'Aceptar'
+          });
+          this.nuevo_pedido = new C_Pedido(0);
+          this.productos_pedir = [];
+          this.num_productos = 0;
+          this.costo_total = 0;
+          this.mostrar_envio = false;
+          this.modal.nativeElement.style.display = "none";
+        }else{
+          Swal.fire({
+            title: 'Error!',
+            text: res.message,
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+          });
+        }
+      },
+      error: (err) => {
+        Swal.fire({
+          title: 'Error!',
+          text: err.message,
+          icon: 'error',
+          confirmButtonText: 'Aceptar'
+        });
+      }
+    });
+
+
+
+
+
+
   }
 
 }

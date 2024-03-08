@@ -2,12 +2,12 @@ import { C_Productos } from "./clase_productos";
 
 export class C_Pedido{
     cve_compañia : string = "";
-    cve_sucursal : string = "";        
+    cve_sucursal : string = "";
     cve_folio : number = 0;
     cve_cliente : string = "";
     rfc : string = "";
     razon_social : string = "";
-    cve_vendedor : string = "";    
+    cve_vendedor : string = "";
     cve_usuario : string = "";
     tipo_pago : string = "";
     uso_cfdi : string = "";
@@ -18,11 +18,11 @@ export class C_Pedido{
 
 
     tipo_cliente : string = "";
-  
-    
+
+
     factura : boolean = true;
     aplicar_envio  = false;
-    costo_envio : number = 0;
+    costo_envio : number = -1;
 
     productos_pedir : C_Productos[] = [];
 
