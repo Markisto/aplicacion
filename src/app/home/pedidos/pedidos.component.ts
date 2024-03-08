@@ -26,6 +26,8 @@ export class PedidosComponent implements OnInit{
   @ViewChild('responsableSelect') respo! : ElementRef ;
   @ViewChild('modal') modal! : ElementRef ;
   @ViewChild('checkfactura') checkfactura! : ElementRef ;
+  @ViewChild('p1') p1! : ElementRef ;
+  @ViewChild('p2') p2! : ElementRef ;
 
   constructor(private router : Router, private service : PedidosService) { }
   ngOnInit(): void {
@@ -40,7 +42,7 @@ export class PedidosComponent implements OnInit{
   }
 
   responsables : C_Responsable[] = [];
-  responsable_select: C_Responsable | any;
+  responsable_select: C_Responsable = new C_Responsable();
   vista = 'nuevo';
   sucursales : any[] = [];
   tipo_pago : any[] = [];
@@ -88,12 +90,15 @@ export class PedidosComponent implements OnInit{
     console.log("cambio de responsable");
     console.log($event);
     let valor = $event;
+    console.log("valor respon");
+    console.log(valor);
     this.responsable_select = valor; 
 
-    this.nuevo_pedido.cve_compañia = this.responsable_select.cve_compañia;
+    this.nuevo_pedido.cve_compañia = this.responsable_select.cve_compania;
     this.nuevo_pedido.cve_cliente = this.responsable_select.cve_responsable;
     this.nuevo_pedido.rfc = this.responsable_select.rfc;
     this.nuevo_pedido.razon_social = this.responsable_select.razon_social;
+
     if(this.nuevo_pedido.rfc == undefined || this.nuevo_pedido.rfc == ""){
       this.nuevo_pedido.factura = false;      
       this.checkfactura.nativeElement.checked = false;
@@ -101,9 +106,46 @@ export class PedidosComponent implements OnInit{
       this.nuevo_pedido.factura = true;
       this.checkfactura.nativeElement.checked = true;
     }
-      
+    
+    if(this.responsable_select.nombre_paciente_1 == "" && this.responsable_select.nombre_paciente_2 == ""){
+      this.nuevo_pedido.paciente_select = "";
+      this.nuevo_pedido.cubre_select = "";
+    }
+
+    if(this.responsable_select.nombre_paciente_1 != "" && this.responsable_select.nombre_paciente_2 == ""){
+      this.p1.nativeElement.checked = true;
+      this.nuevo_pedido.paciente_select = this.responsable_select.nombre_paciente_1;
+      this.nuevo_pedido.cubre_select = this.responsable_select.cubre_1;
+    }
+
+    if(this.responsable_select.nombre_paciente_1 == "" && this.responsable_select.nombre_paciente_2 != ""){
+      this.p2.nativeElement.checked = true;
+      this.nuevo_pedido.paciente_select = this.responsable_select.nombre_paciente_2;
+      this.nuevo_pedido.cubre_select = this.responsable_select.cubre_2;
+    }
+
   }
 
+
+  establece_paciente($event : any){
+    console.log("establece paciente");
+    console.log($event);
+
+    let valor = $event.target.value;
+    if(valor == "p1"){
+      this.nuevo_pedido.paciente_select = this.responsable_select.nombre_paciente_1;
+      this.nuevo_pedido.cubre_select = this.responsable_select.cubre_1;
+    }else if(valor == "p2"){
+      this.nuevo_pedido.paciente_select = this.responsable_select.nombre_paciente_2;
+      this.nuevo_pedido.cubre_select = this.responsable_select.cubre_2;
+    }
+    
+    console.log("paciente select: ");
+    console.log(this.nuevo_pedido.paciente_select);
+    console.log("cubre select: ");
+    console.log(this.nuevo_pedido.cubre_select);
+
+  }
 
 
   buscar_responsable($event : any){
@@ -132,7 +174,10 @@ export class PedidosComponent implements OnInit{
               responsable.cve_tipo_cte = data[i].Cve_Tipo_Cte;
               responsable.c_uso_cfdi = data[i].c_UsoCFDI;
               responsable.c_regimen_fiscal = data[i].c_RegimenFiscal;
-              responsable.cubre = data[i].Cubre;
+              responsable.nombre_paciente_1 = data[i].Nombre_Paciente_1;
+              responsable.cubre_1 = data[i].Cubre_1;
+              responsable.nombre_paciente_2 = data[i].Nombre_Paciente_2;
+              responsable.cubre_2 = data[i].Cubre_2;
               respons.push(responsable);
             }
 
@@ -316,7 +361,7 @@ export class PedidosComponent implements OnInit{
 
   validar_envio(){
     let productos_envio = this.productos_pedir.filter((producto) => producto.cobrar_envio == "si" && producto.cantidad == 1 );
-    if(productos_envio.length > 0 || this.responsable_select.cubre < 25){
+    if(productos_envio.length > 0){
       this.mostrar_envio = true;
     }
   }

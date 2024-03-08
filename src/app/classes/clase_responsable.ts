@@ -1,4 +1,5 @@
 export class C_Responsable{
+    cve_compania : string = "";
     cve_responsable : string = "";
     nombre : string ="";
     razon_social : string = "";
@@ -14,5 +15,10 @@ export class C_Responsable{
     cve_tipo_cte : string = "";
     c_uso_cfdi : string = "";
     c_regimen_fiscal : string = "";
-    cubre = 0;
+    
+    nombre_paciente_1 : string = "";
+    cubre_1 : string = "";
+    nombre_paciente_2 : string = "";
+    cubre_2 : string = "";
+
 }

@@ -23,6 +23,15 @@
 
         </div>
       </div>
+      <div class="col-12 mb-2" [ngClass]="{'d-none': (responsable_select.nombre_paciente_1 == '' && responsable_select.nombre_paciente_2 == '') }">
+        <div class="form-group">
+          <label class="text-terciario" >Seleccionar Paciente</label><br>
+         
+          <input type="radio" #p1 class="form-check-input border-secundario border-2" value="p1" [ngClass]="{'d-none': responsable_select.nombre_paciente_1 ==''}" value="1" name="paciente" (change)="establece_paciente($event)" > {{responsable_select.nombre_paciente_1}}<br>
+          <input type="radio" #p2 class="form-check-input border-secundario border-2" value="p2" [ngClass]="{'d-none': responsable_select.nombre_paciente_2 ==''}" value="2" name="paciente" (change)="establece_paciente($event)" > {{responsable_select.nombre_paciente_2}}
+        
+        </div>
+      </div>
       <div class="col-12 mb-2">
         <div class="form-group">
           <label class="text-terciario" >Seleccionar Tipo de Cliente</label>
@@ -156,7 +165,7 @@
     </div>
     <div class="row">
       <div class="col-12 mb-2">
-        <button class="btn bg-primario text-light w-100" Guardar_Pedido()>Guardar</button>
+        <button class="btn bg-primario text-light w-100" (click)="Guardar_Pedido()">Guardar</button>
       </div>
     </div>
   </div>

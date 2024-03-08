@@ -21,10 +21,13 @@ export class C_Pedido{
   
     
     factura : boolean = true;
-   aplicar_envio  = false;
+    aplicar_envio  = false;
     costo_envio : number = 0;
 
     productos_pedir : C_Productos[] = [];
+
+    paciente_select : string = "";
+    cubre_select : string = "";
 
     constructor(cve_folio : number ){
         this.cve_folio = cve_folio;
