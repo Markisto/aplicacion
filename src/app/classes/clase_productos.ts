@@ -18,6 +18,8 @@ export class C_Productos{
     cantidad : number = 0;
     cobrar_envio : string = "";
     pantalla : string = "";
+    envio : number = 0;
+    sub_total : number = 0;
 
     
     

@@ -61,6 +61,17 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   box-shadow: 0 0 10px #E86C39;
 }
 
+.btn-terciario {
+  background-color: #E86C39;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: Poppins-Light;
+}
+
 .bg-primario {
   background-color: #2B8B92;
 }

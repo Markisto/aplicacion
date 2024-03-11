@@ -174,22 +174,35 @@
       <p class="text-terciario" style="font-size: medium;">Consultar Pedido:</p>
 
 
-      <div class="col-6 mb-2">
-        <div class="form-group">
-          <input type="date" id="inputpassword" class="form-control border-secundario border-2 " placeholder="Fecha" />
-        </div>
+      <div class="col-12 mb-2">
+        <div class="row">
+          <div class="col-6">
+            <div class="form-group">
+              <label class="text-terciario">Desde:</label>
+              <input type="date" class="form-control border-secundario border-2 " placeholder="Fecha" [(ngModel)]="buscar_desde" />
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-group">
+              <label class="text-terciario">Hasta:</label>
+              <input type="date"  class="form-control border-secundario border-2 " placeholder="Fecha" [(ngModel)]="buscar_hasta" />
+            </div>
+          </div>
+        </div>        
       </div>
 
 
 
 
-      <div class="col-6 mb-2">
+      <div class="col-12 mb-2">
         <div class="form-group">
-          <select class="form-select border-secundario border-2" aria-label="Default select example">
-            <option selected>Status</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
+          <label class="text-terciario">Status</label>
+          <select class="form-select border-secundario border-2" aria-label="Default select example" [(ngModel)]="buscar_status">
+            <option value="0" >TODOS</option>
+            <option value="CT">CAPTURADO</option>
+            <option value="2">FACTURADO</option>
+            <option value="3">PAGADO</option>
+            <option value="4">SURTIDO</option>
           </select>
 
         </div>
@@ -197,7 +210,7 @@
 
 
       <div class="col-12 mb-2 text-center">
-        <button class="btn bg-primario text-light w-75">Buscar</button>
+        <button class="btn bg-secundario text-light w-75" (click)="Buscar_Pedido()">Buscar</button>
       </div>
 
     </div>
@@ -206,11 +219,10 @@
     <div class="row">
       <div class="col-12 mb-2">
         <div class="form-group">
-          <select class="form-select border-secundario border-2" aria-label="Default select example">
-            <option selected>Seleccionar Pedido...</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
+          <label class="text-terciario">Seleccionar Pedido</label>
+          <select class="form-select border-secundario border-2" aria-label="Default select example" [(ngModel)]="this.selected_id" (change)="Ver_Selected()">
+            <option ></option>
+            <option value="{{item.cve_folio}}" style="font-size: xx-small;" *ngFor="let item of pedidos_consulta ">{{item.resumen()}}</option>                       
           </select>
 
         </div>
@@ -219,58 +231,64 @@
     </div>
     <div class="row">
       <div class="col-12">
-        <div class="card bg-primario">
+        <div class="card bg-secundario">
           <div class="card-body text-light p-0">
-            <p class="d-flex justify-content-between p-0"><span class="h5">Total de pedidos:</span> <span>Productos:
-                <span>13</span></span> </p>
-            <p class="d-flex justify-content-between p-0"><span class="h5">Importe: </span> <span
-                class="h2">$8,723.00</span></p>
+            <p class="d-flex justify-content-between p-0"><span class="h6">Razon Social:</span> 
+              <span>{{pedido_consulta_select.razon_social}}</span> </p>
+            <p class="d-flex justify-content-between p-0"><span class="h6">RFC: </span> <span
+                class="h6">{{pedido_consulta_select.rfc}}</span></p>
+            <p class="d-flex justify-content-between p-0">
+              <span class="h6">Almacén: </span>
+              <span class="h6">{{pedido_consulta_select.nombre_sucursal}}</span>
+            </p>
           </div>
         </div>
       </div>
 
-      <div class="col-12">
+      <div class="col-12 mt-3">
         <table class="table table-borderless" style="color:#2B8B92 ;">
           <thead>
             <tr>
               <th scope="col">Producto</th>
               <th scope="col">Cantidad</th>
-              <th scope="col">Precio</th>
-              <th scope="col">Subtotal</th>
+              <th scope="col">Precio</th>  
+              <th scope="col">Subtotal</th>        
             </tr>
-          </thead>
+          </thead>         
           <tbody>
-            <tr>
-              <td>Producto 1</td>
-              <td>2</td>
-              <td>100</td>
-              <td>200</td>
+            <tr *ngFor="let item of pedido_consulta_select.productos_pedir" >
+              <td>{{item.descripcion}}</td>
+              <td>{{item.cantidad}}</td>
+              <td>{{item.precio | number : '1.2-2'}}</td>  
+              <td>{{item.sub_total | number : '1.2-2'}}</td>            
             </tr>
-            <tr>
-              <td>Producto 2</td>
-              <td>3</td>
-              <td>200</td>
-              <td>600</td>
-            </tr>
-            <tr>
-              <td>Producto 3</td>
-              <td>1</td>
-              <td>300</td>
-              <td>300</td>
-            </tr>
-          </tbody>
         </table>
       </div>
 
       <div class="col-12">
-        <div class="card bg-primario">
+        <div class="card bg-secundario">
           <div class="card-body text-light p-0">
-            <p class="d-flex justify-content-between p-0"><span class="h5">Total de pedidos:</span> <span>Productos:
-                <span>13</span></span> </p>
+            <p class="d-flex justify-content-between p-0"><span class="h5">Envio:</span><span>{{pedido_consulta_select.total_envio()}}</span></p>
+            <p class="d-flex justify-content-between p-0"><span class="h5">Total de pedidos:</span><span>{{pedido_consulta_select.number_productos()}}</span> </p>
             <p class="d-flex justify-content-between p-0"><span class="h5">Importe: </span> <span
-                class="h2">$8,723.00</span></p>
+                class="h2">{{pedido_consulta_select.total_productos() | number : '1.2-2'}}</span></p>
           </div>
         </div>
+      </div>
+
+      <div class="col-12">
+        <div class="row">
+          <div class="col-6" [ngClass]="{'d-none': pedido_consulta_select.id_pago_1 == ''}">
+            <button class="btn btn-link w-100" (click)="Cargar_Imagen(pedido_consulta_select.id_pago_1)">Pago {{pedido_consulta_select.nombre_pago_1}}</button>
+          </div>
+          <div class="col-6" [ngClass]="{'d-none': pedido_consulta_select.id_pago_2 == ''}">
+            <button class="btn btn-link w-100" (click)="Cargar_Imagen(pedido_consulta_select.id_pago_2)" >Pago {{pedido_consulta_select.nombre_pago_2}}</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 text-center mt-3 " [ngClass]="{'d-none': pedido_consulta_select.mostrar_subir_pago() == false }">
+        <button class="btn btn-terciario w-100" (click)="Subir_Pago()">Subir Pago</button>
       </div>
 
     </div>
