@@ -1,451 +1,622 @@
 <div class="container-fluid">
-    <div class="row py-4">
-      <div class="col-6">
-        <button class=" btn-primario text-light w-100" (click)="Nuevo_Cliente()" >Nuevo</button>
-      </div>
-      <div class="col-6">
-        <button class="btn-secundario text-light w-100" (click)="vista = 'consulta'">Ver-Modificar</button>
-      </div>
+  <div class="row py-4">
+    <div class="col-6">
+      <button class=" btn-primario text-light w-100" (click)="Nuevo_Cliente()">Nuevo</button>
     </div>
-  
-    <div [ngClass]="{'d-none': vista != 'nuevo'}">
-      <div class="row">
-        <p class="text-terciario" style="font-size: medium;">Nuevo Cliente:</p>
-        <div class="col-12 mb-2">
-          <div class="form-group">           
-            <label class="text-terciario" >Responsable</label><br>
-            <input type="text" class="form-control border-secundario border-2" [(ngModel)]="ncliente.nombre" placeholder="Responsable">  
-          </div>
-        </div>
-        <div class="col-12 mb-2">
-          <div class="form-group">
-            <label class="text-terciario" >Teléfono</label><br>
-            <input type="tel" class="form-control border-secundario border-2" [(ngModel)]="ncliente.telefono" placeholder="Teléfono Principal...">               
-          </div>
-        </div>
-        <div class="col-12 mb-2">
-          <div class="form-group">
-            <label class="text-terciario" >Celular</label><br>
-            <input type="tel" class="form-control border-secundario border-2" [(ngModel)]="ncliente.telefono_2"  placeholder="Teléfono Celular...">
-             
-          </div>
-        </div>
-        <div class="col-12 mb-2">
-          <div class="form-group">
-            <label class="text-terciario" >Email</label><br>
-            <input type="email" class="form-control border-secundario border-2" [(ngModel)]="ncliente.email" placeholder="Correo Electrónico...">         
-          </div>
-        </div>
-        
-        <div class="col-12 mb-2">
-            <div class="row">
-                <div class="col-12">
-                    <div class="form-group">
-                        <div class="form-check ">
-                        <input class="form-check-input border-secundario border-2 h6" type="checkbox" [(ngModel)]="ncliente.facturacion"  id="flexCheckDefault">
-                        <label class="form-check-label" for="flexCheckDefault">
-                            Facturación
-                        </label>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6">
-                    <div class="form-group">
-                        <div class="form-check ">
-                          <input class="form-check-input border-secundario border-2 h6" type="radio" name="tipo_persona" [(ngModel)]="ncliente.persona_fisica" id="persona_fisica">
-                          <label class="form-check-label" for="persona_fisica"> Persona Física  </label>
-                        </div>
-                      </div>
-                </div>
-                <div class="col-6">
-                    <div class="form-group">
-                        <div class="form-check ">
-                          <input class="form-check-input border-secundario border-2 h6" type="radio" name="tipo_persona"  id="persona_moral">
-                          <label class="form-check-label" for="persona_moral"> Persona Moral </label>
-                        </div>
-                      </div>
-                </div>
-            </div>         
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12 mb-2">
-            <p class="text-terciario" style="font-size: medium;">Datos de Entrega:</p>
-        </div>
-        <div class="col-12 mb-2">
-            <div class="form-group">
-              <label class="text-terciario" >Nombre Contacto</label><br>
-              <input type="text" class="form-control border-secundario border-2" [(ngModel)]="ncliente.nombre_contacto"  placeholder="Nombre de Contacto...">         
-            </div>
-          </div>
-          <div class="col-12 mb-2">
-            <div class="form-group">
-              <label class="text-terciario" >Calle y Número</label><br>
-              <input type="text" class="form-control border-secundario border-2" [(ngModel)]="ncliente.calle_numero_entrega"  placeholder="Calle y Número...">         
-            </div>
-          </div>
-          <div class="col-12 mb-2">
-            <div class="form-group">
-              <label class="text-terciario" >Codigo Postal</label><br>
-              <input type="text" class="form-control border-secundario border-2" [(ngModel)]="ncliente.codigo_postal_entrega" (change)="Buscar_Dir_Entrega()"  placeholder="Código Postal...">         
-            </div>
-          </div>
-
-          <div class="col-12 mb-2">
-            <div class="form-group">
-              <label class="text-terciario" >Seleccion Dirección</label><br>
-              <select class="form-select border-secundario border-2" (change)="Establecer_Dir_Entrega($event)" >
-                <option value="0">Seleccionar Dirección..</option>
-                <option value="{{item.index}}" *ngFor="let item of direcciones_entrega">{{item.get_pantalla()}}</option>
-              </select>    
-            </div>
-          </div>
-
-          <div class="col-12 mb-2">
-            <div class="form-group">
-              <label class="text-terciario" >Población</label><br>
-             <p class="form-control border-secundario border-2">{{ncliente.poblacion_entrega}} </p>         
-            </div>
-          </div>
-          <div class="col-12 mb-2">
-            <div class="form-group">
-              <label class="text-terciario" >Delegación/Municipio</label><br>
-              <p  class="form-control border-secundario border-2">{{ncliente.delegacion_entrega}}</p>      
-            </div>
-          </div>
-          <div class="col-12 mb-2">
-            <div class="form-group">
-              <label class="text-terciario" >Colonia</label><br>
-              <p type="text" class="form-control border-secundario border-2">{{ncliente.colonia_entrega}} </p>
-            </div>
-          </div>
-      </div>
-
-      <div class="row">
-        <p class="text-terciario" style="font-size: medium;">Facturacion:</p>
-
-        <div class="col-12 mb-2">
-            <div class="form-group">
-              <label class="text-terciario" >Razon Social</label><br>
-              <input type="text" class="form-control border-secundario border-2"  placeholder="Razon Social" [(ngModel)]="ncliente.razon_social_facturacion">         
-            </div>
-        </div>
-
-        <div class="col-12 mb-2">
-            <div class="form-group">
-              <label class="text-terciario" >Calle</label><br>
-              <input type="text" class="form-control border-secundario border-2"  placeholder="Calle" [(ngModel)]="ncliente.calle_facturacion">         
-            </div>
-        </div>
-
-        <div class="col-6 mb-2">
-            <div class="form-group">
-              <label class="text-terciario" >Número Exterior</label><br>
-              <input type="text" class="form-control border-secundario border-2"  placeholder="Número Exterior..." [(ngModel)]="ncliente.numero_exterior_facturacion">         
-            </div>
-        </div>
-
-        <div class="col-6 mb-2">
-          <div class="form-group">
-            <label class="text-terciario" >Número Interior</label><br>
-            <input type="text" class="form-control border-secundario border-2" placeholder="Número Interior..." [(ngModel)]="ncliente.numero_interior_facturacion">         
-          </div>
-      </div>
-
-        <div class="col-6 mb-2">
-            <div class="form-group">
-              <label class="text-terciario" >Código Postal</label><br>
-              <input type="text" class="form-control border-secundario border-2" placeholder="Codigo postal..." [(ngModel)]="ncliente.codigo_postal_facturacion" (change)="Buscar_Dir_Facturacion()">         
-            </div>
-        </div>
-
-        <div class="col-12 mb-2">
-            <div class="form-group">
-              <label class="text-terciario" >Seleccionar Dirección</label><br>
-              <select class="form-select border-secundario border-2" aria-placeholder="select " (change)="Establecer_Dir_Facturacion($event)">
-                <option value="0">Seleccionar Dirección..</option>
-                <option value="{{item.index}}" *ngFor="let item of direcciones_facturacion">{{item.get_pantalla()}}</option>
-              </select>    
-            </div>
-        </div>
-
-        <div class="col-12 mb-2">
-            <div class="form-group">
-              <label class="text-terciario" >Población</label><br>
-              <p class="form-control border-secundario border-2">{{ncliente.poblacion_facturacion}} </p>          
-            </div>
-        </div>
-        <div class="col-12 mb-2">
-            <div class="form-group">
-              <label class="text-terciario" >Delegación/Municipio</label><br>
-              <p class="form-control border-secundario border-2">{{ncliente.delegacion_facturacion}} </p>          
-            </div>
-        </div>
-        <div class="col-12 mb-2">
-            <div class="form-group">
-              <label class="text-terciario" >Colonia</label><br>
-              <p class="form-control border-secundario border-2">{{ncliente.colonia_facturacion}} </p>            
-            </div>
-        </div>
-        
-        <div class="col-12 mb-2">
-            <div class="form-group">
-              <label class="text-terciario" >RFC</label><br>
-              <input type="text" class="form-select border-secundario border-2" aria-label="Default select example" placeholder="RFC..." [(ngModel)]="ncliente.rfc_facturacion">         
-            </div>
-        </div>
-
-        <div class="col-12 mb-2">
-            <div class="form-group">
-              <label class="text-terciario" >Uso de CFDI</label><br>
-              <select class="form-select border-secundario border-2" [(ngModel)]="ncliente.uso_cfdi_facturacion">
-                <option value="0">Uso de CFDI...</option>
-                <option value="{{item.c_UsoCFDI}}" *ngFor="let item of list_usos_cfdi" >{{item.Descripcion}}</option>
-              </select>    
-            </div>
-        </div>
-
-        <div class="col-12 mb-2">
-          <div class="form-group">
-            <label class="text-terciario" >Régimen</label><br>
-            <select class="form-select border-secundario border-2" [(ngModel)]="ncliente.regimen_fiscal_facturacion" >
-              <option value="0">Regimen</option>
-              <option value="{{item.c_RegimenFiscal}}" *ngFor="let item of regimenes_fiscales" >{{item.Descripcion}}</option>
-            </select>    
-          </div>
-      </div>
-
-        <div class="col-12 mb-2">
-            <div class="form-group">
-              <label class="text-terciario" >Forma de Pago</label><br>
-              <select class="form-select border-secundario border-2" [(ngModel)]="ncliente.tipo_pago" >
-                <option value="0">Forma de Pago...</option>
-                <option value="{{item.Cve_Pago_FE}}" *ngFor="let item of tipos_pago" >{{item.Descripcion}}</option>
-               
-              </select>    
-            </div>
-        </div>
-
-        <div class="col-12 mb-2">
-            <div class="form-group">
-              <label class="text-terciario" >Clase de Cliente</label><br>
-              <select class="form-select border-secundario border-2" [(ngModel)]="ncliente.cve_clase_cte" >
-                <option value="0">Clase de Cliente..</option>
-                <option value="{{item.c_ClaseCliente}}" *ngFor="let item of clases_cliente" >{{item.Descripcion}}</option>
-              </select>    
-            </div>
-        </div>
-
-       
-
-       
-
-        <div class="col-12 mb-2">
-            <div class="form-group">
-              <label class="text-terciario" >Médico</label><br>
-              <select class="form-select border-secundario border-2" aria-placeholder="select ">
-                <option value="0">Seleccionar Médico..</option>
-                <option value="{{item.Cve_Medico}}" *ngFor="let item of lista_medicos" >{{item.Nombre}}</option>
-              </select>    
-            </div>
-        </div>        
-      </div>
-
-      <div class="row">
-        <p class="text-terciario" style="font-size: medium;">Pacientes:</p>
-        <div class="col-12 mb-2">
-            <div class="form-group">
-                <label >Fecha de Recompra</label>
-              <input type="date" class="form-select border-secundario border-2" aria-label="Default select example" placeholder="Plazo de Pago...">         
-            </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <p class="text-terciario" style="font-size: medium;">Pacientes:</p>
-        <div class="col-12 mb-2">
-            <div class="form-group">
-                <label >Fecha de Recompra</label>
-              <input type="date" class="form-select border-secundario border-2" aria-label="Default select example" placeholder="Plazo de Pago...">         
-            </div>
-        </div>
-        <div class="col-12">
-          <table class="" style="color:#2B8B92 ;" id="table_new_paciente"  data-mobile-responsive="true">
-            <thead>
-              <tr>
-                <th data-field="nombre_paciente">Nombre del Paciente: </th>
-                <th >Edad en Años</th>
-                <th >Edad en Meses</th>
-                <th >Fecha de Nacimiento</th>
-                <th >Receta</th>
-                <th >Dosis</th>
-                <th >Cartucho</th>
-                <th >Cubre</th>
-                <th >Compra</th>
-                <th >Cubre Total</th>
-                <th >Presentacion</th>
-                <th >Precio</th>
-              </tr>
-            </thead>
-          
-          </table>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12 mb-2">
-          <div class="form-group">
-            <select class="form-select border-secundario border-2" aria-label="Default select example">
-              <option selected>Seleccionar Tipo Envio...</option>
-              <option value="1">One</option>
-              <option value="2">Two</option>
-              <option value="3">Three</option>
-            </select>
-  
-          </div>
-        </div>
-        <div class="col-12 mb-2">
-          <div class="row g-3 align-items-center">
-            <div class="col-4">
-              <label for="inputPassword6" class="col-form-label">Fecha de Envío</label>
-            </div>
-            <div class="col-8">
-              <input type="date" id="inputPassword6" class="form-control  border-secundario border-2"
-                aria-describedby="passwordHelpInline">
-            </div>
-          </div>
-  
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12">
-          <div class="card bg-primario" style="background-color: #2B8B92;">
-            <div class="card-body text-light p-0">
-              <p class="d-flex justify-content-between p-0"><span class="h5">Total de pedidos:</span> <span>Productos:
-                  <span>13</span></span> </p>
-              <p class="d-flex justify-content-between p-0"><span class="h5">Importe: </span> <span
-                  class="h2">$8,723.00</span></p>
-            </div>
-          </div>
-          <div class="col-12 mb-2 pt-2">
-  
-            <blockquote class="blockquote mb-2 text-poppins-light text-terciario text-center" style="font-size: small;">
-              <b style="font-size: medium;">ATENCIÓN</b>
-              <br>
-              Los pedidos con envío local realizados antes de las 10:45, se enviarán el mismo día.
-            </blockquote>
-          </div>
-        </div>
-  
-      </div>
+    <div class="col-6">
+      <button class="btn-secundario text-light w-100" (click)="vista = 'consulta'">Ver-Modificar</button>
     </div>
-  
-    <!-- Consulta -->
-    <div [ngClass]="{'d-none': vista != 'consulta'}">
-  
-      <div class="row">
-        <p class="text-terciario" style="font-size: medium;">Consultar Pedido:</p>
-  
-  
-        <div class="col-6 mb-2">
-          <div class="form-group">
-            <input type="date" id="inputpassword" class="form-control border-secundario border-2 " placeholder="Fecha" />
-          </div>
-        </div>
-  
-  
-  
-  
-        <div class="col-6 mb-2">
-          <div class="form-group">
-            <select class="form-select border-secundario border-2" aria-label="Default select example">
-              <option selected>Status</option>
-              <option value="1">One</option>
-              <option value="2">Two</option>
-              <option value="3">Three</option>
-            </select>
-  
-          </div>
-        </div>
-  
-  
-        <div class="col-12 mb-2 text-center">
-          <button class="btn bg-primario text-light w-75">Buscar</button>
-        </div>
-  
-      </div>
-  
-  
-      <div class="row">
-        <div class="col-12 mb-2">
-          <div class="form-group">
-            <select class="form-select border-secundario border-2" aria-label="Default select example">
-              <option selected>Seleccionar Pedido...</option>
-              <option value="1">One</option>
-              <option value="2">Two</option>
-              <option value="3">Three</option>
-            </select>
-  
-          </div>
-        </div>
-  
-      </div>
-      <div class="row">
-        <div class="col-12">
-          <div class="card bg-primario">
-            <div class="card-body text-light p-0">
-              <p class="d-flex justify-content-between p-0"><span class="h5">Total de pedidos:</span> <span>Productos:
-                  <span>13</span></span> </p>
-              <p class="d-flex justify-content-between p-0"><span class="h5">Importe: </span> <span
-                  class="h2">$8,723.00</span></p>
-            </div>
-          </div>
-        </div>
-        
-        <div class="col-12">
-          <table class="table table-borderless" style="color:#2B8B92 ;">
-            <thead>
-              <tr>
-                <th scope="col">Producto</th>
-                <th scope="col">Cantidad</th>
-                <th scope="col">Precio</th>
-                <th scope="col">Subtotal</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Producto 1</td>
-                <td>2</td>
-                <td>100</td>
-                <td>200</td>
-              </tr>
-              <tr>
-                <td>Producto 2</td>
-                <td>3</td>
-                <td>200</td>
-                <td>600</td>
-              </tr>
-              <tr>
-                <td>Producto 3</td>
-                <td>1</td>
-                <td>300</td>
-                <td>300</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-  
-        <div class="col-12">
-          <div class="card bg-primario">
-            <div class="card-body text-light p-0">
-              <p class="d-flex justify-content-between p-0"><span class="h5">Total de pedidos:</span> <span>Productos:
-                  <span>13</span></span> </p>
-              <p class="d-flex justify-content-between p-0"><span class="h5">Importe: </span> <span
-                  class="h2">$8,723.00</span></p>
-            </div>
-          </div>
-        </div>
-      
-      </div>
-    </div>
-  
   </div>
+
+  <div [ngClass]="{'d-none': vista != 'nuevo'}">
+    <div class="row">
+      <p class="text-terciario" style="font-size: medium;">Nuevo Cliente:</p>
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Responsable</label><br>
+          <input type="text" class="form-control border-secundario border-2" [(ngModel)]="ncliente.nombre"
+            placeholder="Responsable">
+        </div>
+      </div>
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Teléfono</label><br>
+          <input type="tel" class="form-control border-secundario border-2" [(ngModel)]="ncliente.telefono"
+            placeholder="Teléfono Principal...">
+        </div>
+      </div>
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Celular</label><br>
+          <input type="tel" class="form-control border-secundario border-2" [(ngModel)]="ncliente.telefono_2"
+            placeholder="Teléfono Celular...">
+
+        </div>
+      </div>
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Email</label><br>
+          <input type="email" class="form-control border-secundario border-2" [(ngModel)]="ncliente.email"
+            placeholder="Correo Electrónico...">
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="row">
+          <div class="col-12">
+            <div class="form-group">
+              <div class="form-check ">
+                <input class="form-check-input border-secundario border-2 h6" type="checkbox"
+                  [(ngModel)]="ncliente.facturacion" id="flexCheckDefault">
+                <label class="form-check-label" for="flexCheckDefault">
+                  Facturación
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-group">
+              <div class="form-check ">
+                <input class="form-check-input border-secundario border-2 h6" type="radio" name="tipo_persona"
+                  [(ngModel)]="ncliente.persona_fisica" id="persona_fisica">
+                <label class="form-check-label" for="persona_fisica"> Persona Física </label>
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-group">
+              <div class="form-check ">
+                <input class="form-check-input border-secundario border-2 h6" type="radio" name="tipo_persona"
+                  id="persona_moral">
+                <label class="form-check-label" for="persona_moral"> Persona Moral </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12 mb-2">
+        <p class="text-terciario" style="font-size: medium;">Datos de Entrega:</p>
+      </div>
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Nombre Contacto</label><br>
+          <input type="text" class="form-control border-secundario border-2" [(ngModel)]="ncliente.nombre_contacto"
+            placeholder="Nombre de Contacto...">
+        </div>
+      </div>
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Calle y Número</label><br>
+          <input type="text" class="form-control border-secundario border-2" [(ngModel)]="ncliente.calle_numero_entrega"
+            placeholder="Calle y Número...">
+        </div>
+      </div>
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Codigo Postal</label><br>
+          <input type="text" class="form-control border-secundario border-2"
+            [(ngModel)]="ncliente.codigo_postal_entrega" (change)="Buscar_Dir_Entrega()" placeholder="Código Postal...">
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Seleccion Dirección</label><br>
+          <select class="form-select border-secundario border-2" (change)="Establecer_Dir_Entrega($event)">
+            <option value="0">Seleccionar Dirección..</option>
+            <option value="{{item.index}}" *ngFor="let item of direcciones_entrega">{{item.get_pantalla()}}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Población</label><br>
+          <p class="form-control border-secundario border-2">{{ncliente.poblacion_entrega}} </p>
+        </div>
+      </div>
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Delegación/Municipio</label><br>
+          <p class="form-control border-secundario border-2">{{ncliente.delegacion_entrega}}</p>
+        </div>
+      </div>
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Colonia</label><br>
+          <p type="text" class="form-control border-secundario border-2">{{ncliente.colonia_entrega}} </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <p class="text-terciario" style="font-size: medium;">Facturacion:</p>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Razon Social</label><br>
+          <input type="text" class="form-control border-secundario border-2" placeholder="Razon Social"
+            [(ngModel)]="ncliente.razon_social_facturacion">
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Calle</label><br>
+          <input type="text" class="form-control border-secundario border-2" placeholder="Calle"
+            [(ngModel)]="ncliente.calle_facturacion">
+        </div>
+      </div>
+
+      <div class="col-6 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Número Exterior</label><br>
+          <input type="text" class="form-control border-secundario border-2" placeholder="Número Exterior..."
+            [(ngModel)]="ncliente.numero_exterior_facturacion">
+        </div>
+      </div>
+
+      <div class="col-6 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Número Interior</label><br>
+          <input type="text" class="form-control border-secundario border-2" placeholder="Número Interior..."
+            [(ngModel)]="ncliente.numero_interior_facturacion">
+        </div>
+      </div>
+
+      <div class="col-6 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Código Postal</label><br>
+          <input type="text" class="form-control border-secundario border-2" placeholder="Codigo postal..."
+            [(ngModel)]="ncliente.codigo_postal_facturacion" (change)="Buscar_Dir_Facturacion()">
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Seleccionar Dirección</label><br>
+          <select class="form-select border-secundario border-2" aria-placeholder="select "
+            (change)="Establecer_Dir_Facturacion($event)">
+            <option value="0">Seleccionar Dirección..</option>
+            <option value="{{item.index}}" *ngFor="let item of direcciones_facturacion">{{item.get_pantalla()}}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Población</label><br>
+          <p class="form-control border-secundario border-2">{{ncliente.poblacion_facturacion}} </p>
+        </div>
+      </div>
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Delegación/Municipio</label><br>
+          <p class="form-control border-secundario border-2">{{ncliente.delegacion_facturacion}} </p>
+        </div>
+      </div>
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Colonia</label><br>
+          <p class="form-control border-secundario border-2">{{ncliente.colonia_facturacion}} </p>
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">RFC</label><br>
+          <input type="text" class="form-select border-secundario border-2" aria-label="Default select example"
+            placeholder="RFC..." [(ngModel)]="ncliente.rfc_facturacion">
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Uso de CFDI</label><br>
+          <select class="form-select border-secundario border-2" [(ngModel)]="ncliente.uso_cfdi_facturacion">
+            <option value="0">Uso de CFDI...</option>
+            <option value="{{item.c_UsoCFDI}}" *ngFor="let item of list_usos_cfdi">{{item.Descripcion}}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Régimen</label><br>
+          <select class="form-select border-secundario border-2" [(ngModel)]="ncliente.regimen_fiscal_facturacion">
+            <option value="0">Regimen</option>
+            <option value="{{item.c_RegimenFiscal}}" *ngFor="let item of regimenes_fiscales">{{item.Descripcion}}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Forma de Pago</label><br>
+          <select class="form-select border-secundario border-2" [(ngModel)]="ncliente.tipo_pago">
+            <option value="0">Forma de Pago...</option>
+            <option value="{{item.Cve_Pago_FE}}" *ngFor="let item of tipos_pago">{{item.Descripcion}}</option>
+
+          </select>
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Clase de Cliente</label><br>
+          <select class="form-select border-secundario border-2" [(ngModel)]="ncliente.cve_clase_cte">
+            <option value="0">Clase de Cliente..</option>
+            <option value="{{item.c_ClaseCliente}}" *ngFor="let item of clases_cliente">{{item.Descripcion}}</option>
+          </select>
+        </div>
+      </div>
+
+
+
+
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Médico</label><br>
+          <select class="form-select border-secundario border-2" aria-placeholder="select ">
+            <option value="0">Seleccionar Médico..</option>
+            <option value="{{item.Cve_Medico}}" *ngFor="let item of lista_medicos">{{item.Nombre}}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <p class="text-terciario h4 text-center" style="font-size: medium;">Primer Pacientes</p>
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Fecha de Recompra</label>
+          <input type="date" class="form-control border-secundario border-2" aria-label="Default select example"
+            placeholder="Plazo de Pago...">
+        </div>
+      </div>
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario"> Nombre: </label>
+          <input type="text" class="form-select border-secundario border-2" aria-label="Default select example"
+            placeholder="Nombre del Paciente...">
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario"> Edad en Años: </label>
+          <input type="text" class="form-select border-secundario border-2" aria-label="Default select example"
+            placeholder="Edad en Años...">
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario"> Edad en Meses: </label>
+          <input type="text" class="form-control border-secundario border-2" aria-label="Default select example"
+            placeholder="Edad en Meses...">
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Fecha de nacimiento</label>
+          <input type="date" class="form-control border-secundario border-2" aria-label="Default select example"
+            placeholder="Fecha de Nacimiento...">
+        </div>
+      </div>
+
+
+      <div class="col-12 mb-2">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="" id="flexCheckIndeterminate">
+          <label class="form-check-label" for="flexCheckIndeterminate">
+            Receta
+          </label>
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario"> Dosis: </label>
+          <input type="number" class="form-control border-secundario border-2" aria-label="Default select example"
+            placeholder="Dosis...">
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario"> Cartucho: </label>
+          <input type="number" class="form-control border-secundario border-2" aria-label="Default select example"
+            placeholder="Cartucho...">
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario"> Cubre: </label>
+          <input type="number" class="form-select border-secundario border-2" aria-label="Default select example"
+            placeholder="Cubre...">
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario"> Compra: </label>
+          <input type="number" class="form-select border-secundario border-2" aria-label="Default select example"
+            placeholder="Compra...">
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario"> Cubre Total: </label>
+          <input type="number" class="form-control border-secundario border-2" aria-label="Default select example"
+            placeholder="Cubre Total...">
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario"> Presentación: </label>
+          <input type="text" class="form-control border-secundario border-2" aria-label="Default select example"
+            placeholder="Presentación...">
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario"> Producto: </label>
+          <input type="number" class="form-control border-secundario border-2" aria-label="Default select example"
+            placeholder="Precio...">
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row">
+      <p class="text-terciario h4  text-center" style="font-size: medium;">Segundo Pacientes</p>
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label>Fecha de Recompra</label>
+          <input type="date" class="form-control border-secundario border-2" aria-label="Default select example"
+            placeholder="Plazo de Pago...">
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario"> Nombre: </label>
+          <input type="text" class="form-control border-secundario border-2" aria-label="Default select example"
+            placeholder="Nombre del Paciente...">
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario"> Edad en Años: </label>
+          <input type="text" class="form-control border-secundario border-2" aria-label="Default select example"
+            placeholder="Edad en Años...">
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario"> Edad en Meses: </label>
+          <input type="text" class="form-control border-secundario border-2" aria-label="Default select example"
+            placeholder="Edad en Meses...">
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Fecha de nacimiento</label>
+          <input type="date" class="form-control border-secundario border-2" aria-label="Default select example"
+            placeholder="Fecha de Nacimiento...">
+        </div>
+      </div>
+
+
+      <div class="col-12 mb-2">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="" id="flexCheckIndeterminate">
+          <label class="form-check-label" for="flexCheckIndeterminate">
+            Receta
+          </label>
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario"> Dosis: </label>
+          <input type="number" class="form-control border-secundario border-2" aria-label="Default select example"
+            placeholder="Dosis...">
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario"> Cartucho: </label>
+          <input type="number" class="form-control border-secundario border-2" aria-label="Default select example"
+            placeholder="Cartucho...">
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario"> Cubre: </label>
+          <input type="number" class="form-control border-secundario border-2" aria-label="Default select example"
+            placeholder="Cubre...">
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario"> Compra: </label>
+          <input type="number" class="form-control border-secundario border-2" aria-label="Default select example"
+            placeholder="Compra...">
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario"> Cubre Total: </label>
+          <input type="number" class="form-control border-secundario border-2" aria-label="Default select example"
+            placeholder="Cubre Total...">
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario"> Presentación: </label>
+          <input type="text" class="form-control border-secundario border-2" aria-label="Default select example"
+            placeholder="Presentación...">
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario"> Producto: </label>
+          <input type="number" class="form-select border-secundario border-2" aria-label="Default select example"
+            placeholder="Precio...">
+        </div>
+      </div>
+
+
+      
+    </div>
+
+    <div class="row">
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Folio Zaizen</label>
+          <input type="text" class="form-control border-secundario border-2" aria-label="Default select example"
+            placeholder="Folio Zaizen...">
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row">
+      <div class="col-12 mb-2">
+        <button class="btn bg-primario text-light w-100">Guardar</button>
+      </div>
+    </div>
+    
+
+  </div>
+
+  <!-- Consulta -->
+  <div [ngClass]="{'d-none': vista != 'consulta'}">
+
+    <div class="row">
+      <p class="text-terciario" style="font-size: medium;">Consultar Pedido:</p>
+
+
+      <div class="col-6 mb-2">
+        <div class="form-group">
+          <input type="date" id="inputpassword" class="form-control border-secundario border-2 " placeholder="Fecha" />
+        </div>
+      </div>
+
+
+
+
+      <div class="col-6 mb-2">
+        <div class="form-group">
+          <select class="form-select border-secundario border-2" aria-label="Default select example">
+            <option selected>Status</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+          </select>
+
+        </div>
+      </div>
+
+
+      <div class="col-12 mb-2 text-center">
+        <button class="btn bg-primario text-light w-75">Buscar</button>
+      </div>
+
+    </div>
+
+
+    <div class="row">
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <select class="form-select border-secundario border-2" aria-label="Default select example">
+            <option selected>Seleccionar Pedido...</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+          </select>
+
+        </div>
+      </div>
+
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <div class="card bg-primario">
+          <div class="card-body text-light p-0">
+            <p class="d-flex justify-content-between p-0"><span class="h5">Total de pedidos:</span> <span>Productos:
+                <span>13</span></span> </p>
+            <p class="d-flex justify-content-between p-0"><span class="h5">Importe: </span> <span
+                class="h2">$8,723.00</span></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <table class="table table-borderless" style="color:#2B8B92 ;">
+          <thead>
+            <tr>
+              <th scope="col">Producto</th>
+              <th scope="col">Cantidad</th>
+              <th scope="col">Precio</th>
+              <th scope="col">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Producto 1</td>
+              <td>2</td>
+              <td>100</td>
+              <td>200</td>
+            </tr>
+            <tr>
+              <td>Producto 2</td>
+              <td>3</td>
+              <td>200</td>
+              <td>600</td>
+            </tr>
+            <tr>
+              <td>Producto 3</td>
+              <td>1</td>
+              <td>300</td>
+              <td>300</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="col-12">
+        <div class="card bg-primario">
+          <div class="card-body text-light p-0">
+            <p class="d-flex justify-content-between p-0"><span class="h5">Total de pedidos:</span> <span>Productos:
+                <span>13</span></span> </p>
+            <p class="d-flex justify-content-between p-0"><span class="h5">Importe: </span> <span
+                class="h2">$8,723.00</span></p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>

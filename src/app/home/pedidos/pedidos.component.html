@@ -14,10 +14,13 @@
       <div class="col-12 mb-2">
         <label class="text-terciario" >Seleccionar Responsable</label>
         <div class="form-group">
-          <ng-select class="border-secundario-ng" [items]="responsables"  #responsableSelect
-          bindLabel="nombre" bindValue="cve_responsable" [selectOnTab]="true" [searchable]="true" [clearable]="true"
-          [virtualScroll]="true"
-            [multiple]="false" [closeOnSelect]="true" [hideSelected]="true" (change)="cambio_responsable($event)"
+          <ng-select class="border-secundario-ng" 
+          [items]="responsables"  #responsableSelect 
+            bindLabel="nombre" 
+            bindValue="cve_responsable" 
+            autofocus
+           
+            (change)="cambio_responsable($event)"
           placeholder="Seleccionar Responsable.."  (keyup)="buscar_responsable($event)" >
           </ng-select>
 
@@ -32,14 +35,7 @@
 
         </div>
       </div>
-      <div class="col-12 mb-2">
-        <div class="form-group">
-          <label class="text-terciario" >Seleccionar Tipo de Cliente</label>
-          <select class="form-select border-secundario border-2" aria-label="Default select example" [(ngModel)]="nuevo_pedido.tipo_cliente">
-            <option value="{{item.Cve_Tipo_Cte}}" *ngFor="let item of tipo_cliente">{{item.Descripcion}}</option>
-          </select>
-        </div>
-      </div>
+      
       <div class="col-12 mb-2">
         <div class="form-group">
           <label class="text-terciario" >Seleccionar Sucursal</label>

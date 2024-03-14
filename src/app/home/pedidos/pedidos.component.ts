@@ -42,7 +42,7 @@ export class PedidosComponent implements OnInit {
     }
     this.obtener_sucursales();
     this.obtener_tipo_pago();
-    this.obtener_tipo_cliente();
+    //this.obtener_tipo_cliente();
     this.obtener_tipo_envio();
   }
 
@@ -396,15 +396,15 @@ export class PedidosComponent implements OnInit {
       return;
     }
 
-    if (this.nuevo_pedido.tipo_cliente == "") {
-      Swal.fire({
-        title: 'Error!',
-        text: "Debes seleccionar un tipo de cliente",
-        icon: 'error',
-        confirmButtonText: 'Aceptar'
-      });
-      return;
-    }
+    // if (this.nuevo_pedido.tipo_cliente == "") {
+    //   Swal.fire({
+    //     title: 'Error!',
+    //     text: "Debes seleccionar un tipo de cliente",
+    //     icon: 'error',
+    //     confirmButtonText: 'Aceptar'
+    //   });
+    //   return;
+    // }
 
     if (this.nuevo_pedido.cve_sucursal == "") {
       Swal.fire({

@@ -1,5 +1,5 @@
 {
-  "name": "aplicacion",
+  "name": "ventas-leben",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:aplicacion": "node dist/aplicacion/server/server.mjs"
+    "serve:ssr:ventas-leben": "node dist/ventas-leben/server/server.mjs"
   },
   "private": true,
   "dependencies": {
