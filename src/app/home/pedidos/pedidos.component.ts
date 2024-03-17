@@ -369,10 +369,17 @@ export class PedidosComponent implements OnInit {
   }
 
   validar_envio() {
-    let productos_envio = this.productos_pedir.filter((producto) => producto.cobrar_envio == "si" && producto.cantidad == 1);
+    let productos_envio = this.productos_pedir.filter((producto) => producto.cobrar_envio == "si" && producto.cantidad == 1 && this.productos_pedir.length == 1);
     if (productos_envio.length > 0 && Number(this.nuevo_pedido.cubre_select) < 25) {
       this.mostrar_envio = true;
+    }else{
+      this.mostrar_envio = false;
     }
+
+    this.nuevo_pedido.costo_envio = 250
+
+    console.log("productos_envio");
+    console.log(this.mostrar_envio);
   }
 
   Guardar_Pedido() {
