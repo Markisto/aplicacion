@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, TemplateRef, ViewChild, inject } from '@angular/core';
 import { C_Usuario } from '../../classes/clase_usuario';
 import { Router } from '@angular/router';
 import { NgSelectModule } from '@ng-select/ng-select';
@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { PedidosService } from './pedidos.service';
 import Swal from 'sweetalert2';
 import { C_Responsable } from '../../classes/clase_responsable';
-import { Observable } from 'rxjs';
+import { Observable, OperatorFunction, Subject, catchError, debounceTime, distinctUntilChanged, filter, map, merge, switchMap, tap } from 'rxjs';
 import bootstrap from '../../../main.server';
 import { C_Productos } from '../../classes/clase_productos';
 import { C_Pedido } from '../../classes/clase_pedido';
@@ -15,25 +15,30 @@ import { data } from 'jquery';
 import { Console } from 'console';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Conexion } from '../../classes/clase_conexion';
-
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatInputModule } from '@angular/material/input';
+import { ModalDismissReasons, NgbDatepickerModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-pedidos',
   standalone: true,
-  imports: [CommonModule, NgSelectModule, FormsModule],
+  imports: [CommonModule, NgSelectModule, FormsModule, MatAutocompleteModule, MatInputModule],
   templateUrl: './pedidos.component.html',
   styleUrl: './pedidos.component.css'
 })
 export class PedidosComponent implements OnInit {
 
   user = new C_Usuario("", "", "", "", "");
-  @ViewChild('responsableSelect') respo!: ElementRef;
+
+  private modalService = inject(NgbModal);
+  closeResult = '';
+
   @ViewChild('modal') modal!: ElementRef;
   @ViewChild('checkfactura') checkfactura!: ElementRef;
   @ViewChild('p1') p1!: ElementRef;
   @ViewChild('p2') p2!: ElementRef;
 
-  constructor(private router: Router, private service: PedidosService,private _sanitizer : DomSanitizer) { }
+  constructor(private router: Router, private service: PedidosService, private _sanitizer: DomSanitizer) { }
   ngOnInit(): void {
     this.user = JSON.parse(sessionStorage.getItem('user') || '{}');
     console.log(this.user);
@@ -70,8 +75,9 @@ export class PedidosComponent implements OnInit {
   selected_id = "";
   archivo: File | any;
   con = new Conexion();
-  
-  
+  boton_buscar = false;
+
+
 
   Nuevo_Pedido() {
     this.nuevo_pedido.cve_folio = 1;
@@ -103,8 +109,8 @@ export class PedidosComponent implements OnInit {
 
   cambio_responsable($event: any) {
     console.log("cambio de responsable");
-    console.log($event);
-    let valor = $event;
+    console.log($event.option.value);
+    let valor = $event.option.value;
     console.log("valor respon");
     console.log(valor);
     this.responsable_select = valor;
@@ -154,10 +160,6 @@ export class PedidosComponent implements OnInit {
       this.nuevo_pedido.cubre_select = this.responsable_select.cubre_2;
     }
 
-    console.log("paciente select: ");
-    console.log(this.nuevo_pedido.paciente_select);
-    console.log("cubre select: ");
-    console.log(this.nuevo_pedido.cubre_select);
 
   }
 
@@ -194,10 +196,10 @@ export class PedidosComponent implements OnInit {
               respons.push(responsable);
             }
 
-            this.responsables = [...respons];
+            this.responsables = respons;
 
           } else {
-            this.responsables = [...respons];
+            this.responsables = respons;;
           }
 
         },
@@ -213,7 +215,11 @@ export class PedidosComponent implements OnInit {
     }
   }
 
+
+
+
   Buscar_Producto($event: any) {
+    this.productos = [];
     let valor = $event.target.value;
     let products: C_Productos[] = [];
 
@@ -228,18 +234,15 @@ export class PedidosComponent implements OnInit {
               producto.cve_producto = data[i].Cve_Producto;
               producto.descripcion = data[i].Descripcion;
               producto.existencia = Number(data[i].existencia) >= 0 ? Number(data[i].existencia) : 0;
-              producto.precio_minimo_venta_base = data[i].precio_minimo_venta;
-              producto.pantalla = data[i].Descripcion + "* Disponible" + data[i].existencia;
+              producto.precio_minimo_venta_base = Number(data[i].precio_minimo_venta);
+              producto.pantalla = data[i].Cve_Producto + " - " + data[i].Descripcion;
               producto.cobrar_envio = data[i].envio;
-
-
+              producto.cantidad = 1;
               products.push(producto);
             }
-
-            this.productos = [...products];
-
+            this.productos = products;
           } else {
-            this.productos = [...products];
+            this.productos = products;
           }
 
         },
@@ -257,7 +260,7 @@ export class PedidosComponent implements OnInit {
   }
 
   Producto_select($event: any) {
-    let valor = $event;
+    let valor = $event.option.value;
     this.producto_select = valor;
 
   }
@@ -316,7 +319,7 @@ export class PedidosComponent implements OnInit {
     });
   }
 
-  Abrir_Modal() {
+  Abrir_Modal(content: TemplateRef<any>) {
 
     if (this.nuevo_pedido.cve_sucursal == "") {
       Swal.fire({
@@ -338,15 +341,31 @@ export class PedidosComponent implements OnInit {
       return;
     }
 
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then((result) => {
+      this.closeResult = `Closed with: ${result}`;
 
+    });
 
-    this.modal.nativeElement.style.display = "block";
+    // this.modal.nativeElement.style.display = "block";
   }
+
+  private getDismissReason(reason: any): string {
+    switch (reason) {
+      case ModalDismissReasons.ESC:
+        return 'by pressing ESC';
+      case ModalDismissReasons.BACKDROP_CLICK:
+        return 'by clicking on a backdrop';
+      default:
+        return `with: ${reason}`;
+    }
+  }
+
   Cerra_Modal() {
+    this.modalService.dismissAll();
     this.producto_select = new C_Productos();
     this.productos = [];
-    this.productos = [...this.productos];
-    this.modal.nativeElement.style.display = "none";
+
+
   }
 
   Agregar_Producto() {
@@ -359,27 +378,74 @@ export class PedidosComponent implements OnInit {
       });
       return;
     }
-    this.productos_pedir.push(this.producto_select);
-    this.num_productos = this.productos_pedir.length;
-    for (let i = 0; i < this.productos_pedir.length; i++) {
-      this.costo_total += Number(this.productos_pedir[i].precio_minimo_venta_base) * Number(this.productos_pedir[i].cantidad);
+
+    let existe = this.productos_pedir.filter((producto) => producto.cve_producto == this.producto_select.cve_producto);
+
+    if (existe.length > 0) {
+      let index = this.productos_pedir.indexOf(existe[0]);
+      let cantidad = Number(existe[0].cantidad) + this.productos_pedir[index].cantidad;
+      if (cantidad > this.productos_pedir[index].existencia) {
+        Swal.fire({
+          title: 'Error!',
+          text: "La cantidad seleccionada es mayor a la existencia",
+          icon: 'error',
+          confirmButtonText: 'Aceptar'
+        });
+        return;
+      } else {
+        this.productos_pedir[index].cantidad = cantidad;
+      }
+    } else {
+      if (this.producto_select.cantidad > this.producto_select.existencia) {
+        Swal.fire({
+          title: 'Error!',
+          text: "La cantidad seleccionada es mayor a la existencia",
+          icon: 'error',
+          confirmButtonText: 'Aceptar'
+        });
+        return;
+      }
+      this.productos_pedir.push(this.producto_select);
+      this.num_productos = this.productos_pedir.length;
     }
+
     this.validar_envio();
+    this.Obtener_Total_Costo();
     this.Cerra_Modal();
+  }
+
+  Quitar_Producto(producto: C_Productos) {
+    let index = this.productos_pedir.indexOf(producto);
+    this.productos_pedir.splice(index, 1);
+    this.num_productos = this.productos_pedir.length;
+    this.validar_envio();
+    this.Obtener_Total_Costo();
   }
 
   validar_envio() {
     let productos_envio = this.productos_pedir.filter((producto) => producto.cobrar_envio == "si" && producto.cantidad == 1 && this.productos_pedir.length == 1);
     if (productos_envio.length > 0 && Number(this.nuevo_pedido.cubre_select) < 25) {
       this.mostrar_envio = true;
-    }else{
+      this.nuevo_pedido.costo_envio = 250;
+      this.costo_total += 250;
+
+    } else {
       this.mostrar_envio = false;
+      this.nuevo_pedido.costo_envio = -1;
+    }
+  }
+
+
+  Obtener_Total_Costo() {
+    this.costo_total = 0;
+    for (let i = 0; i < this.productos_pedir.length; i++) {
+      this.costo_total += Number(this.productos_pedir[i].precio_minimo_venta_base) * Number(this.productos_pedir[i].cantidad);
     }
 
-    this.nuevo_pedido.costo_envio = 250
+    if (this.mostrar_envio == true) {
+      this.costo_total += this.nuevo_pedido.costo_envio;
+    }
 
-    console.log("productos_envio");
-    console.log(this.mostrar_envio);
   }
 
   Guardar_Pedido() {
@@ -486,12 +552,17 @@ export class PedidosComponent implements OnInit {
             icon: 'success',
             confirmButtonText: 'Aceptar'
           });
+          this.responsable_select = new C_Responsable();
+          this.producto_select = new C_Productos();
+          this.responsables = [];
+          this.productos = [];
           this.nuevo_pedido = new C_Pedido(0);
           this.productos_pedir = [];
           this.num_productos = 0;
           this.costo_total = 0;
           this.mostrar_envio = false;
-          this.modal.nativeElement.style.display = "none";
+          this.vista = 'consulta';
+
         } else {
           Swal.fire({
             title: 'Error!',
@@ -569,13 +640,14 @@ export class PedidosComponent implements OnInit {
       return;
     }
 
+    this.pedidos_consulta = [];
+    this.pedido_consulta_select = new C_Pedido(0);
+
+    this.boton_buscar = true;
     this.service.Buscar_Pedidos(this.buscar_desde, this.buscar_hasta, this.buscar_status, this.user.cve_usuario).subscribe({
       next: (res: any) => {
         if (res.code == 0) {
           let data = res.data;
-         
-
-
           for (let i = 0; i < data.length; i++) {
             let pedido = new C_Pedido(data[i].Cve_Folio);
             pedido.fecha_documento = data[i].Capturado;
@@ -584,258 +656,264 @@ export class PedidosComponent implements OnInit {
             pedido.nombre_sucursal = data[i].Nombre_Sucursal;
             pedido.razon_social = data[i].Razon_Social;
             pedido.status = data[i].Estatus;
+            pedido.fecha_envio = data[i].Fecha_Envio;
+            pedido.tipo_envio = data[i].Cve_Tipo_Envio;
+            pedido.nombre_tipo_envio = data[i].Nombre_Tipo_Envio;
             this.pedidos_consulta.push(pedido);
           }
-        
 
+          console.log("pedido_consulta");
+          console.log(this.pedidos_consulta);
 
-
-      } else {
-        this.pedidos_consulta = [];
-      }
-    },
-      error: (err) => {
-        Swal.fire({
-          title: 'Error!',
-          text: err.message,
-          icon: 'error',
-          confirmButtonText: 'Aceptar'
-        });
-      }
-    });
-
-
-
-
-}
-
-
-Ver_Selected() {
-  console.log("ver selected");
-  console.log(this.selected_id);
-  if (this.selected_id != "") {
-    let pedido = this.pedidos_consulta.filter((pedido) => pedido.cve_folio == Number(this.selected_id));
-    this.pedido_consulta_select = pedido[0];
-    this.pedido_consulta_select.productos_pedir = [];
-    this.service.Buscar_Pedido_Detalle(this.pedido_consulta_select.cve_folio, this.pedido_consulta_select.cve_sucursal).subscribe({
-      next: (res: any) => {
-        if (res.code == 0) {
-          let data = res.data[0];
-          let images = res.data[1];
-
-          if (data != undefined) {
-            for (let i = 0; i < data.length; i++) {
-              let p = new C_Productos();
-              p.cve_producto = data[i].Cve_Producto;
-              p.descripcion = data[i].Descripcion;
-              p.cantidad = data[i].Cantidad_Ordenada;
-              p.precio = data[i].Precio_Publico;
-              p.envio = data[i].Envio;
-              p.sub_total = Number(data[i].Cantidad_Ordenada) * Number(data[i].Precio_Publico);
-              this.pedido_consulta_select.productos_pedir.push(p);
-            }
-          }
-
-          if (images != undefined) {
-            for (let i = 0; i < images.length; i++) {
-              if (i == 0) {
-                this.pedido_consulta_select.nombre_pago_1 = images[i].Nombre;
-                this.pedido_consulta_select.fecha_pago_1 = images[i].Fecha;
-                this.pedido_consulta_select.id_pago_1 = images[i].id;
-              }
-
-              if (i == 1) {
-                this.pedido_consulta_select.nombre_pago_2 = images[i].Nombre;
-                this.pedido_consulta_select.fecha_pago_2 = images[i].Fecha;
-                this.pedido_consulta_select.id_pago_2 = images[i].id;
-              }
-            }
-          }
+        } else {
+          this.pedidos_consulta = [];
         }
       },
       error: (err) => {
+        this.boton_buscar = false;
         Swal.fire({
           title: 'Error!',
           text: err.message,
           icon: 'error',
           confirmButtonText: 'Aceptar'
         });
+      }, complete: () => {
+        this.boton_buscar = false;
       }
     });
-  }
-}
 
-Cargar_Imagen(id : string){
-  console.log("cargar imagen");
-  console.log(id);
-  if (id != "") {
-    this.service.Cargar_Imagen(id,this.pedido_consulta_select.cve_folio.toString(), this.pedido_consulta_select.cve_sucursal).subscribe({
-      next: (res: any) => {                      
-        Swal.fire({
-          title: 'Imagen',
-          html: `<img src="${this.con.get_url()+res.data}" style="width: 100%; height: 100%;">`,
-          confirmButtonText: 'Sustituir Pago',
-          showCancelButton: true,
-          cancelButtonText: 'Cerrar',               
-        }).then((result) => {
-          if (result.isConfirmed == true) {
-            this.Actualizar_Pago(id);
+
+
+
+  }
+
+
+  Ver_Selected() {
+    console.log("ver selected");
+    console.log(this.selected_id);
+    if (this.selected_id != "") {
+      let pedido = this.pedidos_consulta.filter((pedido) => pedido.cve_folio == Number(this.selected_id));
+      this.pedido_consulta_select = pedido[0];
+      this.pedido_consulta_select.productos_pedir = [];
+      this.service.Buscar_Pedido_Detalle(this.pedido_consulta_select.cve_folio, this.pedido_consulta_select.cve_sucursal).subscribe({
+        next: (res: any) => {
+          if (res.code == 0) {
+            let data = res.data[0];
+            let images = res.data[1];
+
+            if (data != undefined) {
+              for (let i = 0; i < data.length; i++) {
+                let p = new C_Productos();
+                p.cve_producto = data[i].Cve_Producto;
+                p.descripcion = data[i].Descripcion;
+                p.cantidad = data[i].Cantidad_Ordenada;
+                p.precio = data[i].Precio_Publico;
+                p.envio = data[i].Envio;
+                p.sub_total = Number(data[i].Cantidad_Ordenada) * Number(data[i].Precio_Publico);
+                this.pedido_consulta_select.productos_pedir.push(p);
+              }
+            }
+
+            if (images != undefined) {
+              for (let i = 0; i < images.length; i++) {
+                if (i == 0) {
+                  this.pedido_consulta_select.nombre_pago_1 = images[i].Nombre;
+                  this.pedido_consulta_select.fecha_pago_1 = images[i].Fecha;
+                  this.pedido_consulta_select.id_pago_1 = images[i].id;
+                }
+
+                if (i == 1) {
+                  this.pedido_consulta_select.nombre_pago_2 = images[i].Nombre;
+                  this.pedido_consulta_select.fecha_pago_2 = images[i].Fecha;
+                  this.pedido_consulta_select.id_pago_2 = images[i].id;
+                }
+              }
+            }
           }
-        });               
-      },
-      error: (err) => {
-        Swal.fire({
-          title: 'Error!',
-          text: err.message,
-          icon: 'error',
-          confirmButtonText: 'Aceptar'
-        });
-      }
-    });
-  }
-
-}
-
-
-Subir_Pago(){
-  Swal.fire({
-    title: 'Subir Pago',
-    input: 'file',
-    inputAttributes: {
-      'accept': 'image/*'
-    },
-    confirmButtonText: 'Subir',
-    focusConfirm: false,
-  }).then((result) => {
-    console.log("result");
-    console.log(result);
-
-    if (result.isConfirmed == true) {
-
-      let file = result.value;
-      let nombre_archivo = file.name;
-      let reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        this.archivo = null;
-        this.archivo = reader.result;
-
-        this.Enviar_Pedido(nombre_archivo);
-        console.log("Envio el archivo");
-      }
-
-    }
-
-
-  });
-}
-
-
-
-Enviar_Pedido(nombre_archivo : string){
-  console.log("entro a enviar_pedido");
-
-  if (this.pedido_consulta_select.cve_folio != 0) {
-    this.service.Subir_Pago(this.pedido_consulta_select.cve_folio.toString(), this.pedido_consulta_select.cve_sucursal, nombre_archivo, this.archivo).subscribe({
-      next: (res: any) => {
-        if (res.code == 0) {
-          console.log(res);
-          Swal.fire({
-            title: 'Exito!',
-            text: res.message,
-            icon: 'success',
-            confirmButtonText: 'Aceptar'
-          }).then((result) => {
-            this.Ver_Selected();
-          });
-        } else {
+        },
+        error: (err) => {
           Swal.fire({
             title: 'Error!',
-            text: res.message,
+            text: err.message,
             icon: 'error',
             confirmButtonText: 'Aceptar'
           });
         }
-      },
-      error: (err) => {
-        Swal.fire({
-          title: 'Error!',
-          text: err.message,
-          icon: 'error',
-          confirmButtonText: 'Aceptar'
-        });
-      }
-    });
-
-  }
-}
-
-Actualizar_Pago(id: string){
-  Swal.fire({
-    title: 'Actualizar Pago',
-    input: 'file',
-    inputAttributes: {
-      'accept': 'image/*'
-    },
-    confirmButtonText: 'Subir',
-    focusConfirm: false,
-  }).then((result) => {
-    console.log("result");
-    console.log(result);
-
-    if (result.isConfirmed == true) {
-
-      let file = result.value;
-      let nombre_archivo = file.name;
-      let reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        this.archivo = null;
-        this.archivo = reader.result;
-
-        this.Actualizar_Pago_Envio(id,nombre_archivo);
-        console.log("Envio el archivo");
-      }
-
+      });
     }
-  });
-}
+  }
 
-Actualizar_Pago_Envio(id: string, nombre_archivo : string){
-  if (this.pedido_consulta_select.cve_folio != 0) {
-    this.service.Actualizar_Pago(id, this.pedido_consulta_select.cve_folio.toString(), this.pedido_consulta_select.cve_sucursal, nombre_archivo, this.archivo).subscribe({
-      next: (res: any) => {
-        if (res.code == 0) {
-          console.log(res);
+  Cargar_Imagen(id: string) {
+    console.log("cargar imagen");
+    console.log(id);
+    if (id != "") {
+      this.service.Cargar_Imagen(id, this.pedido_consulta_select.cve_folio.toString(), this.pedido_consulta_select.cve_sucursal).subscribe({
+        next: (res: any) => {
           Swal.fire({
-            title: 'Exito!',
-            text: res.message,
-            icon: 'success',
-            confirmButtonText: 'Aceptar'
+            title: 'Imagen',
+            html: `<img src="${this.con.get_url() + res.data}" style="width: 100%; height: 100%;">`,
+            confirmButtonText: 'Sustituir Pago',
+            showCancelButton: true,
+            cancelButtonText: 'Cerrar',
           }).then((result) => {
-            this.Ver_Selected();
+            if (result.isConfirmed == true) {
+              this.Actualizar_Pago(id);
+            }
           });
-        } else {
+        },
+        error: (err) => {
           Swal.fire({
             title: 'Error!',
-            text: res.message,
+            text: err.message,
             icon: 'error',
             confirmButtonText: 'Aceptar'
           });
         }
-      },
-      error: (err) => {
-        Swal.fire({
-          title: 'Error!',
-          text: err.message,
-          icon: 'error',
-          confirmButtonText: 'Aceptar'
-        });
-      }
-    });
+      });
+    }
 
   }
-}
+
+
+  Subir_Pago() {
+    Swal.fire({
+      title: 'Subir Pago',
+      input: 'file',
+      inputAttributes: {
+        'accept': 'image/*'
+      },
+      confirmButtonText: 'Subir',
+      focusConfirm: false,
+    }).then((result) => {
+      console.log("result");
+      console.log(result);
+
+      if (result.isConfirmed == true) {
+
+        let file = result.value;
+        let nombre_archivo = file.name;
+        let reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+          this.archivo = null;
+          this.archivo = reader.result;
+
+          this.Enviar_Pedido(nombre_archivo);
+          console.log("Envio el archivo");
+        }
+
+      }
+
+
+    });
+  }
+
+
+
+  Enviar_Pedido(nombre_archivo: string) {
+    console.log("entro a enviar_pedido");
+
+    if (this.pedido_consulta_select.cve_folio != 0) {
+      this.service.Subir_Pago(this.pedido_consulta_select.cve_folio.toString(), this.pedido_consulta_select.cve_sucursal, nombre_archivo, this.archivo).subscribe({
+        next: (res: any) => {
+          if (res.code == 0) {
+            console.log(res);
+            Swal.fire({
+              title: 'Exito!',
+              text: res.message,
+              icon: 'success',
+              confirmButtonText: 'Aceptar'
+            }).then((result) => {
+              this.Ver_Selected();
+            });
+          } else {
+            Swal.fire({
+              title: 'Error!',
+              text: res.message,
+              icon: 'error',
+              confirmButtonText: 'Aceptar'
+            });
+          }
+        },
+        error: (err) => {
+          Swal.fire({
+            title: 'Error!',
+            text: err.message,
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+          });
+        }
+      });
+
+    }
+  }
+
+  Actualizar_Pago(id: string) {
+    Swal.fire({
+      title: 'Actualizar Pago',
+      input: 'file',
+      inputAttributes: {
+        'accept': 'image/*'
+      },
+      confirmButtonText: 'Subir',
+      focusConfirm: false,
+    }).then((result) => {
+      console.log("result");
+      console.log(result);
+
+      if (result.isConfirmed == true) {
+
+        let file = result.value;
+        let nombre_archivo = file.name;
+        let reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+          this.archivo = null;
+          this.archivo = reader.result;
+
+          this.Actualizar_Pago_Envio(id, nombre_archivo);
+          console.log("Envio el archivo");
+        }
+
+      }
+    });
+  }
+
+  Actualizar_Pago_Envio(id: string, nombre_archivo: string) {
+    if (this.pedido_consulta_select.cve_folio != 0) {
+      this.service.Actualizar_Pago(id, this.pedido_consulta_select.cve_folio.toString(), this.pedido_consulta_select.cve_sucursal, nombre_archivo, this.archivo).subscribe({
+        next: (res: any) => {
+          if (res.code == 0) {
+            console.log(res);
+            Swal.fire({
+              title: 'Exito!',
+              text: res.message,
+              icon: 'success',
+              confirmButtonText: 'Aceptar'
+            }).then((result) => {
+              this.Ver_Selected();
+            });
+          } else {
+            Swal.fire({
+              title: 'Error!',
+              text: res.message,
+              icon: 'error',
+              confirmButtonText: 'Aceptar'
+            });
+          }
+        },
+        error: (err) => {
+          Swal.fire({
+            title: 'Error!',
+            text: err.message,
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+          });
+        }
+      });
+
+    }
+  }
 
 
 }

@@ -13,6 +13,7 @@ export class C_Pedido{
     tipo_pago : string = "";
     uso_cfdi : string = "";
     tipo_envio : string = "";
+    nombre_tipo_envio : string = "";
     fecha_envio : string = "";
     nuevo_recompra : string = "";
 
@@ -44,6 +45,8 @@ export class C_Pedido{
 
     imagen_pago_1 : File | any = null;
     imagen_pago_2 : File | any = null;
+
+
 
 
 

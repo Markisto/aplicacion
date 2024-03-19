@@ -28,6 +28,14 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   src: url("assets/fonts/Poppins-Regular.ttf");
 }
 
+
+.cdk-overlay-pane { z-index: 1056 !important; }
+.cdk-overlay-content { z-index: 1056  !important; }
+
+
+.cdk-overlay-container { z-index: 1056 !important; }
+
+
 .btn-primario {
   background-color: #2B8B92;
   color: white;
@@ -126,6 +134,11 @@ button:disabled {
   background-color: #9c9c9c;
 }
 
+button:hover {
+  background-color: #E86C39;
+  
+}
+
 .ng-select.border-secundario-ng{
   border:solid 2px #47BACD;
   --bs-border-opacity: 1; 
@@ -139,3 +152,12 @@ button:disabled {
   border-radius: 5px;
   color : #000;
 }
+
+.bold {
+  font-weight: bold;
+}
+
+
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

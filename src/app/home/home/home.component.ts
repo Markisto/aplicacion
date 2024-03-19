@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component,OnInit  } from '@angular/core';
+import { Component,OnInit, TemplateRef, inject  } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import {RouterModule, Router, NavigationEnd} from '@angular/router';
 import { Subscription, filter } from 'rxjs';
-
+import {NgbOffcanvas, OffcanvasDismissReasons} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-home',
@@ -17,6 +17,10 @@ export class HomeComponent  implements OnInit{
   ruta = "";
   init = 1;
   subscriber: Subscription | undefined;
+
+  private offcanvasService = inject(NgbOffcanvas);
+	closeResult = '';
+
   constructor(private router: Router) {}
   ngOnInit(): void {
     this.ruta = this.router.url;
@@ -38,6 +42,28 @@ export class HomeComponent  implements OnInit{
     this.router.navigate(['login']);
   }
 
+
+  open(content: TemplateRef<any>) {
+		this.offcanvasService.open(content, { ariaLabelledBy: 'offcanvas-basic-title' }).result.then(
+			(result) => {
+				this.closeResult = `Closed with: ${result}`;
+			},
+			(reason) => {
+				this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+			},
+		);
+	}
+
+	private getDismissReason(reason: any): string {
+		switch (reason) {
+			case OffcanvasDismissReasons.ESC:
+				return 'by pressing ESC';
+			case OffcanvasDismissReasons.BACKDROP_CLICK:
+				return 'by clicking on the backdrop';
+			default:
+				return `with: ${reason}`;
+		}
+	}
 
 
 

@@ -7,39 +7,46 @@
       <button class="btn-secundario text-light w-100" (click)="vista = 'consulta'">Buscar</button>
     </div>
   </div>
+  <ng-template #fr let-result="result">
+    <div>{{result.cve_cliente}}</div>
+    <div>{{result.nombre}}</div>
+  </ng-template>
 
   <div [ngClass]="{'d-none': vista != 'nuevo'}">
     <div class="row">
       <p class="text-terciario" style="font-size: medium;">Nuevo Pedido:</p>
       <div class="col-12 mb-2">
-        <label class="text-terciario" >Seleccionar Responsable</label>
+        <label class="text-terciario">Seleccionar Responsable</label>
         <div class="form-group">
-          <ng-select class="border-secundario-ng" 
-          [items]="responsables"  #responsableSelect 
-            bindLabel="nombre" 
-            bindValue="cve_responsable" 
-            autofocus
-           
-            (change)="cambio_responsable($event)"
-          placeholder="Seleccionar Responsable.."  (keyup)="buscar_responsable($event)" >
-          </ng-select>
+          <input class="form-select border-secundario border-2" type="text" matInput [matAutocomplete]="auto"
+            [(ngModel)]="responsable_select.nombre" (keyup)="buscar_responsable($event)">
+          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="cambio_responsable($event)">
+            @for(option of responsables ; track option.nombre){
+            <mat-option [value]="option">{{option.nombre}}</mat-option>
+            }
+          </mat-autocomplete>
+        </div>
+      </div>
+      <div class="col-12 mb-2"
+        [ngClass]="{'d-none': (responsable_select.nombre_paciente_1 == '' && responsable_select.nombre_paciente_2 == '') }">
+        <div class="form-group">
+          <label class="text-terciario">Seleccionar Paciente</label><br>
+
+          <input type="radio" #p1 id="p1" class="form-check-input border-secundario border-2" value="p1"
+            [ngClass]="{'d-none': responsable_select.nombre_paciente_1 ==''}" value="1" name="paciente"
+            (change)="establece_paciente('p1')"> <label for="p1">{{responsable_select.nombre_paciente_1}}</label> <br>
+          <input type="radio" #p2 id="p2" class="form-check-input border-secundario border-2" value="p2"
+            [ngClass]="{'d-none': responsable_select.nombre_paciente_2 ==''}" value="2" name="paciente"
+            (change)="establece_paciente('p2')"><label for="p2">{{responsable_select.nombre_paciente_2}}</label>
 
         </div>
       </div>
-      <div class="col-12 mb-2" [ngClass]="{'d-none': (responsable_select.nombre_paciente_1 == '' && responsable_select.nombre_paciente_2 == '') }">
-        <div class="form-group">
-          <label class="text-terciario" >Seleccionar Paciente</label><br>
 
-          <input type="radio" #p1 id="p1" class="form-check-input border-secundario border-2" value="p1" [ngClass]="{'d-none': responsable_select.nombre_paciente_1 ==''}" value="1" name="paciente" (change)="establece_paciente('p1')" > <label for="p1">{{responsable_select.nombre_paciente_1}}</label> <br>
-          <input type="radio" #p2 id="p2" class="form-check-input border-secundario border-2" value="p2" [ngClass]="{'d-none': responsable_select.nombre_paciente_2 ==''}" value="2" name="paciente" (change)="establece_paciente('p2')" ><label for="p2">{{responsable_select.nombre_paciente_2}}</label>
-
-        </div>
-      </div>
-      
       <div class="col-12 mb-2">
         <div class="form-group">
-          <label class="text-terciario" >Seleccionar Sucursal</label>
-          <select class="form-select border-secundario border-2" aria-label="Default select example" [(ngModel)]="nuevo_pedido.cve_sucursal">
+          <label class="text-terciario">Seleccionar Sucursal</label>
+          <select class="form-select border-secundario border-2" aria-label="Default select example"
+            [(ngModel)]="nuevo_pedido.cve_sucursal">
             <option selected>Seleccionar Sucursal...</option>
             <option value="{{item.Cve_Sucursal}}" *ngFor="let item of sucursales">{{item.Descripcion}}</option>
 
@@ -49,8 +56,9 @@
       </div>
       <div class="col-12 mb-2">
         <div class="form-group">
-          <label class="text-terciario" >Seleccionar Tipo Pago</label>
-          <select class="form-select border-secundario border-2" aria-label="Default select example" [(ngModel)]="nuevo_pedido.tipo_pago">
+          <label class="text-terciario">Seleccionar Tipo Pago</label>
+          <select class="form-select border-secundario border-2" aria-label="Default select example"
+            [(ngModel)]="nuevo_pedido.tipo_pago">
             <option selected>Seleccionar Tipo de Pago...</option>
             <option value="{{item.Cve_Tipo_Pago}}" *ngFor="let item of tipo_pago">{{item.Descripcion}}</option>
           </select>
@@ -58,8 +66,9 @@
       </div>
       <div class="col-12 mb-2 ">
         <div class="form-group">
-          <label class="text-terciario" >Nuevo/Recompra</label>
-          <select class="form-select border-secundario border-2" aria-label="Default select example" [(ngModel)]="nuevo_pedido.nuevo_recompra">
+          <label class="text-terciario">Nuevo/Recompra</label>
+          <select class="form-select border-secundario border-2" aria-label="Default select example"
+            [(ngModel)]="nuevo_pedido.nuevo_recompra">
             <option value="1">Cliente Nuevo</option>
             <option value="2">Recompra</option>
           </select>
@@ -68,7 +77,8 @@
       <div class="col-12 mb-2">
         <div class="form-group">
           <div class="form-check ">
-            <input class="form-check-input border-secundario border-2 h6" type="checkbox" value="" [(ngModel)]="nuevo_pedido.factura" [disabled]="nuevo_pedido.rfc == ''" #checkfactura id="checkfactura">
+            <input class="form-check-input border-secundario border-2 h6" type="checkbox" value=""
+              [(ngModel)]="nuevo_pedido.factura" [disabled]="nuevo_pedido.rfc == ''" #checkfactura id="checkfactura">
 
             <label class="form-check-label" for="checkfactura">
               Factura
@@ -79,26 +89,29 @@
     </div>
     <div class="row">
       <div class="col-12 mb-2">
-        <button class="btn bg-primario text-light w-100" (click)="Abrir_Modal()">Agregar producto</button>
+        <button class="btn bg-primario text-light w-100" (click)="Abrir_Modal(content)">Agregar producto</button>
       </div>
     </div>
     <div class="row">
       <div class="col-12">
-        <table class="table table-borderless" style="color:#2B8B92 ;">
+        <table class="table table-sm text-small table-borderless" style="color:#2B8B92 ;">
           <thead>
             <tr>
               <th scope="col">Producto</th>
               <th scope="col">Cantidad</th>
               <th scope="col">Precio</th>
               <th scope="col">Subtotal</th>
+              <th scope="col"></th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of productos_pedir" >
+            <tr *ngFor="let item of productos_pedir">
               <td>{{item.descripcion}}</td>
               <td>{{item.cantidad}}</td>
-              <td>{{item.precio_minimo_venta_base}}</td>
-              <td>{{item.cantidad * item.precio_minimo_venta_base}}</td>
+              <td>{{item.precio_minimo_venta_base | number : '1.2-2'}}</td>
+              <td>{{item.cantidad * item.precio_minimo_venta_base | number : '1.2-2'}}</td>
+              <td><button class="btn btn-sm" (click)="Quitar_Producto(item)"><i class="bi bi-trash2 text-danger"></i>
+                </button> </td>
             </tr>
           </tbody>
         </table>
@@ -107,12 +120,12 @@
     <div class="row">
       <div class="col-12 mb-2">
         <div class="form-group">
-          <label class="text-terciario" >Seleccionar Tipo Envio</label>
-          <select class="form-select border-secundario border-2" aria-label="Default select example" [(ngModel)]="nuevo_pedido.tipo_envio">
+          <label class="text-terciario">Seleccionar Tipo Envio</label>
+          <select class="form-select border-secundario border-2" aria-label="Default select example"
+            [(ngModel)]="nuevo_pedido.tipo_envio">
             <option selected>Seleccionar Tipo Envio...</option>
-           <option value="{{item.Cve_Tipo_Envio}}" *ngFor="let item of tipo_envio">{{item.Descripcion}}</option>
+            <option value="{{item.Cve_Tipo_Envio}}" *ngFor="let item of tipo_envio">{{item.Descripcion}}</option>
           </select>
-
         </div>
       </div>
       <div class="col-12 mb-2">
@@ -125,11 +138,10 @@
               aria-describedby="passwordHelpInline" [(ngModel)]="nuevo_pedido.fecha_envio">
           </div>
         </div>
-
       </div>
       <div class="col-12 mb-2" [ngClass]="{'d-none': mostrar_envio == false}">
         <div class="form-group">
-          <label class="text-terciario" >Costo de Envio</label>
+          <label class="text-terciario">Costo de Envio</label>
           <input type="number" class="form-control border-secundario border-2" [(ngModel)]="nuevo_pedido.costo_envio">
 
         </div>
@@ -142,7 +154,7 @@
             <p class="d-flex justify-content-between p-0"><span class="h5">Total de pedido:</span> <span>Productos:
                 <span>{{num_productos}}</span></span> </p>
             <p class="d-flex justify-content-between p-0"><span class="h5">Importe: </span> <span
-                class="h2">${{costo_total}}</span></p>
+                class="h2">${{costo_total | number : '1.2-2'}}</span></p>
           </div>
         </div>
         <div class="col-12 mb-2 pt-2">
@@ -162,29 +174,28 @@
       </div>
     </div>
   </div>
-
   <!-- Consulta -->
   <div [ngClass]="{'d-none': vista != 'consulta'}">
 
     <div class="row">
       <p class="text-terciario" style="font-size: medium;">Consultar Pedido:</p>
-
-
       <div class="col-12 mb-2">
         <div class="row">
           <div class="col-6">
             <div class="form-group">
               <label class="text-terciario">Desde:</label>
-              <input type="date" class="form-control border-secundario border-2 " placeholder="Fecha" [(ngModel)]="buscar_desde" />
+              <input type="date" class="form-control border-secundario border-2 " placeholder="Fecha"
+                [(ngModel)]="buscar_desde" />
             </div>
           </div>
           <div class="col-6">
             <div class="form-group">
               <label class="text-terciario">Hasta:</label>
-              <input type="date"  class="form-control border-secundario border-2 " placeholder="Fecha" [(ngModel)]="buscar_hasta" />
+              <input type="date" class="form-control border-secundario border-2 " placeholder="Fecha"
+                [(ngModel)]="buscar_hasta" />
             </div>
           </div>
-        </div>        
+        </div>
       </div>
 
 
@@ -193,8 +204,9 @@
       <div class="col-12 mb-2">
         <div class="form-group">
           <label class="text-terciario">Status</label>
-          <select class="form-select border-secundario border-2" aria-label="Default select example" [(ngModel)]="buscar_status">
-            <option value="0" >TODOS</option>
+          <select class="form-select border-secundario border-2" aria-label="Default select example"
+            [(ngModel)]="buscar_status">
+            <option value="0">TODOS</option>
             <option value="CT">CAPTURADO</option>
             <option value="2">FACTURADO</option>
             <option value="3">PAGADO</option>
@@ -206,7 +218,11 @@
 
 
       <div class="col-12 mb-2 text-center">
-        <button class="btn bg-secundario text-light w-75" (click)="Buscar_Pedido()">Buscar</button>
+        <button class="btn bg-secundario text-light w-75" [ngClass]="{'d-none': boton_buscar == true}" (click)="Buscar_Pedido()">Buscar</button>
+        <button class="btn bg-secundario text-light w-75" type="button" [ngClass]="{'d-none': boton_buscar == false}" >
+          <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+          Buscando...
+        </button>
       </div>
 
     </div>
@@ -216,9 +232,11 @@
       <div class="col-12 mb-2">
         <div class="form-group">
           <label class="text-terciario">Seleccionar Pedido</label>
-          <select class="form-select border-secundario border-2" aria-label="Default select example" [(ngModel)]="this.selected_id" (change)="Ver_Selected()">
-            <option ></option>
-            <option value="{{item.cve_folio}}" style="font-size: xx-small;" *ngFor="let item of pedidos_consulta ">{{item.resumen()}}</option>                       
+          <select class="form-select border-secundario border-2" aria-label="Default select example"
+            [(ngModel)]="this.selected_id" (change)="Ver_Selected()">
+            <option></option>
+            <option value="{{item.cve_folio}}" style="font-size: xx-small;" *ngFor="let item of pedidos_consulta ">
+              {{item.resumen()}}</option>
           </select>
 
         </div>
@@ -229,8 +247,9 @@
       <div class="col-12">
         <div class="card bg-secundario">
           <div class="card-body text-light p-0">
-            <p class="d-flex justify-content-between p-0"><span class="h6">Razon Social:</span> 
-              <span>{{pedido_consulta_select.razon_social}}</span> </p>
+            <p class="d-flex justify-content-between p-0"><span class="h6">Razon Social:</span>
+              <span>{{pedido_consulta_select.razon_social}}</span>
+            </p>
             <p class="d-flex justify-content-between p-0"><span class="h6">RFC: </span> <span
                 class="h6">{{pedido_consulta_select.rfc}}</span></p>
             <p class="d-flex justify-content-between p-0">
@@ -247,16 +266,16 @@
             <tr>
               <th scope="col">Producto</th>
               <th scope="col">Cantidad</th>
-              <th scope="col">Precio</th>  
-              <th scope="col">Subtotal</th>        
+              <th scope="col">Precio</th>
+              <th scope="col">Subtotal</th>
             </tr>
-          </thead>         
+          </thead>
           <tbody>
-            <tr *ngFor="let item of pedido_consulta_select.productos_pedir" >
+            <tr *ngFor="let item of pedido_consulta_select.productos_pedir">
               <td>{{item.descripcion}}</td>
               <td>{{item.cantidad}}</td>
-              <td>{{item.precio | number : '1.2-2'}}</td>  
-              <td>{{item.sub_total | number : '1.2-2'}}</td>            
+              <td>{{item.precio | number : '1.2-2'}}</td>
+              <td>{{item.sub_total | number : '1.2-2'}}</td>
             </tr>
         </table>
       </div>
@@ -264,8 +283,14 @@
       <div class="col-12">
         <div class="card bg-secundario">
           <div class="card-body text-light p-0">
-            <p class="d-flex justify-content-between p-0"><span class="h5">Envio:</span><span>{{pedido_consulta_select.total_envio()}}</span></p>
-            <p class="d-flex justify-content-between p-0"><span class="h5">Total de pedidos:</span><span>{{pedido_consulta_select.number_productos()}}</span> </p>
+            <p class="d-flex justify-content-between p-0 h5">Envio</p>
+            <p class="d-flex justify-content-between p-0">
+              <span class="bold">Costo:</span><span>{{pedido_consulta_select.total_envio()}}</span>
+              <span class="bold">Tipo: </span><span>{{pedido_consulta_select.nombre_tipo_envio}}</span>
+              <span class="bold"> Fecha: </span><span>{{pedido_consulta_select.fecha_envio}}</span>
+            </p>
+            <p class="d-flex justify-content-between p-0"><span class="h5">Total de
+                pedidos:</span><span>{{pedido_consulta_select.number_productos()}}</span> </p>
             <p class="d-flex justify-content-between p-0"><span class="h5">Importe: </span> <span
                 class="h2">{{pedido_consulta_select.total_productos() | number : '1.2-2'}}</span></p>
           </div>
@@ -275,67 +300,69 @@
       <div class="col-12">
         <div class="row">
           <div class="col-6" [ngClass]="{'d-none': pedido_consulta_select.id_pago_1 == ''}">
-            <button class="btn btn-link w-100" (click)="Cargar_Imagen(pedido_consulta_select.id_pago_1)">Pago {{pedido_consulta_select.nombre_pago_1}}</button>
+            <button class="btn btn-link w-100" (click)="Cargar_Imagen(pedido_consulta_select.id_pago_1)">Pago
+              {{pedido_consulta_select.nombre_pago_1}}</button>
           </div>
           <div class="col-6" [ngClass]="{'d-none': pedido_consulta_select.id_pago_2 == ''}">
-            <button class="btn btn-link w-100" (click)="Cargar_Imagen(pedido_consulta_select.id_pago_2)" >Pago {{pedido_consulta_select.nombre_pago_2}}</button>
+            <button class="btn btn-link w-100" (click)="Cargar_Imagen(pedido_consulta_select.id_pago_2)">Pago
+              {{pedido_consulta_select.nombre_pago_2}}</button>
           </div>
         </div>
       </div>
 
-      <div class="col-12 text-center mt-3 " [ngClass]="{'d-none': pedido_consulta_select.mostrar_subir_pago() == false }">
+      <div class="col-12 text-center mt-3 "
+        [ngClass]="{'d-none': pedido_consulta_select.mostrar_subir_pago() == false }">
         <button class="btn btn-terciario w-100" (click)="Subir_Pago()">Subir Pago</button>
       </div>
 
     </div>
   </div>
-
 </div>
 
 
-<div class="modal" style="background-color: rgba(10, 10, 10, 0.86);" tabindex="-1" #modal>
-  <div class="modal-dialog modal-dialog-centered">
 
-    <div class="modal-content">
-      <div class="modal-header py-1 px-2 bg-primario text-light ">
-        <h4 class="modal-title">Busacar Producto</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="Cerra_Modal()"></button>
-      </div>
-      <div class="modal-body">
-        <div class="row">
-          <div class="col-12 mb-2">
-            <div class="form-group">
-              <ng-select class="border-secundario-ng" [items]="productos"  #responsableSelect
-              bindLabel="pantalla" bindValue="cve_producto" [selectOnTab]="true" [searchable]="true" [clearable]="true"
-              [virtualScroll]="true"
-                [multiple]="false" [closeOnSelect]="true" [hideSelected]="true"
-              placeholder="Buscar Productos.."  (keyup)="Buscar_Producto($event)" (change)="Producto_select($event)" >
-              </ng-select>
 
-            </div>
-          </div>
-
-          <div class="col-12">
-            <label for="inputPassword6" class="col-form-label">Precio Minimo Venta</label>
-            <input type="number" class="form-control" [(ngModel)]="producto_select.precio_minimo_venta_base">
-          </div>
-
-          <div class="col-12">
-            <label for="inputPassword6" class="col-form-label">Existencia</label>
-            <input type="number" class="form-control" [disabled]="true" [(ngModel)]="producto_select.existencia">
-          </div>
-
-          <div class="col-12">
-            <label for="inputCantidad" class="col-form-label">Cantidad</label>
-            <input type="number" class="form-control" id="inputCantidad" onFocus="this.select()" [(ngModel)]="producto_select.cantidad">
-          </div>
-
+<ng-template #content let-modal>
+  <div class="modal-header  py-1 px-2 bg-primario text-light">
+    <h4 class="modal-title" id="modal-basic-title">Busacar Producto</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <input class="form-select border-secundario border-2" type="text" matInputs [matAutocomplete]="prods"
+            (keyup)="Buscar_Producto($event)" [(ngModel)]="producto_select.pantalla">
+          <mat-autocomplete #prods="matAutocomplete" (optionSelected)="Producto_select($event)">
+            @for(option of productos ; track option.cve_producto){
+            <mat-option [value]="option">{{option.cve_producto + '-' + option.descripcion}}</mat-option>
+            }
+          </mat-autocomplete>
         </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="Cerra_Modal()">Close</button>
-        <button type="button" class="btn btn-primary" (click)="Agregar_Producto()" [disabled]="producto_select.existencia <= 0">Agregar</button>
+
+
+      <div class="col-12">
+        <label for="inputPassword6" class="col-form-label">Precio Venta</label>
+        <input type="number" class="form-control" [(ngModel)]="producto_select.precio_minimo_venta_base">
       </div>
+
+      <div class="col-12">
+        <label for="inputPassword6" class="col-form-label">Existencia</label>
+        <input type="number" class="form-control" [disabled]="true" [(ngModel)]="producto_select.existencia">
+      </div>
+
+      <div class="col-12">
+        <label for="inputCantidad" class="col-form-label">Cantidad</label>
+        <input type="number" class="form-control" id="inputCantidad" onFocus="this.select()"
+          [(ngModel)]="producto_select.cantidad">
+      </div>
+
     </div>
   </div>
-</div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-danger" (click)="modal.close('Save click')">Cancelar</button>
+    <button type="button" class="btn btn-primary" (click)="Agregar_Producto()"
+      [disabled]="producto_select.existencia <= 0">Agregar</button>
+  </div>
+</ng-template>
