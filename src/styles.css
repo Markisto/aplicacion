@@ -48,8 +48,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 .btn-primario:hover {
-  border-color: #E86C39;
-  box-shadow: 0 0 10px #E86C39;
+  border-color: #E86C39 !important;
+  box-shadow: 0 0 10px #E86C39 !important;
 }
 
 
@@ -65,8 +65,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 .btn-secundario:hover {
-  border-color: #E86C39;
-  box-shadow: 0 0 10px #E86C39;
+  border-color: #E86C39 !important;
+  box-shadow: 0 0 10px #E86C39 !important;
 }
 
 .btn-terciario {
@@ -135,7 +135,12 @@ button:disabled {
 }
 
 button:hover {
-  background-color: #E86C39;
+  background-color: #E86C39 !important;
+  
+}
+
+button:active {
+  background-color: #E86C39 !important;
   
 }
 

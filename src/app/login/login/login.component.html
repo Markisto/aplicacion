@@ -37,7 +37,11 @@
         </div>
 
         <div class="d-grid gap-2">
-          <button type="button" class="btn  rounded-4  mb-4 bg-primario text-light" (click)="login()">Entrar</button>
+          <button type="button" class="btn  rounded-4  mb-4 bg-primario text-light" [ngClass]="{'d-none': button_loading == true}" (click)="login()">Entrar</button>
+          <button  class="btn  rounded-4  mb-4 bg-primario text-light"  type="button" [ngClass]="{'d-none': button_loading == false}" >
+            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+            Cargando...
+          </button>
         </div>
 
 

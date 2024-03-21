@@ -17,6 +17,7 @@ export class LoginComponent {
 
   cve_usuario = '';
   password = '';
+  button_loading = false; 
   constructor(private router: Router, private service : LoginService) { }
 
   login() {
@@ -30,6 +31,7 @@ export class LoginComponent {
       })
       return;
     }
+    this.button_loading = true;
     
     this.service.InicioSesion(this.cve_usuario, this.password).subscribe({
       next: (res : any) => {
@@ -37,6 +39,8 @@ export class LoginComponent {
           let data = res.data;
           let user = new C_Usuario(data.token, data.Cve_Vendedor, data.Nombre, data.Cve_Sucursal,data.Usuario);
           sessionStorage.setItem('user', JSON.stringify(user));
+          this.button_loading = false;
+    
           this.router.navigate(['home']);
         }else{
           Swal.fire({
@@ -48,12 +52,16 @@ export class LoginComponent {
         }
       },
       error: (error) => {
+        this.button_loading = false;
+    
         Swal.fire({
           title: 'Error!',
           text: error.message,
           icon: 'error',
           confirmButtonText: 'Ok'
         })
+      },complete: () => {
+        this.button_loading = false;
       }
     });
       

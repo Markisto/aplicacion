@@ -91,6 +91,19 @@ export class ClientesService {
     )
   }
 
+  
+  Buscar_Productos(descripcion : string, cve_sucursal : string, tipo_cliente : string){
+    let res =  this.http.post(`${this.url}pedidos.php`, {"evento":"buscar_productos", "descripcion": descripcion, "cve_sucursal": "", "tipo_cliente": ""});
+    return res
+    .pipe(
+      tap((res: any) => {
+        return res;
+      }),
+      catchError((err) => {
+        return throwError(() => err);
+      })
+    )
+  }
 
 
 }
