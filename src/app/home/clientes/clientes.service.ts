@@ -105,5 +105,18 @@ export class ClientesService {
     )
   }
 
+  Guardar_Cliente(cliente : C_Responsable, usuario : string){
+    let res =  this.http.post(`${this.url}clientes.php`, {"evento":"guardar_cliente", "cliente": cliente, "usuario": usuario});
+    return res
+    .pipe(
+      tap((res: any) => {
+        return res;
+      }),
+      catchError((err) => {
+        return throwError(() => err);
+      })
+    )
+  }
+
 
 }

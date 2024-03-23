@@ -68,6 +68,7 @@ export class C_Responsable{
     docis_paciente_1 : number = 0;
     cartucho_paciente_1 : number = 0;
     compra_paciente_1 :number = 0;
+
     cubre_total_paciente_1 : number = 0;
     pantalla_cubre_total_1 = "";
     presetnacion_paciente_1 : string = "";
@@ -115,7 +116,7 @@ export class C_Responsable{
         let dosis = Number(this.docis_paciente_1);
         let cubre = carturho / dosis;
         this.cubre_1 = cubre.toString();
-        this.pantalla_cubre_1 = this.cubre_1 + " Días";
+        this.pantalla_cubre_1 = Number(this.cubre_1).toFixed(2) + " Días";
     }
 
     set_cubre_total_1(){
@@ -123,16 +124,17 @@ export class C_Responsable{
         let compra = Number(this.compra_paciente_1);
         let cubre_total = cubre * compra;
         this.cubre_total_paciente_1 = cubre_total;
-        this.pantalla_cubre_total_1 = this.cubre_total_paciente_1 + " Días"; 
+        this.pantalla_cubre_total_1 = Number(this.cubre_total_paciente_1).toFixed(2) + " Días"; 
     }
 
     set_cubre_2(){
+        console.log("set_cubre_2"); 
         let carturho = Number(this.cartucho_paciente_2);
         
         let dosis = Number(this.docis_paciente_2);
         let cubre = carturho / dosis;
         this.cubre_2 = cubre.toString();
-        this.pantalla_cubre_2 = this.cubre_2 + " Días";
+        this.pantalla_cubre_2 = Number(this.cubre_2).toFixed(2) + " Días";
 
     }
 
@@ -141,7 +143,7 @@ export class C_Responsable{
         let compra = Number(this.compra_paciente_2);
         let cubre_total = cubre * compra;
         this.cubre_total_paciente_2 = cubre_total;
-        this.pantalla_cubre_total_2 = this.cubre_total_paciente_2 + " Días";
+        this.pantalla_cubre_total_2 = Number(this.cubre_total_paciente_2).toFixed(2) + " Días";
 
     }
 

@@ -24,7 +24,7 @@ export class ClientesComponent implements OnInit {
  
 
   user : C_Usuario = new C_Usuario("","","","","");
-  vista = "nuevo";
+  vista = "consulta";
   pacientes : C_Pacientes[] = [];
   inittable = 1;
   ncliente = new C_Responsable();
@@ -38,6 +38,7 @@ export class ClientesComponent implements OnInit {
 
   productos_1 : C_Productos[] = [];
   productos_2 : C_Productos[] = [];
+  btn_guardando = false;
 
   constructor(private service : ClientesService) {
     
@@ -47,10 +48,6 @@ export class ClientesComponent implements OnInit {
     this.user = JSON.parse(sessionStorage.getItem("user") || "{}");
     console.log("user");
     console.log(this.user);
-
-
-
-
     this.Cargar_Usos_CFDI();
     this.Cargar_Regimenes_Fiscales();
     this.Cargar_Formas_Pago();
@@ -61,10 +58,7 @@ export class ClientesComponent implements OnInit {
   Nuevo_Cliente(){
     this.vista = "nuevo";
     this.ncliente.cve_cliente = 1;
-    this.ncliente.persona_fisica = true;
-
-    console.log("nuevo cliente");
-    console.log(this.ncliente);
+    this.ncliente.persona_fisica = true;    
   }
 
   comp(tipo_persona : string){
@@ -77,9 +71,6 @@ export class ClientesComponent implements OnInit {
       this.ncliente.persona_fisica = false;
       this.ncliente.persona_moral = true;
     }
-
-    console.log("ncliente comp");
-    console.log(this.ncliente);
   }
 
   Cargar_Usos_CFDI(){
@@ -345,30 +336,32 @@ export class ClientesComponent implements OnInit {
 
 
   Guardar_Nuevo_Cliente(){
+    console.log(this.ncliente);
     let enviar = true;
     if(this.ncliente.nombre == "" || 
       this.ncliente.nombre_contacto == "" ||
-       this.ncliente.calle_no == "" || 
+       this.ncliente.calle_numero_entrega == "" || 
        this.ncliente.codigo_postal_entrega == "" || 
-      this.ncliente.cve_clase_cte == "" || this.ncliente.cve_medico == "" ){
+      this.ncliente.cve_clase_cte == "" || this.ncliente.cve_medico == "" ||  this.ncliente.tipo_pago == "" ){
       Swal.fire({
         title: 'Error!',
         text: "Faltan datos obligatorios por llenar",
         icon: 'error',
         confirmButtonText: 'Ok'
       });
+    
       enviar = false;
       return;
     }
 
     if(this.ncliente.facturacion == true){
-      if(this.ncliente.razon_social == "" || 
+      if(this.ncliente.razon_social_facturacion == "" || 
       this.ncliente.codigo_postal_facturacion == "" || 
       this.ncliente.calle_facturacion == "" || 
       this.ncliente.rfc_facturacion == "" || 
       this.ncliente.uso_cfdi_facturacion == "" ||
-      this.ncliente.regimen_fiscal_facturacion == "" ||
-      this.ncliente.tipo_pago == ""){
+      this.ncliente.regimen_fiscal_facturacion == "" 
+     ){
         Swal.fire({
           title: 'Error!',
           text: "Faltan datos de facturación por llenar",
@@ -381,7 +374,7 @@ export class ClientesComponent implements OnInit {
     }
 
     if(( this.ncliente.cve_producto_paciente_1 =="" || this.ncliente.docis_paciente_1 == 0 || this.ncliente.cartucho_paciente_1 ==0 || this.ncliente.compra_paciente_1 == 0 ) && 
-      this.ncliente.cve_producto_paciente_2 == "" || this.ncliente.docis_paciente_2 == 0 || this.ncliente.cartucho_paciente_2 == 0 || this.ncliente.compra_paciente_2 == 0 ){
+      (this.ncliente.cve_producto_paciente_2 == "" || this.ncliente.docis_paciente_2 == 0 || this.ncliente.cartucho_paciente_2 == 0 || this.ncliente.compra_paciente_2 == 0 )){
       Swal.fire({
         title: 'Error!',
         text: "Debe agregar al menos una receta para el paciente",
@@ -393,8 +386,51 @@ export class ClientesComponent implements OnInit {
     }
 
     if(enviar == true){
-      console.log("esto sera enviado ");
-      console.log(this.ncliente);
+      this.btn_guardando = true;
+      this.service.Guardar_Cliente(this.ncliente, this.user.cve_usuario).subscribe({
+        next: (res: any) => {
+          if(res.code == 0){
+            Swal.fire({
+              title: 'Exito!',
+              text: "Cliente guardado correctamente",
+              icon: 'success',
+              confirmButtonText: 'Ok'
+            }).then((result) => {
+                         
+              this.Nuevo_Cliente();
+              this.productos_1 = [];
+              this.productos_2 = [];
+              this.direcciones_entrega = [];
+              this.direcciones_facturacion = [];
+              this.list_usos_cfdi= [];
+              this.tipos_pago = [];
+              this.clases_cliente  = [];
+              this.lista_medicos = [];
+              this.vista = "nuevo";   
+            });
+            this.Nuevo_Cliente();
+          }else{
+            Swal.fire({
+              title: 'Error!',
+              text: res.message,
+              icon: 'error',
+              confirmButtonText: 'Ok'
+            });
+          }
+        },
+        error: (err) => {
+          Swal.fire({
+            title: 'Error!',
+            text: err.message,
+            icon: 'error',
+            confirmButtonText: 'Ok'
+          });
+          this.btn_guardando = false;
+        },complete: () => {
+          this.btn_guardando = false;
+        }
+
+      });
     }
 
 

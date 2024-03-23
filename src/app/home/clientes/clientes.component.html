@@ -8,27 +8,29 @@
     </div>
   </div>
 
+ 
   <div [ngClass]="{'d-none': vista != 'nuevo'}">
+  
     <div class="row">
       <p class="text-terciario text-center" style="font-size: medium;">Nuevo Cliente:</p>
       <div class="col-12 mb-2">
         <div class="form-group">
           <label class="text-terciario">Responsable</label><br>
           <input type="text" class="form-control border-secundario border-2" [(ngModel)]="ncliente.nombre"
-            placeholder="Responsable">
+            placeholder="Responsable" style="text-transform:uppercase" > 
         </div>
       </div>
       <div class="col-12 mb-2">
         <div class="form-group">
           <label class="text-terciario">Teléfono</label><br>
-          <input type="tel" class="form-control border-secundario border-2" [(ngModel)]="ncliente.telefono"
-            placeholder="Teléfono Principal...">
+          <input type="number" class="form-control border-secundario border-2" [(ngModel)]="ncliente.telefono" Max="10"
+            placeholder="Teléfono Principal..." >
         </div>
       </div>
       <div class="col-12 mb-2">
         <div class="form-group">
           <label class="text-terciario">Celular</label><br>
-          <input type="tel" class="form-control border-secundario border-2" [(ngModel)]="ncliente.telefono_2"
+          <input type="number" class="form-control border-secundario border-2" [(ngModel)]="ncliente.telefono_2" Max="10"
             placeholder="Teléfono Celular...">
 
         </div>
@@ -37,7 +39,38 @@
         <div class="form-group">
           <label class="text-terciario">Email</label><br>
           <input type="text" class="form-control border-secundario border-2" [(ngModel)]="ncliente.email"
-            placeholder="Correo Electrónico...">
+            placeholder="Correo Electrónico..." >
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Forma de Pago</label><br>
+          <select class="form-select border-secundario border-2" [(ngModel)]="ncliente.tipo_pago">
+            <option value="0">Forma de Pago...</option>
+            <option value="{{item.Cve_Pago_FE}}" *ngFor="let item of tipos_pago">{{item.Descripcion}}</option>
+
+          </select>
+        </div>
+      </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Clase de Cliente</label><br>
+          <select class="form-select border-secundario border-2" [(ngModel)]="ncliente.cve_clase_cte">
+            <option value="0">Clase de Cliente..</option>
+            <option value="{{item.Cve_Clase_Cte}}" *ngFor="let item of clases_cliente">{{item.Descripcion}}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Médico</label><br>
+          <select class="form-select border-secundario border-2" aria-placeholder="select " [(ngModel)]="ncliente.cve_medico" >
+            <option value="0">Seleccionar Médico..</option>
+            <option value="{{item.Cve_Medico}}" *ngFor="let item of lista_medicos">{{item.Nombre}}</option>
+          </select>
         </div>
       </div>
 
@@ -84,7 +117,7 @@
             <div class="col-12 mb-2">
               <div class="form-group">
                 <label class="text-terciario">Razon Social</label><br>
-                <input type="text" class="form-control border-secundario border-2" placeholder="Razon Social"
+                <input type="text" class="form-control border-secundario border-2" style="text-transform:uppercase" placeholder="Razon Social"
                   [(ngModel)]="ncliente.razon_social_facturacion">
               </div>
             </div>
@@ -92,7 +125,7 @@
             <div class="col-12 mb-2">
               <div class="form-group">
                 <label class="text-terciario">Calle</label><br>
-                <input type="text" class="form-control border-secundario border-2" placeholder="Calle"
+                <input type="text" class="form-control border-secundario border-2" style="text-transform:uppercase" placeholder="Calle"
                   [(ngModel)]="ncliente.calle_facturacion">
               </div>
             </div>
@@ -116,7 +149,7 @@
             <div class="col-6 mb-2">
               <div class="form-group">
                 <label class="text-terciario">Código Postal</label><br>
-                <input type="text" class="form-control border-secundario border-2" placeholder="Codigo postal..."
+                <input type="number" class="form-control border-secundario border-2" placeholder="Codigo postal..."
                   [(ngModel)]="ncliente.codigo_postal_facturacion" (change)="Buscar_Dir_Facturacion()">
               </div>
             </div>
@@ -156,7 +189,7 @@
               <div class="form-group">
                 <label class="text-terciario">RFC</label><br>
                 <input type="text" class="form-control border-secundario border-2" aria-label="Default select example"
-                  placeholder="RFC..." [(ngModel)]="ncliente.rfc_facturacion">
+                  placeholder="RFC..." [(ngModel)]="ncliente.rfc_facturacion" style="text-transform:uppercase">
               </div>
             </div>
 
@@ -181,40 +214,7 @@
                   <option value="{{item.c_UsoCFDI}}" *ngFor="let item of list_usos_cfdi">{{item.Descripcion}}</option>
                 </select>
               </div>
-            </div>
-
-          
-
-            <div class="col-12 mb-2">
-              <div class="form-group">
-                <label class="text-terciario">Forma de Pago</label><br>
-                <select class="form-select border-secundario border-2" [(ngModel)]="ncliente.tipo_pago">
-                  <option value="0">Forma de Pago...</option>
-                  <option value="{{item.Cve_Pago_FE}}" *ngFor="let item of tipos_pago">{{item.Descripcion}}</option>
-
-                </select>
-              </div>
-            </div>
-
-            <div class="col-12 mb-2">
-              <div class="form-group">
-                <label class="text-terciario">Clase de Cliente</label><br>
-                <select class="form-select border-secundario border-2" [(ngModel)]="ncliente.cve_clase_cte">
-                  <option value="0">Clase de Cliente..</option>
-                  <option value="{{item.c_ClaseCliente}}" *ngFor="let item of clases_cliente">{{item.Descripcion}}
-                  </option>
-                </select>
-              </div>
-            </div>
-            <div class="col-12 mb-2">
-              <div class="form-group">
-                <label class="text-terciario">Médico</label><br>
-                <select class="form-select border-secundario border-2" aria-placeholder="select ">
-                  <option value="0">Seleccionar Médico..</option>
-                  <option value="{{item.Cve_Medico}}" *ngFor="let item of lista_medicos">{{item.Nombre}}</option>
-                </select>
-              </div>
-            </div>
+            </div>                    
           </div>
         </div>
       </div>
@@ -232,29 +232,29 @@
             <div class="form-group">
               <label class="text-terciario">Nombre Contacto</label><br>
               <input type="text" class="form-control border-secundario border-2" [(ngModel)]="ncliente.nombre_contacto"
-                placeholder="Nombre de Contacto...">
+                placeholder="Nombre de Contacto..." style="text-transform:uppercase">
             </div>
           </div>
           <div class="col-12 mb-2">
             <div class="form-group">
               <label class="text-terciario">Calle y Número</label><br>
               <input type="text" class="form-control border-secundario border-2"
-                [(ngModel)]="ncliente.calle_numero_entrega" placeholder="Calle y Número...">
+                [(ngModel)]="ncliente.calle_numero_entrega" placeholder="Calle y Número..." style="text-transform:uppercase">
             </div>
           </div>
 
           <div class="col-12 mb-2">
             <div class="form-group">
               <label class="text-terciario">Codigo Postal</label><br>
-              <input type="text" class="form-control border-secundario border-2"
-                [(ngModel)]="ncliente.codigo_postal_entrega" placeholder="Código Postal...">
+              <input type="number" class="form-control border-secundario border-2"
+                [(ngModel)]="ncliente.codigo_postal_entrega" placeholder="Código Postal..." >
             </div>
           </div>
 
           <div class="col-12 mb-2">
             <div class="form-group">
               <label class="text-terciario">Colonia</label><br>
-              <input type="text" class="form-control border-secundario border-2" [(ngModel)]="ncliente.colonia_entrega" >
+              <input type="text" class="form-control border-secundario border-2" [(ngModel)]="ncliente.colonia_entrega" style="text-transform:uppercase">
             </div>
           </div>
 
@@ -271,15 +271,17 @@
           <div class="col-12 mb-2">
             <div class="form-group">
               <label class="text-terciario">Población</label><br>
-              <input type="text" class="form-control border-secundario border-2" [(ngModel)]="ncliente.poblacion_entrega" >
+              <input type="text" class="form-control border-secundario border-2" [(ngModel)]="ncliente.poblacion_entrega" style="text-transform:uppercase" >
             </div>
           </div>
-          <!-- <div class="col-12 mb-2">
+
+          <div class="col-12 mb-2">
             <div class="form-group">
               <label class="text-terciario">Delegación/Municipio</label><br>
-              <p class="form-control border-secundario border-2">{{ncliente.delegacion_entrega}}</p>
+              <input type="text" class="form-control border-secundario border-2" [(ngModel)]="ncliente.delegacion_entrega" style="text-transform:uppercase">
             </div>
-          </div> -->
+          </div>
+
           <div class="col-12 mb-2">
             <div class="form-group">
               <label class="text-terciario">Fecha de Recompra</label>
@@ -301,15 +303,15 @@
           <div class="col-12 mb-2">
             <div class="form-group">
               <label class="text-terciario"> Nombre: </label>
-              <input type="text" class="form-select border-secundario border-2" aria-label="Default select example"
-                placeholder="Nombre del Paciente..." [(ngModel)]="ncliente.nombre_paciente_1">
+              <input type="text" class="form-control border-secundario border-2" aria-label="Default select example"
+                placeholder="Nombre del Paciente..." [(ngModel)]="ncliente.nombre_paciente_1" style="text-transform:uppercase">
             </div>
           </div>
 
           <div class="col-12 mb-2">
             <div class="form-group">
               <label class="text-terciario"> Edad en Años: </label>
-              <input type="text" class="form-select border-secundario border-2" aria-label="Default select example"
+              <input type="number" class="form-control border-secundario border-2" aria-label="Default select example"
                 placeholder="Edad en Años..." [(ngModel)]="ncliente.edad_anyos_paciente_1">
             </div>
           </div>
@@ -317,7 +319,7 @@
           <div class="col-12 mb-2">
             <div class="form-group">
               <label class="text-terciario"> Edad en Meses: </label>
-              <input type="text" class="form-control border-secundario border-2" aria-label="Default select example"
+              <input type="number" class="form-control border-secundario border-2" aria-label="Default select example"
                 placeholder="Edad en Meses..." [(ngModel)]="ncliente.edad_meses_paciente_1">
             </div>
           </div>
@@ -375,7 +377,7 @@
           <div class="col-12 mb-2">
             <div class="form-group">
               <label class="text-terciario"> Compra: </label>
-              <input type="number" class="form-select border-secundario border-2" aria-label="Default select example"
+              <input type="number" class="form-control border-secundario border-2" aria-label="Default select example"
                 placeholder="Compra..." [(ngModel)]="ncliente.compra_paciente_1" (change)="ncliente.set_cubre_total_1()">
             </div>
           </div>
@@ -412,7 +414,7 @@
           <div class="col-12 mb-2">
             <div class="form-group">
               <label class="text-terciario"> Nombre: </label>
-              <input type="text" class="form-control border-secundario border-2" aria-label="Default select example"
+              <input type="text" class="form-control border-secundario border-2" style="text-transform:uppercase" aria-label="Default select example"
                 placeholder="Nombre del Paciente..." [(ngModel)]="ncliente.nombre_paciente_2">
             </div>
           </div>
@@ -420,7 +422,7 @@
           <div class="col-12 mb-2">
             <div class="form-group">
               <label class="text-terciario"> Edad en Años: </label>
-              <input type="text" class="form-control border-secundario border-2" aria-label="Default select example"
+              <input type="number" class="form-control border-secundario border-2" aria-label="Default select example"
                 placeholder="Edad en Años..." [(ngModel)]="ncliente.edad_anyos_paciente_2">
             </div>
           </div>
@@ -428,7 +430,7 @@
           <div class="col-12 mb-2">
             <div class="form-group">
               <label class="text-terciario"> Edad en Meses: </label>
-              <input type="text" class="form-control border-secundario border-2" aria-label="Default select example"
+              <input type="number" class="form-control border-secundario border-2" aria-label="Default select example"
                 placeholder="Edad en Meses..." [(ngModel)]="ncliente.edad_meses_paciente_2">
             </div>
           </div>
@@ -458,7 +460,7 @@
           </div>
 
 
-          <div class="col-12 mb-2">
+          <div class="col-6 mb-2">
             <div class="form-group">
               <label class="text-terciario"> Dosis: </label>
               <input type="number" class="form-control border-secundario border-2" aria-label="Default select example"
@@ -474,11 +476,11 @@
             </div>
           </div>
 
-          <div class="col-6 mb-2">
+          <div class="col-12 mb-2">
             <div class="form-group">
               <label class="text-terciario"> Cubre: </label>
-              <input type="number" class="form-control border-secundario border-2" aria-label="Default select example"
-                placeholder="Cubre...">
+              <input type="text" class="form-control border-secundario border-2" aria-label="Default select example"
+                placeholder="Cubre..."  [readOnly]="true" [(ngModel)]="ncliente.pantalla_cubre_2">
             </div>
           </div>
 
@@ -493,8 +495,8 @@
           <div class="col-12 mb-2">
             <div class="form-group">
               <label class="text-terciario"> Cubre Total: </label>
-              <input type="number" class="form-control border-secundario border-2" aria-label="Default select example"
-                placeholder="Cubre Total..." [(ngModel)]="ncliente.pantalla_cubre_total_2">
+              <input type="text" class="form-control border-secundario border-2" aria-label="Default select example"
+                placeholder="Cubre Total..." [readOnly]="true" [(ngModel)]="ncliente.pantalla_cubre_total_2">
             </div>
           </div>               
         </div>
@@ -507,17 +509,22 @@
         <div class="form-group">
           <label class="text-terciario">Folio Zaizen</label>
           <input type="text" class="form-control border-secundario border-2" aria-label="Default select example"
-            placeholder="Folio Zaizen...">
+            placeholder="Folio Zaizen..." [(ngModel)]="ncliente.folio_zaizen">
         </div>
       </div>
-
     </div>
 
     <div class="row">
       <div class="col-12 mb-2">
-        <button class="btn bg-primario text-light w-100">Guardar</button>
+        <button class="btn bg-primario text-light w-100" [ngClass]="{'d-none': btn_guardando == true}" (click)="Guardar_Nuevo_Cliente()">Guardar</button>
+        <button class="btn bg-secundario text-light w-75" type="button" [ngClass]="{'d-none': btn_guardando == false}" >
+          <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+          Guardando...
+        </button>
+      
       </div>
     </div>
+
 
 
   </div>
