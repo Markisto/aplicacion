@@ -28,6 +28,7 @@ export class ClientesComponent implements OnInit {
   pacientes : C_Pacientes[] = [];
   inittable = 1;
   ncliente = new C_Responsable();
+ 
   direcciones_entrega : C_Direccion[]=[];
   direcciones_facturacion : C_Direccion[]=[];  
   list_usos_cfdi : any[] = [];
@@ -39,6 +40,12 @@ export class ClientesComponent implements OnInit {
   productos_1 : C_Productos[] = [];
   productos_2 : C_Productos[] = [];
   btn_guardando = false;
+
+
+  list_clientes : C_Responsable[] = []; 
+  mcliente = new C_Responsable();
+  modificar = false;
+  muestra_btn_modificar = false;
 
   constructor(private service : ClientesService) {
     
@@ -55,6 +62,8 @@ export class ClientesComponent implements OnInit {
     this.Cargar_Medicos();
   }
 
+
+  // ==========================================   FUNCIONES NUEVO CLIENTE ================================
   Nuevo_Cliente(){
     this.vista = "nuevo";
     this.ncliente.cve_cliente = 1;
@@ -230,7 +239,6 @@ export class ClientesComponent implements OnInit {
       },
     });
   }
-
 
   Establecer_Dir_Entrega($event:any){
     let index = $event.target.value;  
@@ -437,6 +445,216 @@ export class ClientesComponent implements OnInit {
 
 
 
+
+
+  }
+
+
+  //=========================================  FUNCIONES MODIFICAR CLIENTE ==========================
+
+  buscar_responsable($event: any) {
+    let valor = $event.target.value;
+    let respons: C_Responsable[] = [];
+    if (valor.length > 3) {
+      this.service.Buscar_Clientes(valor, this.user.cve_usuario).subscribe({
+        next: (res: any) => {
+          this.list_clientes = [];
+          this.muestra_btn_modificar = false;
+          if (res.code == 0) {
+            let data = res.data;          
+            for (let i = 0; i < data.length; i++) {
+              let r = new C_Responsable();
+              r.cve_cliente = data[i].cve_cliente;
+              r.nombre = data[i].Nombre_Cte;
+              r.telefono = data[i].Telefono;
+              r.telefono_2 = data[i].Telefono_2;
+              r.email = data[i].EMail;
+              r.tipo_pago = data[i].FormPago_Factura;
+              r.cve_clase_cte = data[i].Cve_Clase_Cte;
+              r.cve_medico = data[i].Cve_Ruta;
+              r.facturacion = (data[i].RFC != "" && data[i].RFC != null && data[i].RFC != undefined) == true ? true : false;  
+              r.persona_fisica =true;
+              r.persona_moral = false;
+              r.razon_social_facturacion = data[i].Razon_Social;
+              r.calle_facturacion = data[i].Calle_No;
+              r.numero_exterior_facturacion =data[i].Numero_Exterior;
+              r.numero_interior_facturacion =data[i].Numero_Interior;
+              r.codigo_postal_facturacion =data[i].CP;
+              r.poblacion_facturacion =data[i].Poblacion ;
+              r.delegacion_facturacion =data[i].Del_Municipio ;
+              r.colonia_facturacion =data[i].Colonia;
+              r.rfc_facturacion =data[i].RFC;
+              r.regimen_fiscal_facturacion =data[i].c_RegimenFiscal;
+              r.uso_cfdi_facturacion =data[i].c_usoCFDI;
+              r.nombre_contacto  = data[i].Nombre_Propietario;
+              r.delegacion_entrega =data[i].Del_Municipio_E;
+              r.calle_numero_entrega =data[i].CalleNumero_E;
+              r.codigo_postal_entrega =data[i].CP_E;
+              r.colonia_entrega =data[i].Colonia_E;
+              r.poblacion_entrega =data[i].Poblacion_E;
+              r.fecha_recompra =  data[i].FechaRecompra;
+
+              r.nombre_paciente_1 = data[i].NombrePaciente;
+              r.edad_anyos_paciente_1 = data[i].EdadAñosP;
+              r.edad_meses_paciente_1 = data[i].EdadMesesP;
+              r.fecha_nacimiento_paciente_1 = data[i].FechaNacimientoP;
+              r.cve_producto_paciente_1 = data[i].ProductoP;
+              r.producto_paciente_1 = data[i].name_p1;
+              r.docis_paciente_1 = data[i].DosisP;
+              r.cartucho_paciente_1 = data[i].CartuchoP;
+              r.cubre_1 = data[i].CubreP;
+              r.compra_paciente_1 = data[i].CompraP;
+              r.cubre_total_paciente_1 = data[i].CubreTotalP;
+              r.set_cubre_1();
+              r.set_cubre_total_1();
+
+              r.nombre_paciente_2 = data[i].NombrePaciente1;
+              r.edad_anyos_paciente_2 = data[i].EdadAñosP1;
+              r.edad_meses_paciente_2 = data[i].EdadMesesP1;
+              r.fecha_nacimiento_paciente_2 = data[i].FechaNacimientoP1;
+              r.cve_producto_paciente_2 = data[i].ProductoP1;
+              r.producto_paciente_2 = data[i].name_p2;
+              r.docis_paciente_2 = data[i].DosisP1;
+              r.cartucho_paciente_2 = data[i].CartuchoP1;
+              r.cubre_2 = data[i].CubreP1;
+              r.compra_paciente_2 = data[i].CompraP1;
+              r.cubre_total_paciente_2 = data[i].CubreTotalP1;
+              r.set_cubre_2();
+              r.set_cubre_total_2();
+              r.folio_zaizen = data[i].zaizen;
+             this.list_clientes.push(r);                                            
+            }
+
+           
+
+          } else {
+           
+          }
+
+        },
+        error: (err) => {
+          Swal.fire({
+            title: 'Error!',
+            text: err.message,
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+          });
+        }
+      });
+    }
+  }
+
+  Ver_Cliente($event : any){
+    let cliente = $event.option.value;
+    this.mcliente = cliente;
+    this.muestra_btn_modificar = true;
+   
+  }
+
+  Cancelar_Modificacion(){
+    this.mcliente = new C_Responsable();
+    this.muestra_btn_modificar = false;
+    this.modificar = false;
+  }
+
+  Guardar_Modificacion(){
+    let enviar = true;
+    if(this.mcliente.nombre == "" || 
+      this.mcliente.nombre_contacto == "" ||
+       this.mcliente.calle_numero_entrega == "" || 
+       this.mcliente.codigo_postal_entrega == "" || 
+      this.mcliente.cve_clase_cte == "" || this.mcliente.cve_medico == "" ||  this.mcliente.tipo_pago == "" ){
+      Swal.fire({
+        title: 'Error!',
+        text: "Faltan datos obligatorios por llenar",
+        icon: 'error',
+        confirmButtonText: 'Ok'
+      });
+    
+      enviar = false;
+      return;
+    }
+
+    if(this.mcliente.facturacion == true){
+      if(this.mcliente.razon_social_facturacion == "" || 
+      this.mcliente.codigo_postal_facturacion == "" || 
+      this.mcliente.calle_facturacion == "" || 
+      this.mcliente.rfc_facturacion == "" || 
+      this.mcliente.uso_cfdi_facturacion == "" ||
+      this.mcliente.regimen_fiscal_facturacion == ""
+      ){
+          Swal.fire({
+            title: 'Error!',
+            text: "Faltan datos de facturación por llenar",
+            icon: 'error',
+            confirmButtonText: 'Ok'
+          });
+          enviar = false;
+          return;
+        }
+      }
+    
+
+    if(( this.mcliente.cve_producto_paciente_1 =="" || this.mcliente.docis_paciente_1 == 0 || this.mcliente.cartucho_paciente_1 ==0 || this.mcliente.compra_paciente_1 == 0 ) && 
+      (this.mcliente.cve_producto_paciente_2 == "" || this.mcliente.docis_paciente_2 == 0 || this.mcliente.cartucho_paciente_2 == 0 || this.mcliente.compra_paciente_2 == 0 ))
+      {
+      Swal.fire({
+        title: 'Error!',
+        text: "Debe agregar al menos una receta para el paciente",
+        icon: 'error',
+        confirmButtonText: 'Ok'
+      });
+      enviar = false;
+      return;;
+    }
+
+    if(enviar == true){
+      this.btn_guardando = true;
+      this.service.Modificar_Cliente(this.mcliente, this.user.cve_usuario).subscribe({
+        next: (res: any) => {
+          if(res.code == 0){
+            Swal.fire({
+              title: 'Exito!',
+              text: "Cliente modificado correctamente",
+              icon: 'success',
+              confirmButtonText: 'Ok'
+            }).then((result) => {
+                         
+              this.Cancelar_Modificacion();
+              this.productos_1 = [];
+              this.productos_2 = [];
+              this.direcciones_entrega = [];
+              this.direcciones_facturacion = [];
+              this.list_usos_cfdi= [];
+              this.tipos_pago = [];
+              this.clases_cliente  = [];
+              this.lista_medicos = [];
+              this.vista = "nuevo";   
+            });
+            this.Cancelar_Modificacion();
+          }else{
+            Swal.fire({
+              title: 'Error!',
+              text: res.message,
+              icon: 'error',
+              confirmButtonText: 'Ok'
+            });
+          }
+        },
+        error: (err) => {
+          Swal.fire({
+            title: 'Error!',
+            text: err.message,
+            icon: 'error',
+            confirmButtonText: 'Ok'
+          });
+          this.btn_guardando = false;
+        },complete: () => {
+          this.btn_guardando = false;
+        }
+
+      });
+    }
 
 
   }

@@ -4,7 +4,8 @@
       <button class=" btn-primario text-light w-100" (click)="Nuevo_Cliente()">Nuevo</button>
     </div>
     <div class="col-6">
-      <button class="btn-secundario text-light w-100" (click)="vista = 'consulta'">Ver-Modificar</button>
+      <button class="btn-secundario text-light w-100" (click)="vista = 'consulta'" [ngClass]="{'d-none': muestra_btn_modificar == true}">Ver</button>
+      <button class="btn-secundario text-light w-100" (click)="modificar = true" [ngClass]="{'d-none': muestra_btn_modificar == false}">Modificar</button>
     </div>
   </div>
 
@@ -517,7 +518,7 @@
     <div class="row">
       <div class="col-12 mb-2">
         <button class="btn bg-primario text-light w-100" [ngClass]="{'d-none': btn_guardando == true}" (click)="Guardar_Nuevo_Cliente()">Guardar</button>
-        <button class="btn bg-secundario text-light w-75" type="button" [ngClass]="{'d-none': btn_guardando == false}" >
+        <button class="btn bg-primario text-light w-100" type="button" [ngClass]="{'d-none': btn_guardando == false}" >
           <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
           Guardando...
         </button>
@@ -532,110 +533,541 @@
   <!-- Consulta -->
   <div [ngClass]="{'d-none': vista != 'consulta'}">
 
+    <div class="row" [ngClass]="{'d-none': modificar == true}">
+      <div class="col-12 mb-2">
+        <label class="text-terciario">Seleccionar Responsable</label>
+        <div class="form-group">
+          <input class="form-select border-secundario border-2" type="text" matInput [matAutocomplete]="auto"
+          [(ngModel)]="mcliente.nombre" (keyup)="buscar_responsable($event)">
+          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="Ver_Cliente($event)"> 
+            @for(option of list_clientes ; track option.nombre){
+            <mat-option [value]="option">{{option.nombre}}</mat-option>
+            }
+          </mat-autocomplete>
+        </div>
+      </div>
+    </div>
+
+
+
     <div class="row">
-      <p class="text-terciario" style="font-size: medium;">Consultar Pedido:</p>
-
-
-      <div class="col-6 mb-2">
+      <p class="text-terciario text-center" style="font-size: medium;">Consultar Cliente:</p>
+      <div class="col-12 mb-2">
         <div class="form-group">
-          <input type="date" id="inputpassword" class="form-control border-secundario border-2 " placeholder="Fecha" />
+          <label class="text-terciario">Responsable</label><br>
+          <input type="text" class="form-control border-secundario border-2" [(ngModel)]="mcliente.nombre"
+            placeholder="Responsable" style="text-transform:uppercase" [disabled]="modificar == false" > 
+        </div>
+      </div>
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Teléfono</label><br>
+          <input type="text" class="form-control border-secundario border-2" [(ngModel)]="mcliente.telefono" Max="10"
+            placeholder="Teléfono Principal..." [disabled]="modificar == false" >
+        </div>
+      </div>
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Celular</label><br>
+          <input type="text" class="form-control border-secundario border-2" [(ngModel)]="mcliente.telefono_2" Max="10"
+            placeholder="Teléfono Celular..." [disabled]="modificar == false" >
+
+        </div>
+      </div>
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Email</label><br>
+          <input type="text" class="form-control border-secundario border-2" [(ngModel)]="mcliente.email"
+            placeholder="Correo Electrónico..."  [disabled]="modificar == false" >
         </div>
       </div>
 
-
-
-
-      <div class="col-6 mb-2">
+      <div class="col-12 mb-2">
         <div class="form-group">
-          <select class="form-select border-secundario border-2" aria-label="Default select example">
-            <option selected>Status</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
+          <label class="text-terciario">Forma de Pago</label><br>
+          <select class="form-select border-secundario border-2" [(ngModel)]="mcliente.tipo_pago" [disabled]="modificar == false" > 
+            <option value="0">Forma de Pago...</option>
+            <option value="{{item.Cve_Pago_FE}}" *ngFor="let item of tipos_pago">{{item.Descripcion}}</option>
+
           </select>
+        </div>
+      </div>
 
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Clase de Cliente</label><br>
+          <select class="form-select border-secundario border-2" [(ngModel)]="mcliente.cve_clase_cte" [disabled]="modificar == false" >
+            <option value="0">Clase de Cliente..</option>
+            <option value="{{item.Cve_Clase_Cte}}" *ngFor="let item of clases_cliente">{{item.Descripcion}}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Médico</label><br>
+          <select class="form-select border-secundario border-2" aria-placeholder="select " [(ngModel)]="mcliente.cve_medico" [disabled]="modificar == false" >
+            <option value="0">Seleccionar Médico..</option>
+            <option value="{{item.Cve_Medico}}" *ngFor="let item of lista_medicos">{{item.Nombre}}</option>
+          </select>
         </div>
       </div>
 
 
-      <div class="col-12 mb-2 text-center">
-        <button class="btn bg-primario text-light w-75">Buscar</button>
-      </div>
+    </div>
 
+    <!-- Datos de Facturacion -->
+    <div class="card mt-4">
+      <div class="card-body">
+        <div class="row">
+          <p class="text-terciario text-center" style="font-size: medium;">Datos de Facturación</p>
+
+          <div class="col-12">
+            <div class="form-group">
+              <div class="form-check ">
+                <input class="form-check-input border-secundario border-2 h6" type="checkbox"
+                  [(ngModel)]="mcliente.facturacion" id="flexCheckDefault">
+                <label class="form-check-label" for="flexCheckDefault">
+                  Facturación
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div [ngClass]="{'d-none': mcliente.facturacion == false}">
+
+            <div class="col-12 d-flex justify-content-between">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="tipopersona" id="personafisica"
+                  (change)="comp('Fisica')" checked [disabled]="modificar == false" >
+                <label class="form-check-label" for="personafisica">
+                  Persona Fisica
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="tipopersona" id="personamoral"
+                  (change)="comp('Moral')" [disabled]="modificar == false" >
+                <label class="form-check-label" for="personamoral">
+                  Persona Moral
+                </label>
+              </div>
+            </div>
+
+            <div class="col-12 mb-2">
+              <div class="form-group">
+                <label class="text-terciario">Razon Social</label><br>
+                <input type="text" class="form-control border-secundario border-2" style="text-transform:uppercase" placeholder="Razon Social"
+                  [(ngModel)]="mcliente.razon_social_facturacion" [disabled]="modificar == false" >
+              </div>
+            </div>
+
+            <div class="col-12 mb-2">
+              <div class="form-group">
+                <label class="text-terciario">Calle</label><br>
+                <input type="text" class="form-control border-secundario border-2" style="text-transform:uppercase" placeholder="Calle"
+                  [(ngModel)]="mcliente.calle_facturacion" [disabled]="modificar == false" >
+              </div>
+            </div>
+
+            <div class="col-6 mb-2">
+              <div class="form-group">
+                <label class="text-terciario">Número Exterior</label><br>
+                <input type="text" class="form-control border-secundario border-2" placeholder="Número Exterior..."
+                  [(ngModel)]="mcliente.numero_exterior_facturacion" [disabled]="modificar == false" >
+              </div>
+            </div>
+
+            <div class="col-6 mb-2">
+              <div class="form-group">
+                <label class="text-terciario">Número Interior</label><br>
+                <input type="text" class="form-control border-secundario border-2" placeholder="Número Interior..."
+                  [(ngModel)]="mcliente.numero_interior_facturacion" [disabled]="modificar == false" >
+              </div>
+            </div>
+
+            <div class="col-6 mb-2">
+              <div class="form-group">
+                <label class="text-terciario">Código Postal</label><br>
+                <input type="number" class="form-control border-secundario border-2" placeholder="Codigo postal..."
+                  [(ngModel)]="mcliente.codigo_postal_facturacion" (change)="Buscar_Dir_Facturacion()" [disabled]="modificar == false" >
+              </div>
+            </div>
+
+            <div class="col-12 mb-2">
+              <div class="form-group">
+                <label class="text-terciario">Seleccionar Dirección</label><br>
+                <select class="form-select border-secundario border-2" aria-placeholder="select "
+                  (change)="Establecer_Dir_Facturacion($event)" [disabled]="modificar == false" >
+                  <option value="0">Seleccionar Dirección..</option>
+                  <option value="{{item.index}}" *ngFor="let item of direcciones_facturacion">{{item.get_pantalla()}}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-12 mb-2">
+              <div class="form-group">
+                <label class="text-terciario">Población</label><br>
+                <p class="form-control border-secundario border-2">{{mcliente.poblacion_facturacion}} </p>
+              </div>
+            </div>
+            <div class="col-12 mb-2">
+              <div class="form-group">
+                <label class="text-terciario">Delegación/Municipio</label><br>
+                <p class="form-control border-secundario border-2">{{mcliente.delegacion_facturacion}} </p>
+              </div>
+            </div>
+            <div class="col-12 mb-2">
+              <div class="form-group">
+                <label class="text-terciario">Colonia</label><br>
+                <p class="form-control border-secundario border-2">{{mcliente.colonia_facturacion}} </p>
+              </div>
+            </div>
+
+            <div class="col-12 mb-2">
+              <div class="form-group">
+                <label class="text-terciario">RFC</label><br>
+                <input type="text" class="form-control border-secundario border-2" aria-label="Default select example"
+                  placeholder="RFC..." [(ngModel)]="mcliente.rfc_facturacion" style="text-transform:uppercase" [disabled]="modificar == false" >
+              </div>
+            </div>
+
+
+            <div class="col-12 mb-2">
+              <div class="form-group">
+                <label class="text-terciario">Régimen</label><br>
+                <select class="form-select border-secundario border-2"
+                  [(ngModel)]="mcliente.regimen_fiscal_facturacion" [disabled]="modificar == false" >
+                  <option value="0">Regimen</option>
+                  <option value="{{item.c_RegimenFiscal}}" *ngFor="let item of regimenes_fiscales">{{item.Descripcion}}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-12 mb-2">
+              <div class="form-group">
+                <label class="text-terciario">Uso de CFDI</label><br>
+                <select class="form-select border-secundario border-2" [(ngModel)]="mcliente.uso_cfdi_facturacion" [disabled]="modificar == false" >
+                  <option value="0">Uso de CFDI...</option>
+                  <option value="{{item.c_UsoCFDI}}" *ngFor="let item of list_usos_cfdi">{{item.Descripcion}}</option>
+                </select>
+              </div>
+            </div>                    
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Datos de Entrega -->
+    <div class="card mt-4">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-12 mb-2">
+            <p class="text-terciario text-center" style="font-size: medium;">Datos de Entrega</p>
+          </div>
+
+          <div class="col-12 mb-2">
+            <div class="form-group">
+              <label class="text-terciario">Nombre Contacto</label><br>
+              <input type="text" class="form-control border-secundario border-2" [(ngModel)]="mcliente.nombre_contacto"
+                placeholder="Nombre de Contacto..." style="text-transform:uppercase" [disabled]="modificar == false" >
+            </div>
+          </div>
+          <div class="col-12 mb-2">
+            <div class="form-group">
+              <label class="text-terciario">Calle y Número</label><br>
+              <input type="text" class="form-control border-secundario border-2"
+                [(ngModel)]="mcliente.calle_numero_entrega" placeholder="Calle y Número..." style="text-transform:uppercase" [disabled]="modificar == false" >
+            </div>
+          </div>
+
+          <div class="col-12 mb-2">
+            <div class="form-group">
+              <label class="text-terciario">Codigo Postal</label><br>
+              <input type="number" class="form-control border-secundario border-2"
+                [(ngModel)]="mcliente.codigo_postal_entrega" placeholder="Código Postal..." [disabled]="modificar == false" >
+            </div>
+          </div>
+
+          <div class="col-12 mb-2">
+            <div class="form-group">
+              <label class="text-terciario">Colonia</label><br>
+              <input type="text" class="form-control border-secundario border-2" [(ngModel)]="mcliente.colonia_entrega" style="text-transform:uppercase" [disabled]="modificar == false" >
+            </div>
+          </div>
+
+          <!-- <div class="col-12 mb-2">
+            <div class="form-group">
+              <label class="text-terciario">Seleccion Dirección</label><br>
+              <select class="form-select border-secundario border-2" (change)="Establecer_Dir_Entrega($event)">
+                <option value="0">Seleccionar Dirección..</option>
+                <option value="{{item.index}}" *ngFor="let item of direcciones_entrega">{{item.get_pantalla()}}</option>
+              </select>
+            </div>
+          </div> -->
+
+          <div class="col-12 mb-2">
+            <div class="form-group">
+              <label class="text-terciario">Población</label><br>
+              <input type="text" class="form-control border-secundario border-2" [(ngModel)]="mcliente.poblacion_entrega" style="text-transform:uppercase" [disabled]="modificar == false" >
+            </div>
+          </div>
+
+          <div class="col-12 mb-2">
+            <div class="form-group">
+              <label class="text-terciario">Delegación/Municipio</label><br>
+              <input type="text" class="form-control border-secundario border-2" [(ngModel)]="mcliente.delegacion_entrega" style="text-transform:uppercase" [disabled]="modificar == false" >
+            </div>
+          </div>
+
+          <div class="col-12 mb-2">
+            <div class="form-group">
+              <label class="text-terciario">Fecha de Recompra</label>
+              <input type="date" class="form-control border-secundario border-2" aria-label="Default select example" [(ngModel)]="mcliente.fecha_recompra" [disabled]="modificar == false" >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- PRIMER PACIENTE -->
+    <div class="card mt-4">
+      <div class="card-body">
+
+        <div class="row">
+          <p class="text-terciario h4 text-center" style="font-size: medium;">Primer Pacientes</p>
+       
+          <div class="col-12 mb-2">
+            <div class="form-group">
+              <label class="text-terciario"> Nombre: </label>
+              <input type="text" class="form-control border-secundario border-2" aria-label="Default select example"
+                placeholder="Nombre del Paciente..." [(ngModel)]="mcliente.nombre_paciente_1" style="text-transform:uppercase" [disabled]="modificar == false" >
+            </div>
+          </div>
+
+          <div class="col-12 mb-2">
+            <div class="form-group">
+              <label class="text-terciario"> Edad en Años: </label>
+              <input type="number" class="form-control border-secundario border-2" aria-label="Default select example"
+                placeholder="Edad en Años..." [(ngModel)]="mcliente.edad_anyos_paciente_1" [disabled]="modificar == false" >
+            </div>
+          </div>
+
+          <div class="col-12 mb-2">
+            <div class="form-group">
+              <label class="text-terciario"> Edad en Meses: </label>
+              <input type="number" class="form-control border-secundario border-2" aria-label="Default select example"
+                placeholder="Edad en Meses..." [(ngModel)]="mcliente.edad_meses_paciente_1" [disabled]="modificar == false" >
+            </div>
+          </div>
+
+          <div class="col-12 mb-2">
+            <div class="form-group">
+              <label class="text-terciario">Fecha de nacimiento</label>
+              <input type="date" class="form-control border-secundario border-2" aria-label="Default select example"
+                placeholder="Fecha de Nacimiento..." [(ngModel)]="mcliente.fecha_nacimiento_paciente_1" [disabled]="modificar == false" >
+            </div>
+          </div>
+
+          <p class="text-terciario h4 text-center" style="font-size: medium;">Receta</p>
+
+          <div class="col-12 mb-2">
+            <div class="form-group">
+              <label class="text-terciario"> Producto: </label>
+              <input class="form-select border-secundario border-2" type="text" matInputs [matAutocomplete]="prods"
+                (keyup)="Buscar_Producto_1($event)" [(ngModel)]="mcliente.producto_paciente_1" [disabled]="modificar == false" >
+              <mat-autocomplete #prods="matAutocomplete" (optionSelected)="Producto_select_1($event)">
+                @for(option of productos_1 ; track option.cve_producto){
+                <mat-option [value]="option">{{option.cve_producto + '-' + option.descripcion}}</mat-option>
+                }
+              </mat-autocomplete>
+            </div>
+          </div>
+
+
+          
+
+          <div class="col-6 mb-2">
+            <div class="form-group">
+              <label class="text-terciario"> Dosis: </label>
+              <input type="number" class="form-control border-secundario border-2" aria-label="Default select example"
+                placeholder="Dosis..." [(ngModel)]="mcliente.docis_paciente_1" (change)="ncliente.set_cubre_1()" [disabled]="modificar == false" >
+            </div>
+          </div>
+
+          <div class="col-6 mb-2">
+            <div class="form-group">
+              <label class="text-terciario"> Cartucho: </label>
+              <input type="number" class="form-control border-secundario border-2" aria-label="Default select example"
+                placeholder="Cartucho..." [(ngModel)]="mcliente.cartucho_paciente_1" (change)="ncliente.set_cubre_1()" [disabled]="modificar == false" >
+            </div>
+          </div>
+
+          <div class="col-12 mb-2">
+            <div class="form-group">
+              <label class="text-terciario"> Cubre: </label>
+              <input type="text" class="form-control border-secundario border-2" aria-label="Default select example"
+                placeholder="Cubre..." [readOnly]="true" [(ngModel)]="mcliente.pantalla_cubre_1" [disabled]="modificar == false" >
+            </div>
+          </div>
+
+          <div class="col-12 mb-2">
+            <div class="form-group">
+              <label class="text-terciario"> Compra: </label>
+              <input type="number" class="form-control border-secundario border-2" aria-label="Default select example"
+                placeholder="Compra..." [(ngModel)]="mcliente.compra_paciente_1" (change)="ncliente.set_cubre_total_1()" [disabled]="modificar == false" >
+            </div>
+          </div>
+
+          <div class="col-12 mb-2">
+            <div class="form-group">
+              <label class="text-terciario"> Cubre Total: </label>
+              <input type="text" class="form-control border-secundario border-2" aria-label="Default select example"
+                placeholder="Cubre Total..." [readOnly]="true" [(ngModel)]="mcliente.pantalla_cubre_total_1"  [disabled]="modificar == false" >
+            </div>
+          </div>
+
+          <!-- <div class="col-12 mb-2">
+            <div class="form-group">
+              <label class="text-terciario"> Presentación: </label>
+              <input type="text" class="form-control border-secundario border-2" aria-label="Default select example"
+                placeholder="Presentación...">
+            </div>
+          </div> -->
+
+        
+
+        </div>
+      </div>
+    </div>
+
+    <!-- SEGUNDO PACIENTE -->
+    <div class="card mt-4">
+      <div class="card-body">
+        <div class="row">
+          <p class="text-terciario h4  text-center" style="font-size: medium;">Segundo Pacientes</p>
+         
+
+          <div class="col-12 mb-2">
+            <div class="form-group">
+              <label class="text-terciario"> Nombre: </label>
+              <input type="text" class="form-control border-secundario border-2" style="text-transform:uppercase" aria-label="Default select example"
+                placeholder="Nombre del Paciente..." [(ngModel)]="mcliente.nombre_paciente_2" [disabled]="modificar == false" >
+            </div>
+          </div>
+
+          <div class="col-12 mb-2">
+            <div class="form-group">
+              <label class="text-terciario"> Edad en Años: </label>
+              <input type="number" class="form-control border-secundario border-2" aria-label="Default select example"
+                placeholder="Edad en Años..." [(ngModel)]="mcliente.edad_anyos_paciente_2" [disabled]="modificar == false" >
+            </div>
+          </div>
+
+          <div class="col-12 mb-2">
+            <div class="form-group">
+              <label class="text-terciario"> Edad en Meses: </label>
+              <input type="number" class="form-control border-secundario border-2" aria-label="Default select example"
+                placeholder="Edad en Meses..." [(ngModel)]="mcliente.edad_meses_paciente_2" [disabled]="modificar == false" >
+            </div>
+          </div>
+
+          <div class="col-12 mb-2">
+            <div class="form-group">
+              <label class="text-terciario">Fecha de nacimiento</label>
+              <input type="date" class="form-control border-secundario border-2" aria-label="Default select example"
+                placeholder="Fecha de Nacimiento..." [(ngModel)]="mcliente.fecha_nacimiento_paciente_2" [disabled]="modificar == false" > 
+            </div>
+          </div>
+
+
+          <p class="text-terciario h4 text-center" style="font-size: medium;">Receta</p>
+
+          <div class="col-12 mb-2">
+            <div class="form-group">
+              <label class="text-terciario"> Producto: </label>
+              <input class="form-select border-secundario border-2" type="text" matInputs [matAutocomplete]="prods2"
+                (keyup)="Buscar_Producto_2($event)" [(ngModel)]="mcliente.producto_paciente_2" [disabled]="modificar == false" >
+              <mat-autocomplete #prods2="matAutocomplete" (optionSelected)="Producto_select_2($event)" >
+                @for(option of productos_2 ; track option.cve_producto){
+                <mat-option [value]="option">{{option.cve_producto + '-' + option.descripcion}}</mat-option>
+                }
+              </mat-autocomplete>
+            </div>
+          </div>
+
+
+          <div class="col-6 mb-2">
+            <div class="form-group">
+              <label class="text-terciario"> Dosis: </label>
+              <input type="number" class="form-control border-secundario border-2" aria-label="Default select example"
+                placeholder="Dosis..." [(ngModel)]="mcliente.docis_paciente_2" (change)="ncliente.set_cubre_2()" [disabled]="modificar == false" >
+            </div>
+          </div>
+
+          <div class="col-6 mb-2">
+            <div class="form-group">
+              <label class="text-terciario"> Cartucho: </label>
+              <input type="number" class="form-control border-secundario border-2" aria-label="Default select example"
+                placeholder="Cartucho..." [(ngModel)]="mcliente.cartucho_paciente_2" (change)="ncliente.set_cubre_2()" [disabled]="modificar == false" >
+            </div>
+          </div>
+
+          <div class="col-12 mb-2">
+            <div class="form-group">
+              <label class="text-terciario"> Cubre: </label>
+              <input type="text" class="form-control border-secundario border-2" aria-label="Default select example"
+                placeholder="Cubre..."  [readOnly]="true" [(ngModel)]="mcliente.pantalla_cubre_2" [disabled]="modificar == false" >
+            </div>
+          </div>
+
+          <div class="col-12 mb-2">
+            <div class="form-group">
+              <label class="text-terciario"> Compra: </label>
+              <input type="number" class="form-control border-secundario border-2" aria-label="Default select example"
+                placeholder="Compra..." [(ngModel)]="mcliente.compra_paciente_2" (change)="ncliente.set_cubre_total_2()" [disabled]="modificar == false" >
+            </div>
+          </div>
+
+          <div class="col-12 mb-2">
+            <div class="form-group">
+              <label class="text-terciario"> Cubre Total: </label>
+              <input type="text" class="form-control border-secundario border-2" aria-label="Default select example"
+                placeholder="Cubre Total..." [readOnly]="true" [(ngModel)]="mcliente.pantalla_cubre_total_2" [disabled]="modificar == false" >
+            </div>
+          </div>               
+        </div>
+      </div>
     </div>
 
 
     <div class="row">
       <div class="col-12 mb-2">
         <div class="form-group">
-          <select class="form-select border-secundario border-2" aria-label="Default select example">
-            <option selected>Seleccionar Pedido...</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
-          </select>
-
+          <label class="text-terciario">Folio Zaizen</label>
+          <input type="text" class="form-control border-secundario border-2" aria-label="Default select example"
+            placeholder="Folio Zaizen..." [(ngModel)]="mcliente.folio_zaizen" [disabled]="modificar == false" > 
         </div>
       </div>
-
     </div>
+
     <div class="row">
-      <div class="col-12">
-        <div class="card bg-primario">
-          <div class="card-body text-light p-0">
-            <p class="d-flex justify-content-between p-0"><span class="h5">Total de pedidos:</span> <span>Productos:
-                <span>13</span></span> </p>
-            <p class="d-flex justify-content-between p-0"><span class="h5">Importe: </span> <span
-                class="h2">$8,723.00</span></p>
-          </div>
-        </div>
+      <div class="col-6 mb-2">
+        <button class="btn bg-primario text-light w-100" [ngClass]="{'d-none': (btn_guardando == true || modificar == false)}" >Guardar</button>
+        <button class="btn bg-primario text-light w-100" type="button" [ngClass]="{'d-none': btn_guardando == false}" >
+          <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+          Guardando...
+        </button>
+      
       </div>
-
-      <div class="col-12">
-        <table class="table table-borderless" style="color:#2B8B92 ;">
-          <thead>
-            <tr>
-              <th scope="col">Producto</th>
-              <th scope="col">Cantidad</th>
-              <th scope="col">Precio</th>
-              <th scope="col">Subtotal</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Producto 1</td>
-              <td>2</td>
-              <td>100</td>
-              <td>200</td>
-            </tr>
-            <tr>
-              <td>Producto 2</td>
-              <td>3</td>
-              <td>200</td>
-              <td>600</td>
-            </tr>
-            <tr>
-              <td>Producto 3</td>
-              <td>1</td>
-              <td>300</td>
-              <td>300</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="col-12">
-        <div class="card bg-primario">
-          <div class="card-body text-light p-0">
-            <p class="d-flex justify-content-between p-0"><span class="h5">Total de pedidos:</span> <span>Productos:
-                <span>13</span></span> </p>
-            <p class="d-flex justify-content-between p-0"><span class="h5">Importe: </span> <span
-                class="h2">$8,723.00</span></p>
-          </div>
-        </div>
-      </div>
-
+      <div class="col-6 mb-2">
+        <button class="btn btn-danger text-light w-100" [ngClass]="{'d-none': modificar == false}" (click)="Cancelar_Modificacion()">Cancelar</button>
+    
+      </div> 
     </div>
+
   </div>
 
 </div>

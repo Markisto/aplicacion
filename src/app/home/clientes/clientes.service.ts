@@ -118,5 +118,33 @@ export class ClientesService {
     )
   }
 
+  Modificar_Cliente(cliente : C_Responsable, usuario : string){
+    let res =  this.http.post(`${this.url}clientes.php`, {"evento":"modificar_cliente", "cliente": cliente, "usuario": usuario});
+    return res
+    .pipe(
+      tap((res: any) => {
+        return res;
+      }),
+      catchError((err) => {
+        return throwError(() => err);
+      })
+    )
+  }
+
+
+
+  Buscar_Clientes(valor : string, cve_usuario : string){
+    let res =  this.http.post(`${this.url}clientes.php`, {"evento":"buscar_clientes", "valor": valor, "cve_usuario": cve_usuario});
+    return res
+    .pipe(
+      tap((res: any) => {
+        return res;
+      }),
+      catchError((err) => {
+        return throwError(() => err);
+      })
+    )
+  }
+
 
 }
