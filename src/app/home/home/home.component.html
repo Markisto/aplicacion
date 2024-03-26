@@ -1,23 +1,31 @@
 <header>
   <nav class="navbar navbar-primary bg-primario">
     <div class="container-fluid text-poppins-medium" [ngClass]="{'justify-content-center': ruta == '/home/inicio'}">
+      <div class="row w-100">
 
+     
       <!-- <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar"
         aria-controls="offcanvasDarkNavbar" aria-label="Toggle navigation"
         [ngClass]="{'d-none': ruta == '/home/inicio'}">
         <span >
         <img src="assets/img/menu-de-puntos (1).png" style="height: 2rem;" alt="logo" class="img-fluid"></span>
       </button> -->
-      <button class="navbar-toggler" type="button" (click)="open(content)"
+      <div class="col-4">
+        <button class="navbar-toggler" type="button" (click)="open(content)"
         [ngClass]="{'d-none': ruta == '/home/inicio'}">
         <span >
         <img src="assets/img/menu-de-puntos (1).png" style="height: 2rem;" alt="logo" class="img-fluid"></span>
       </button>
+      </div>
+      
+      
+      <div class="col-6">
+        <a class="navbar-brand text-light">{{page}}</a>
 
+      </div>
 
-      <a class="navbar-brand">{{page}}</a>
-
-
+      
+    </div>
       <!-- <div class="offcanvas offcanvas-start bg-primario" tabindex="-1" id="offcanvasDarkNavbar"
         aria-labelledby="offcanvasDarkNavbarLabel">
         <div class="offcanvas-header p-1">
@@ -58,7 +66,7 @@
 
       <ng-template #content let-offcanvas >
         <div class="offcanvas-header  bg-primario">
-          <h4 class="offcanvas-title" id="offcanvas-basic-title">Menú</h4>
+          <p class="offcanvas-title h1 text-light" id="offcanvas-basic-title">Menú</p>
           <button type="button" class="btn-close" aria-label="Close" (click)="offcanvas.dismiss('Cross click')"></button>
         </div>
         <div class="offcanvas-body bg-primario">
@@ -72,7 +80,7 @@
               <button class="btn btn-lg text-light text-poppins-regular  " style="font-size: x-large;" data-bs-dismiss="offcanvas" routerLink="clientes" (click)="offcanvas.dismiss('Cross click')"><i class="bi bi-person-check-fill"></i> Clientes</button>
             </li>
             <li class="nav-item">
-              <button class="btn btn-lg text-light text-poppins-regular  " style="font-size: x-large;" data-bs-dismiss="offcanvas" routerLink="pedidos" (click)="offcanvas.dismiss('Cross click')"><mat-icon>medical_information</mat-icon> Médicos</button>
+              <button class="btn btn-lg text-light text-poppins-regular  " style="font-size: x-large;" data-bs-dismiss="offcanvas" routerLink="medicos" (click)="offcanvas.dismiss('Cross click')"><mat-icon>medical_information</mat-icon> Médicos</button>
             </li>
             <li class="nav-item">
               <button class="btn btn-lg text-light text-poppins-regular  " style="font-size: x-large;" data-bs-dismiss="offcanvas" routerLink="pedidos" (click)="offcanvas.dismiss('Cross click')"><i class="bi bi-calendar-date-fill"></i> Visitas</button>

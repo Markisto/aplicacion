@@ -46,6 +46,7 @@ export class ClientesComponent implements OnInit {
   mcliente = new C_Responsable();
   modificar = false;
   muestra_btn_modificar = false;
+  buscando_lista = false;
 
   constructor(private service : ClientesService) {
     
@@ -55,6 +56,10 @@ export class ClientesComponent implements OnInit {
     this.user = JSON.parse(sessionStorage.getItem("user") || "{}");
     console.log("user");
     console.log(this.user);
+    this.Cargar_Parametros();
+  }
+
+  Cargar_Parametros(){
     this.Cargar_Usos_CFDI();
     this.Cargar_Regimenes_Fiscales();
     this.Cargar_Formas_Pago();
@@ -456,6 +461,7 @@ export class ClientesComponent implements OnInit {
     let valor = $event.target.value;
     let respons: C_Responsable[] = [];
     if (valor.length > 3) {
+      this.buscando_lista = true;  
       this.service.Buscar_Clientes(valor, this.user.cve_usuario).subscribe({
         next: (res: any) => {
           this.list_clientes = [];
@@ -464,7 +470,7 @@ export class ClientesComponent implements OnInit {
             let data = res.data;          
             for (let i = 0; i < data.length; i++) {
               let r = new C_Responsable();
-              r.cve_cliente = data[i].cve_cliente;
+              r.cve_responsable = data[i].Cve_Cliente;
               r.nombre = data[i].Nombre_Cte;
               r.telefono = data[i].Telefono;
               r.telefono_2 = data[i].Telefono_2;
@@ -539,12 +545,22 @@ export class ClientesComponent implements OnInit {
             icon: 'error',
             confirmButtonText: 'Aceptar'
           });
+          this.buscando_lista = false;  
+        },complete: () => {
+          this.buscando_lista = false;  
         }
       });
     }
   }
 
+  view_id(responsable: C_Responsable) {
+    return responsable.nombre;
+  }
+
+
   Ver_Cliente($event : any){
+    console.log($event.option.value);
+    this.mcliente = new C_Responsable();
     let cliente = $event.option.value;
     this.mcliente = cliente;
     this.muestra_btn_modificar = true;
@@ -629,7 +645,9 @@ export class ClientesComponent implements OnInit {
               this.tipos_pago = [];
               this.clases_cliente  = [];
               this.lista_medicos = [];
-              this.vista = "nuevo";   
+              this.vista = "consulta";   
+              this.modificar = false;
+              this.Cargar_Parametros();
             });
             this.Cancelar_Modificacion();
           }else{

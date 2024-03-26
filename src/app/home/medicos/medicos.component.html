@@ -1,1 +1,439 @@
-<p>medicos works!</p>
+<div class="container-fluid">
+    <div class="row py-4">
+        <div class="col-6">
+            <button class=" btn-primario text-light w-100" (click)="Nuevo_Medico()">Nuevo</button>
+        </div>
+        <div class="col-6">
+            <button class="btn-secundario text-light w-100" (click)="vista = 'consulta'"
+                [ngClass]="{'d-none': muestra_btn_modificar == true}">Ver</button>
+            <button class="btn-secundario text-light w-100" (click)="modificar = true"
+                [ngClass]="{'d-none': muestra_btn_modificar == false}">Modificar</button>
+        </div>
+    </div>
+
+    <div [ngClass]="{'d-none': vista != 'nuevo'}">
+
+        <div class="row">
+            <p class="text-terciario text-center" style="font-size: medium;">Nuevo Medico:</p>
+            <div class="col-12 mb-2">
+                <div class="form-group">
+                    <label class="text-terciario">Nombre Completo</label><br>
+                    <input type="text" class="form-control border-secundario border-2" [(ngModel)]="nmedico.Nombre"
+                        placeholder="Nombre..." style="text-transform:uppercase">
+                </div>
+            </div>
+            <div class="col-12 mb-2">
+                <div class="form-group">
+                    <label class="text-terciario">Teléfono</label><br>
+                    <input type="number" class="form-control border-secundario border-2" [(ngModel)]="nmedico.Telefono1"
+                        Max="10" placeholder="Teléfono Principal...">
+                </div>
+            </div>
+            <div class="col-12 mb-2">
+                <div class="form-group">
+                    <label class="text-terciario">Celular</label><br>
+                    <input type="number" class="form-control border-secundario border-2" [(ngModel)]="nmedico.Telefono2"
+                        Max="10" placeholder="Teléfono Celular...">
+                </div>
+            </div>
+            <div class="col-12 mb-2">
+                <div class="form-group">
+                    <label class="text-terciario">Email</label><br>
+                    <input type="text" class="form-control border-secundario border-2" [(ngModel)]="nmedico.email"
+                        placeholder="Correo Electrónico...">
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-body">
+                <div class="row">
+                    <p class="text-terciario text-center" style="font-size: medium;">Domicilio</p>
+
+                    <div class="col-12 mb-2">
+                        <div class="form-group">
+                            <label class="text-terciario">Calle y Número</label><br>
+                            <input type="text" class="form-control border-secundario border-2"
+                                style="text-transform:uppercase" placeholder="Calle" [(ngModel)]="nmedico.CalleNumero">
+                        </div>
+                    </div>
+
+                    <div class="col-6 mb-2">
+                        <div class="form-group">
+                            <label class="text-terciario">Código Postal</label><br>
+                            <input type="number" class="form-control border-secundario border-2"
+                                placeholder="Codigo postal..." [(ngModel)]="nmedico.CP" (change)="Buscar_Direccion1()">
+                        </div>
+                    </div>
+
+                    <div class="col-12 mb-2">
+                        <div class="form-group">
+                            <label class="text-terciario">Seleccione Una Dirección</label><br>
+                            <select class="form-select border-secundario border-2" aria-placeholder="select "
+                                (change)="Establecer_Dir_1($event)">
+                                <option value="0">Seleccionar Dirección..</option>
+                                <option value="{{item.index}}" *ngFor="let item of direcciones_1">
+                                    {{item.get_pantalla()}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mb-2">
+                        <div class="form-group">
+                            <label class="text-terciario">Población</label><br>
+                            <p class="form-control border-secundario border-2">{{nmedico.Poblacion}} </p>
+                        </div>
+                    </div>
+                    <div class="col-12 mb-2">
+                        <div class="form-group">
+                            <label class="text-terciario">Delegación/Municipio</label><br>
+                            <p class="form-control border-secundario border-2">{{nmedico.Estado}} </p>
+                        </div>
+                    </div>
+                    <div class="col-12 mb-2">
+                        <div class="form-group">
+                            <label class="text-terciario">Colonia</label><br>
+                            <p class="form-control border-secundario border-2">{{nmedico.Colonia}} </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 mb-2">
+                        <p class="text-terciario text-center" style="font-size: medium;">Domicilio 2</p>
+                    </div>
+
+                    <div class="col-12 mb-2">
+                        <div class="form-group">
+                            <label class="text-terciario">Calle y Número</label><br>
+                            <input type="text" class="form-control border-secundario border-2"
+                                [(ngModel)]="nmedico.CalleNumero2" placeholder="Calle y Número..."
+                                style="text-transform:uppercase">
+                        </div>
+                    </div>
+
+                    <div class="col-12 mb-2">
+                        <div class="form-group">
+                            <label class="text-terciario">Codigo Postal</label><br>
+                            <input type="number" class="form-control border-secundario border-2"
+                                [(ngModel)]="nmedico.CP2" (change)="Buscar_Direccion2()" placeholder="Código Postal...">
+                        </div>
+                    </div>
+
+                    <div class="col-12 mb-2">
+                        <div class="form-group">
+                            <label class="text-terciario">Seleccione Una Dirección</label><br>
+                            <select class="form-select border-secundario border-2" (change)="Establecer_Dir_2($event)">
+                                <option value="0">Seleccionar Dirección..</option>
+                                <option value="{{item.index}}" *ngFor="let item of direcciones_2">
+                                    {{item.get_pantalla()}}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mb-2">
+                        <div class="form-group">
+                            <label class="text-terciario">Población</label><br>
+                            <p class="form-control border-secundario border-2" >{{nmedico.Poblacion2}}</p>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mb-2">
+                        <div class="form-group">
+                            <label class="text-terciario">Delegación/Municipio</label><br>
+                            <p class="form-control border-secundario border-2">{{nmedico.Estado2}}</p>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mb-2">
+                        <div class="form-group">
+                            <label class="text-terciario">Colonia</label><br>
+                            <p class="form-control border-secundario border-2">{{nmedico.Colonia2}} </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 mb-2">
+                        <div class="form-group">
+                            <label class="text-terciario">Consultorio</label><br>
+                            <input type="text" class="form-control border-secundario border-2"
+                                [(ngModel)]="nmedico.consultorio" placeholder="Consultorio..."
+                                style="text-transform:uppercase">
+                        </div>
+                    </div>
+
+                    <div class="col-12 mb-2">
+                        <div class="form-group">
+                            <label class="text-terciario">Cédula</label><br>
+                            <input type="text" class="form-control border-secundario border-2"
+                                [(ngModel)]="nmedico.cedula" placeholder="Cédula..." style="text-transform:uppercase">
+                        </div>
+                    </div>
+
+                    <div class="col-12 mb-2">
+                        <div class="form-group">
+                            <label class="text-terciario">Horrio</label><br>
+                            <textarea class="form-control border-secundario border-2" rows="5"
+                                [(ngModel)]="nmedico.horario" placeholder="Horario..."
+                                style="text-transform:uppercase"></textarea>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12 mb-2">
+                <button class="btn bg-primario text-light w-100" [ngClass]="{'d-none': btn_guardando == true}"
+                    (click)="Guardar_Nuevo_Medico()">Guardar</button>
+                <button class="btn bg-primario text-light w-100" type="button"
+                    [ngClass]="{'d-none': btn_guardando == false}">
+                    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                    Guardando...
+                </button>
+
+            </div>
+        </div>
+    </div>
+
+    
+    <div [ngClass]="{'d-none': vista != 'consulta'}">
+
+        <div class="row" [ngClass]="{'d-none': modificar == true}">
+            <div class="col-12 mb-2">
+                <label class="text-terciario">Buscar Medico</label> <span class="text-danger text-poppins-black ms-5"
+                    [ngClass]="{'d-none': buscando_lista != true}">Buscando..</span>
+                <div class="form-group">
+                    <input #buscar_medico_in class="form-select border-secundario border-2" type="text" matInput [matAutocomplete]="auto"
+                        (keyup)="Buscar_Medico($event)">
+                    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="Ver_Medico($event)" 
+                        [displayWith]="view_id">
+                        @for(option of lista_medicos ; track option.Nombre){
+                        <mat-option [value]="option">{{option.Nombre}}</mat-option>
+                        }
+                    </mat-autocomplete>
+                </div>
+            </div>
+        </div>    
+
+        <div class="row">
+            <div class="row">
+                <p class="text-terciario text-center" style="font-size: medium;">Médico:</p>
+                <div class="col-12 mb-2">
+                    <div class="form-group">
+                        <label class="text-terciario">Nombre Completo</label><br>
+                        <input type="text" class="form-control border-secundario border-2" [(ngModel)]="mmedico.Nombre"
+                            placeholder="Nombre..." style="text-transform:uppercase" [disabled]="modificar == false" >
+                    </div>
+                </div>
+                <div class="col-12 mb-2">
+                    <div class="form-group">
+                        <label class="text-terciario">Teléfono</label><br>
+                        <input type="number" class="form-control border-secundario border-2" [(ngModel)]="mmedico.Telefono1"
+                            Max="10" placeholder="Teléfono Principal..." [disabled]="modificar == false" >
+                    </div>
+                </div>
+                <div class="col-12 mb-2">
+                    <div class="form-group">
+                        <label class="text-terciario">Celular</label><br>
+                        <input type="number" class="form-control border-secundario border-2" [(ngModel)]="mmedico.Telefono2"
+                            Max="10" placeholder="Teléfono Celular..." [disabled]="modificar == false" >
+                    </div>
+                </div>
+                <div class="col-12 mb-2">
+                    <div class="form-group">
+                        <label class="text-terciario">Email</label><br>
+                        <input type="text" class="form-control border-secundario border-2" [(ngModel)]="mmedico.email"
+                            placeholder="Correo Electrónico..." [disabled]="modificar == false" >
+                    </div>
+                </div>
+            </div>
+    
+            <div class="card mt-4">
+                <div class="card-body">
+                    <div class="row">
+                        <p class="text-terciario text-center" style="font-size: medium;">Domicilio</p>
+    
+                        <div class="col-12 mb-2">
+                            <div class="form-group">
+                                <label class="text-terciario">Calle y Número</label><br>
+                                <input type="text" class="form-control border-secundario border-2"
+                                    style="text-transform:uppercase" placeholder="Calle" [(ngModel)]="mmedico.CalleNumero" [disabled]="modificar == false" >
+                            </div>
+                        </div>
+    
+                        <div class="col-6 mb-2">
+                            <div class="form-group">
+                                <label class="text-terciario">Código Postal</label><br>
+                                <input type="number" class="form-control border-secundario border-2"
+                                    placeholder="Codigo postal..." [(ngModel)]="mmedico.CP" (change)="Buscar_Direccion1()" [disabled]="modificar == false" >
+                            </div>
+                        </div>
+    
+                        <div class="col-12 mb-2" [ngClass]="{'d-none':  modificar == false}">
+                            <div class="form-group">
+                                <label class="text-terciario">Seleccione Una Dirección</label><br>
+                                <select class="form-select border-secundario border-2" aria-placeholder="select "
+                                    (change)="Establecer_Dir_1($event)">
+                                    <option value="0">Seleccionar Dirección..</option>
+                                    <option value="{{item.index}}" *ngFor="let item of direcciones_1">
+                                        {{item.get_pantalla()}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+    
+                        <div class="col-12 mb-2">
+                            <div class="form-group">
+                                <label class="text-terciario">Población</label><br>
+                                <p class="form-control border-secundario border-2" [ngClass]="{'bg-secondary-subtle': modificar == false}">{{mmedico.Poblacion}} </p>
+                            </div>
+                        </div>
+                        <div class="col-12 mb-2">
+                            <div class="form-group">
+                                <label class="text-terciario">Delegación/Municipio</label><br>
+                                <p class="form-control border-secundario border-2" [ngClass]="{'bg-secondary-subtle': modificar == false}">{{mmedico.Estado}} </p>
+                            </div>
+                        </div>
+                        <div class="col-12 mb-2">
+                            <div class="form-group">
+                                <label class="text-terciario">Colonia</label><br>
+                                <p class="form-control border-secundario border-2" [ngClass]="{'bg-secondary-subtle': modificar == false}">{{mmedico.Colonia}} </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="card mt-4">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 mb-2">
+                            <p class="text-terciario text-center" style="font-size: medium;">Domicilio 2</p>
+                        </div>
+    
+                        <div class="col-12 mb-2">
+                            <div class="form-group">
+                                <label class="text-terciario">Calle y Número</label><br>
+                                <input type="text" class="form-control border-secundario border-2"
+                                    [(ngModel)]="mmedico.CalleNumero2" placeholder="Calle y Número..."
+                                    style="text-transform:uppercase" [disabled]="modificar == false" >
+                            </div>
+                        </div>
+    
+                        <div class="col-12 mb-2">
+                            <div class="form-group">
+                                <label class="text-terciario">Codigo Postal</label><br>
+                                <input type="number" class="form-control border-secundario border-2"
+                                    [(ngModel)]="mmedico.CP2" (change)="Buscar_Direccion2()" placeholder="Código Postal..." [disabled]="modificar == false" >
+                            </div>
+                        </div>
+    
+                        <div class="col-12 mb-2" [ngClass]="{'d-none': modificar == false}">
+                            <div class="form-group">
+                                <label class="text-terciario">Seleccione Una Dirección</label><br>
+                                <select class="form-select border-secundario border-2" (change)="Establecer_Dir_2($event)">
+                                    <option value="0">Seleccionar Dirección..</option>
+                                    <option value="{{item.index}}" *ngFor="let item of direcciones_2">
+                                        {{item.get_pantalla()}}</option>
+                                </select>
+                            </div>
+                        </div>
+    
+                        <div class="col-12 mb-2">
+                            <div class="form-group">
+                                <label class="text-terciario">Población</label><br>
+                                <p class="form-control border-secundario border-2" [ngClass]="{'bg-secondary-subtle': modificar == false}">{{mmedico.Poblacion2}}</p>
+                            </div>
+                        </div>
+    
+                        <div class="col-12 mb-2">
+                            <div class="form-group">
+                                <label class="text-terciario">Delegación/Municipio</label><br>
+                                <p class="form-control border-secundario border-2" [ngClass]="{'bg-secondary-subtle': modificar == false}">{{mmedico.Estado2}}</p>
+                            </div>
+                        </div>
+    
+                        <div class="col-12 mb-2">
+                            <div class="form-group">
+                                <label class="text-terciario">Colonia</label><br>
+                                <p class="form-control border-secundario border-2" [ngClass]="{'bg-secondary-subtle': modificar == false}">{{mmedico.Colonia2}} </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="card mt-4">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 mb-2">
+                            <div class="form-group">
+                                <label class="text-terciario">Consultorio</label><br>
+                                <input type="text" class="form-control border-secundario border-2"
+                                    [(ngModel)]="mmedico.consultorio" placeholder="Consultorio..."
+                                    style="text-transform:uppercase" [disabled]="modificar == false" >
+                            </div>
+                        </div>
+    
+                        <div class="col-12 mb-2">
+                            <div class="form-group">
+                                <label class="text-terciario">Cédula</label><br>
+                                <input type="text" class="form-control border-secundario border-2"
+                                    [(ngModel)]="mmedico.cedula" placeholder="Cédula..." style="text-transform:uppercase" [disabled]="modificar == false" >
+                            </div>
+                        </div>
+    
+                        <div class="col-12 mb-2">
+                            <div class="form-group">
+                                <label class="text-terciario">Horrio</label><br>
+                                <textarea class="form-control border-secundario border-2" rows="5"
+                                    [(ngModel)]="mmedico.horario" placeholder="Horario..."
+                                    style="text-transform:uppercase" [disabled]="modificar == false" ></textarea>
+    
+                            </div>
+                        </div>
+    
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        
+
+
+        <div class="row">
+            <div class="col-6 mb-2">
+                <button class="btn bg-primario text-light w-100"
+                    [ngClass]="{'d-none': (btn_guardando == true || modificar == false)}"
+                    (click)="Guardar_Modificacion()">Guardar</button>
+                <button class="btn bg-primario text-light w-100" type="button"
+                    [ngClass]="{'d-none': btn_guardando == false}">
+                    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                    Guardando...
+                </button>
+
+            </div>
+            <div class="col-6 mb-2">
+                <button class="btn btn-danger text-light w-100" [ngClass]="{'d-none': modificar == false}"
+                    (click)="Cancelar_Modificacion()">Cancelar</button>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>

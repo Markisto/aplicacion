@@ -115,6 +115,9 @@ export class C_Responsable{
         
         let dosis = Number(this.docis_paciente_1);
         let cubre = carturho / dosis;
+        if(isNaN(cubre) || cubre == undefined || cubre == null){
+            cubre = 0;
+        }
         this.cubre_1 = cubre.toString();
         this.pantalla_cubre_1 = Number(this.cubre_1).toFixed(2) + " Días";
     }
@@ -127,12 +130,13 @@ export class C_Responsable{
         this.pantalla_cubre_total_1 = Number(this.cubre_total_paciente_1).toFixed(2) + " Días"; 
     }
 
-    set_cubre_2(){
-        console.log("set_cubre_2"); 
-        let carturho = Number(this.cartucho_paciente_2);
-        
+    set_cubre_2(){      
+        let carturho = Number(this.cartucho_paciente_2);        
         let dosis = Number(this.docis_paciente_2);
         let cubre = carturho / dosis;
+        if(isNaN(cubre) || cubre == undefined || cubre == null){
+            cubre = 0;
+        }
         this.cubre_2 = cubre.toString();
         this.pantalla_cubre_2 = Number(this.cubre_2).toFixed(2) + " Días";
 
