@@ -214,8 +214,9 @@
 
 
       <div class="col-12 mb-2 text-center">
-        <button class="btn bg-secundario text-light w-75" [ngClass]="{'d-none': boton_buscar == true}" (click)="Buscar_Pedido()">Buscar</button>
-        <button class="btn bg-secundario text-light w-75" type="button" [ngClass]="{'d-none': boton_buscar == false}" >
+        <button class="btn bg-secundario text-light w-75" [ngClass]="{'d-none': boton_buscar == true}"
+          (click)="Buscar_Pedido()">Buscar</button>
+        <button class="btn bg-secundario text-light w-75" type="button" [ngClass]="{'d-none': boton_buscar == false}">
           <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
           Buscando...
         </button>
@@ -362,3 +363,23 @@
       [disabled]="producto_select.existencia <= 0">Agregar</button>
   </div>
 </ng-template>
+
+
+<!--modal de cargando-->
+
+<div class="modal" tabindex="-1" [ngClass]="{'d-block': loading}">
+  
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content bg-black bg-opacity-50" >
+     
+      <div class="modal-body d-flex" >
+        <div class="spinner-border text-light m-auto h1" role="status">
+          <span class="visually-hidden">Loading...</span>
+          
+        </div>
+       
+      </div>
+     
+    </div>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+
+#modal_cargando .modal-conten{
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+.modal-backdrop{
+    background-color: rgba(0, 0, 0, 0.5);
+    
+}

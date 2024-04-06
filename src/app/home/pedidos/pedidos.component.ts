@@ -34,6 +34,7 @@ export class PedidosComponent implements OnInit {
   closeResult = '';
 
   @ViewChild('modal') modal!: ElementRef;
+  @ViewChild('modal_cargando') modal_cargando!: ElementRef;
   @ViewChild('checkfactura') checkfactura!: ElementRef;
   @ViewChild('p1') p1!: ElementRef;
   @ViewChild('p2') p2!: ElementRef;
@@ -45,6 +46,8 @@ export class PedidosComponent implements OnInit {
     if (this.user.cve_usuario == "") {
       //this.router.navigate(['/login']);
     }
+
+    console.log(this.date_ac.toLocaleDateString().replace(/\//g, "-").split("-").reverse().join("-"));
     this.obtener_sucursales();
     this.obtener_tipo_pago();
     //this.obtener_tipo_cliente();
@@ -69,15 +72,33 @@ export class PedidosComponent implements OnInit {
   //--------------------------------- PANEL DE BUSQUEDA DE PEDIDOS --------------------------------
   pedidos_consulta: C_Pedido[] = [];
   pedido_consulta_select: C_Pedido = new C_Pedido(0);
-  buscar_desde = "";
-  buscar_hasta = "";
+  date_ac = new Date();
+  buscar_desde = this.formatDate(this.date_ac);
+  buscar_hasta = this.formatDate(this.date_ac);;
   buscar_status = "0";
   selected_id = "";
   archivo: File | any;
   con = new Conexion();
   boton_buscar = false;
+  loading = false;
 
+  formatDate(date: Date) {
+    let d = new Date(date),
+      month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = d.getFullYear();
 
+    if (month.length < 2) {
+      month = '0' + month;
+    }
+
+    if (day.length < 2) {
+      day = '0' + day;
+    }
+
+    return [year, month, day].join('-');
+
+  }
 
   Nuevo_Pedido() {
     this.nuevo_pedido.cve_folio = 1;
@@ -449,6 +470,8 @@ export class PedidosComponent implements OnInit {
   }
 
   Guardar_Pedido() {
+
+    
     if (this.productos_pedir.length == 0) {
       Swal.fire({
         title: 'Error!',
@@ -469,15 +492,7 @@ export class PedidosComponent implements OnInit {
       return;
     }
 
-    // if (this.nuevo_pedido.tipo_cliente == "") {
-    //   Swal.fire({
-    //     title: 'Error!',
-    //     text: "Debes seleccionar un tipo de cliente",
-    //     icon: 'error',
-    //     confirmButtonText: 'Aceptar'
-    //   });
-    //   return;
-    // }
+
 
     if (this.nuevo_pedido.cve_sucursal == "") {
       Swal.fire({
@@ -540,9 +555,9 @@ export class PedidosComponent implements OnInit {
     }
 
     this.nuevo_pedido.productos_pedir = this.productos_pedir;
-
-    console.log("Esto es lo que se envia ");
-    console.log(this.nuevo_pedido);
+    this.nuevo_pedido.status = "CT";
+   
+    this.loading = true;
     this.service.Guardar_Pedido(this.nuevo_pedido).subscribe({
       next: (res: any) => {
         if (res.code == 0) {
@@ -551,19 +566,39 @@ export class PedidosComponent implements OnInit {
             text: res.message,
             icon: 'success',
             confirmButtonText: 'Aceptar'
+          }).then((result) => {
+
+            let data = res.data[0];
+          
+            let pedido = new C_Pedido(data.Cve_Folio);
+            pedido.fecha_documento = data.Capturado;
+            pedido.rfc = data.RFC;
+            pedido.cve_sucursal = data.Cve_Sucursal;
+            pedido.nombre_sucursal = data.Nombre_Sucursal;
+            pedido.razon_social = data.Razon_Social;
+            pedido.status = data.Estatus;
+            pedido.fecha_envio = data.Fecha_Envio;
+            pedido.tipo_envio = data.Cve_Tipo_Envio;
+            pedido.nombre_tipo_envio = data.Nombre_Tipo_Envio;
+            
+          
+
+            this.Ver_Selected(pedido.cve_folio, Number(pedido.cve_sucursal), pedido);
+            this.responsable_select = new C_Responsable();
+            this.producto_select = new C_Productos();
+            this.responsables = [];
+            this.productos = [];
+            this.nuevo_pedido = new C_Pedido(0);
+            this.productos_pedir = [];
+            this.num_productos = 0;
+            this.costo_total = 0;
+            this.mostrar_envio = false;
+            this.vista = 'consulta';
           });
-          this.responsable_select = new C_Responsable();
-          this.producto_select = new C_Productos();
-          this.responsables = [];
-          this.productos = [];
-          this.nuevo_pedido = new C_Pedido(0);
-          this.productos_pedir = [];
-          this.num_productos = 0;
-          this.costo_total = 0;
-          this.mostrar_envio = false;
-          this.vista = 'consulta';
+         
 
         } else {
+
           Swal.fire({
             title: 'Error!',
             text: res.message,
@@ -579,14 +614,11 @@ export class PedidosComponent implements OnInit {
           icon: 'error',
           confirmButtonText: 'Aceptar'
         });
+        this.loading = false;
+      }, complete: () => {
+        this.loading = false;
       }
     });
-
-
-
-
-
-
   }
 
 
@@ -687,14 +719,18 @@ export class PedidosComponent implements OnInit {
 
   }
 
+  
 
-  Ver_Selected() {
+  Ver_Selected(folio = 0, sucursal = 0, pedido : any = null) {
     console.log("ver selected");
     console.log(this.selected_id);
-    if (this.selected_id != "") {
+
+
+    if ((folio == 0 && sucursal == 0) && this.selected_id != "" ) {
       let pedido = this.pedidos_consulta.filter((pedido) => pedido.cve_folio == Number(this.selected_id));
       this.pedido_consulta_select = pedido[0];
       this.pedido_consulta_select.productos_pedir = [];
+      this.loading = true;
       this.service.Buscar_Pedido_Detalle(this.pedido_consulta_select.cve_folio, this.pedido_consulta_select.cve_sucursal).subscribe({
         next: (res: any) => {
           if (res.code == 0) {
@@ -738,6 +774,67 @@ export class PedidosComponent implements OnInit {
             icon: 'error',
             confirmButtonText: 'Aceptar'
           });
+          this.loading = false;
+        },
+        complete: () => {
+          this.loading = false;
+        }
+      });
+    }else if(folio != 0 && sucursal != 0){
+      this.pedidos_consulta=[];
+      this.pedidos_consulta.push(pedido);      
+      this.pedido_consulta_select = pedido;
+      this.pedido_consulta_select.productos_pedir = [];
+      this.selected_id = pedido.cve_folio.toString();
+      this.loading = true;
+      this.service.Buscar_Pedido_Detalle(folio, sucursal.toString()).subscribe({
+        next: (res: any) => {
+          if (res.code == 0) {
+            let data = res.data[0];
+            let images = res.data[1];
+            console.log("data");
+            console.log(res)
+
+            if (data != undefined) {
+              for (let i = 0; i < data.length; i++) {
+                let p = new C_Productos();
+                p.cve_producto = data[i].Cve_Producto;
+                p.descripcion = data[i].Descripcion;
+                p.cantidad = data[i].Cantidad_Ordenada;
+                p.precio = data[i].Precio_Publico;
+                p.envio = data[i].Envio;
+                p.sub_total = Number(data[i].Cantidad_Ordenada) * Number(data[i].Precio_Publico);
+                this.pedido_consulta_select.productos_pedir.push(p);
+              }
+            }
+
+            if (images != undefined) {
+              for (let i = 0; i < images.length; i++) {
+                if (i == 0) {
+                  this.pedido_consulta_select.nombre_pago_1 = images[i].Nombre;
+                  this.pedido_consulta_select.fecha_pago_1 = images[i].Fecha;
+                  this.pedido_consulta_select.id_pago_1 = images[i].id;
+                }
+
+                if (i == 1) {
+                  this.pedido_consulta_select.nombre_pago_2 = images[i].Nombre;
+                  this.pedido_consulta_select.fecha_pago_2 = images[i].Fecha;
+                  this.pedido_consulta_select.id_pago_2 = images[i].id;
+                }
+              }
+            }
+          }
+        },
+        error: (err) => {
+          Swal.fire({
+            title: 'Error!',
+            text: err.message,
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+          });
+          this.loading = false;
+        }, complete: () => {
+          this.loading = false;
         }
       });
     }
@@ -747,6 +844,7 @@ export class PedidosComponent implements OnInit {
     console.log("cargar imagen");
     console.log(id);
     if (id != "") {
+      this.loading = true;
       this.service.Cargar_Imagen(id, this.pedido_consulta_select.cve_folio.toString(), this.pedido_consulta_select.cve_sucursal).subscribe({
         next: (res: any) => {
           Swal.fire({
@@ -768,6 +866,10 @@ export class PedidosComponent implements OnInit {
             icon: 'error',
             confirmButtonText: 'Aceptar'
           });
+          this.loading = false;
+        },
+        complete: () => {
+          this.loading = false;
         }
       });
     }
@@ -814,6 +916,7 @@ export class PedidosComponent implements OnInit {
     console.log("entro a enviar_pedido");
 
     if (this.pedido_consulta_select.cve_folio != 0) {
+      this.loading = true;
       this.service.Subir_Pago(this.pedido_consulta_select.cve_folio.toString(), this.pedido_consulta_select.cve_sucursal, nombre_archivo, this.archivo).subscribe({
         next: (res: any) => {
           if (res.code == 0) {
@@ -842,6 +945,10 @@ export class PedidosComponent implements OnInit {
             icon: 'error',
             confirmButtonText: 'Aceptar'
           });
+          this.loading = false;
+        },
+        complete: () => {
+          this.loading = false;
         }
       });
 
@@ -881,6 +988,7 @@ export class PedidosComponent implements OnInit {
 
   Actualizar_Pago_Envio(id: string, nombre_archivo: string) {
     if (this.pedido_consulta_select.cve_folio != 0) {
+      this.loading = true;
       this.service.Actualizar_Pago(id, this.pedido_consulta_select.cve_folio.toString(), this.pedido_consulta_select.cve_sucursal, nombre_archivo, this.archivo).subscribe({
         next: (res: any) => {
           if (res.code == 0) {
@@ -909,6 +1017,10 @@ export class PedidosComponent implements OnInit {
             icon: 'error',
             confirmButtonText: 'Aceptar'
           });
+          this.loading = false;
+        },
+        complete: () => {
+          this.loading = false;
         }
       });
 
@@ -916,4 +1028,5 @@ export class PedidosComponent implements OnInit {
   }
 
 
+ 
 }
