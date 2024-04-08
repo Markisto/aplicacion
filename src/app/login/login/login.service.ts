@@ -35,4 +35,19 @@ export class LoginService {
       )
   }
 
+  CerrarSesion(){
+    this.islogin.next(false);
+    let res =  this.http.post(`${this.url}logout.php`, { });
+    return res
+      .pipe(
+        tap((res:any) => {          
+          return res;
+        }),
+        catchError((err) => {         
+          return throwError(()=> err);
+        })
+
+      )
+  }
+
 }

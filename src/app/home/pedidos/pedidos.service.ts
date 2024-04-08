@@ -173,5 +173,33 @@ export class PedidosService {
   }
 
 
+  //--------------------- consutlas de iicio --------------------------
+
+  Pedidos_Mes(cve_usuario : string){
+    let res =  this.http.post(`${this.url}pedidos.php`, {"evento":"pedidos_mes", "cve_usuario": cve_usuario});
+    return res
+    .pipe(
+      tap((res: any) => {
+        return res;
+      }),
+      catchError((err) => {
+        return throwError(() => err);
+      })
+    )
+  }
+
+  Pedidos_Dia(cve_usuario : string){
+    let res =  this.http.post(`${this.url}pedidos.php`, {"evento":"pedidos_dia", "cve_usuario": cve_usuario});
+    return res
+    .pipe(
+      tap((res: any) => {
+        return res;
+      }),
+      catchError((err) => {
+        return throwError(() => err);
+      })
+    )
+  }
+
 
 }

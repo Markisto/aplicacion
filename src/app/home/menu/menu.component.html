@@ -1,12 +1,11 @@
 <div class="row">
   <div class="col-12">
-    <p>Hola, <span>{{user.nombre}}!!</span></p>
+    <p class="text-poppins-regular text-terciario h4 mt-3">Hola, <span class="text-poppins-medium">{{user.nombre}}!!</span></p>
 
   </div>
 </div>
 
-<div class="row bg-light pb-4 shadow-sm p-3  bg-body-tertiary rounded " style="    border-bottom: 2px solid;
-border-color: lightgrey; ">
+<div class="row bg-light pb-4 shadow-sm p-3  bg-body-tertiary rounded" style="    border-bottom: 2px solid; border-color: lightgrey; ">
   <div class="col-12">
     <p class="text-terciario h6 text-poppins-medium">Selecciona una opción:</p>
   </div>
@@ -64,6 +63,17 @@ border-color: lightgrey; ">
     </div>
   </div>
 
+  <div class="col-4">
+    <div class="card bg-secundario">
+      <div class="card-body text-center p-1">
+        <img src="assets/img/cerrar-sesion-b.png" (click)="Salir()" style="height:10vh;" alt="pedidos" class="img-fluid ">
+        <p class="text-poppins-medium text-light">Salir</p>
+
+      </div>
+
+    </div>
+  </div>
+
 </div>
 
 
@@ -71,18 +81,50 @@ border-color: lightgrey; ">
   <div class="col-12 mt-4">
     <div class="card bg-primario">
       <div class="card-body">
-        <p></p>
-        <p>Pedidos</p>
-
+        <div class="row">
+          <div class="col-6">
+            <p class="text-light  text-poppins-medium">Venta del Día </p>
+          </div>
+          <div class="col-6">
+            <p class="text-light text-poppins-normal">pedidos: <span class="float-end">{{p_dia.pedidos}}</span></p>
+            
+            
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-4">
+            <p class="text-light  text-poppins-medium">Importe: </p>
+           
+          </div>
+          <div class="col-8">
+            <p class="text-light text-poppins-bold h2 float-end">${{p_dia.total | number:'1.2-2'}}</p>
+          </div>
+        </div>        
       </div>
     </div>
   </div>
 
   <div class="col-12 mt-4">
-    <div class="card bg-primario">
+    <div class="card bg-secundario">
       <div class="card-body">
-        <p></p>
-        <p>Pedidos</p>
+        <div class="row">
+          <div class="col-6">
+            <p class="text-light  text-poppins-medium">Venta del Mes </p>
+          </div>
+          <div class="col-6">
+            <p class="text-light text-poppins-normal">pedidos: <span class="float-end">{{p_mes.pedidos}}</span></p>
+            
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-4">
+            <p class="text-light  text-poppins-medium">Importe: </p>
+            
+          </div>
+          <div class="col-8 float-end">
+            <p class="text-light text-poppins-bold h2 float-end"> ${{p_mes.total | number:'1.2-2'}}</p>
+          </div>
+        </div> 
 
       </div>
     </div>

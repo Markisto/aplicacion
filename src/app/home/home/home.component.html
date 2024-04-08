@@ -71,6 +71,10 @@
         </div>
         <div class="offcanvas-body bg-primario">
           <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+
+            <li class="nav-item " [ngClass]="{'d-none': ruta == '/home/inicio'}">
+             <button class="btn btn-lg text-light text-poppins-regular  " style="font-size: x-large;" data-bs-dismiss="offcanvas" routerLink="inicio" (click)="offcanvas.dismiss('Cross click')"><i class="bi bi-house-door"></i> Inicio</button>
+            </li>
             
             <li class="nav-item ">
              <button class="btn btn-lg text-light text-poppins-regular  " style="font-size: x-large;" data-bs-dismiss="offcanvas" routerLink="pedidos" (click)="offcanvas.dismiss('Cross click')"><i class="bi bi-list-check"></i> Pedidos</button>
@@ -88,6 +92,9 @@
             <li class="nav-item">
               <button class="btn btn-lg text-light text-poppins-regular  " style="font-size: x-large;" data-bs-dismiss="offcanvas" routerLink="pedidos" (click)="offcanvas.dismiss('Cross click')"><i class="bi bi-list-check"></i> Reportes</button>
             </li> 
+            <li class="nav-item">
+              <button class="btn btn-lg text-light text-poppins-regular  " style="font-size: x-large;" data-bs-dismiss="offcanvas" (click)="Salir('Cross click')"><i class="bi bi-box-arrow-right"></i> Salir</button>
+            </li>
 
           </ul>
 

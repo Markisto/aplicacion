@@ -12,6 +12,7 @@ import { C_Usuario } from '../../classes/clase_usuario';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
 import { C_Productos } from '../../classes/clase_productos';
+import validateRfc from 'validate-rfc';
 
 @Component({
   selector: 'app-clientes',
@@ -47,6 +48,8 @@ export class ClientesComponent implements OnInit {
   modificar = false;
   muestra_btn_modificar = false;
   buscando_lista = false;
+  Valida_rfc = validateRfc;
+  rfc_ok = true;
 
   constructor(private service : ClientesService) {
     
@@ -347,6 +350,20 @@ export class ClientesComponent implements OnInit {
     this.ncliente.producto_paciente_2 = producto.descripcion;
   }
 
+  Validar_RFC(){
+    let rfc = this.Valida_rfc(this.ncliente.rfc_facturacion);
+    if(rfc.isValid == false){
+      this.rfc_ok = false;
+      Swal.fire({
+        title: 'RFC no válido!',
+        text: "verifique el RFC ingresado",
+        icon: 'warning',
+        confirmButtonText: 'Ok'
+      });
+    }else{
+      this.rfc_ok = true;
+    }
+  }
 
   Guardar_Nuevo_Cliente(){
     console.log(this.ncliente);
@@ -453,6 +470,7 @@ export class ClientesComponent implements OnInit {
 
 
   }
+
 
 
   //=========================================  FUNCIONES MODIFICAR CLIENTE ==========================

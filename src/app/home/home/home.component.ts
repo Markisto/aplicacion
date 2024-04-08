@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component,OnInit, TemplateRef, inject  } from '@angular/core';
+import { Component,OnInit, TemplateRef, ViewChild, inject  } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import {RouterModule, Router, NavigationEnd} from '@angular/router';
 import { Subscription, filter } from 'rxjs';
 import {NgbOffcanvas, OffcanvasDismissReasons} from '@ng-bootstrap/ng-bootstrap';
+import Swal from 'sweetalert2';
+import { LoginService } from '../../login/login/login.service';
 
 @Component({
   selector: 'app-home',
@@ -18,10 +20,12 @@ export class HomeComponent  implements OnInit{
   init = 1;
   subscriber: Subscription | undefined;
 
+
+
   private offcanvasService = inject(NgbOffcanvas);
 	closeResult = '';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router,private sesionservice : LoginService) {}
   ngOnInit(): void {
     this.ruta = this.router.url;
     this.page = this.ruta.replace("/home/","").toUpperCase();
@@ -38,9 +42,34 @@ export class HomeComponent  implements OnInit{
     console.log("Cambio ruta ")
   }
 
-  logout() {
-    this.router.navigate(['login']);
+  Salir(reason: any){
+    this.offcanvasService.dismiss(reason);
+    
+    this.sesionservice.CerrarSesion().subscribe({
+      next: (res: any) => {
+        if(res.code==0){
+          sessionStorage.clear();
+          this.router.navigate(['login']);
+        }else{
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo cerrar la sesión'
+          });
+        }
+      },
+      error: (err) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudo cerrar la sesión'
+        });
+      }
+
+    });
+ 
   }
+
 
 
   open(content: TemplateRef<any>) {

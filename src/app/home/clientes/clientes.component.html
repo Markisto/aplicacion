@@ -188,9 +188,10 @@
 
             <div class="col-12 mb-2">
               <div class="form-group">
-                <label class="text-terciario">RFC</label><br>
+                <label class="text-terciario">RFC</label><span class="text-danger float-end" [ngClass]="{'d-none': rfc_ok == true}">El RFC no es válido</span><br>
                 <input type="text" class="form-control border-secundario border-2" aria-label="Default select example"
-                  placeholder="RFC..." [(ngModel)]="ncliente.rfc_facturacion" style="text-transform:uppercase">
+                [ngClass]="{'is-invalid': rfc_ok == false}"
+                  placeholder="RFC..." [(ngModel)]="ncliente.rfc_facturacion" style="text-transform:uppercase" (change)="Validar_RFC()">
               </div>
             </div>
 
