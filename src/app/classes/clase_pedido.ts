@@ -46,9 +46,10 @@ export class C_Pedido{
     imagen_pago_1 : File | any = null;
     imagen_pago_2 : File | any = null;
 
-
-
-
+    observaciones : string = "";
+    cve_consignatario : string = "";
+    nombre_consignatario : string = "";
+    guia : string = "";
 
     constructor(cve_folio : number ){
         this.cve_folio = cve_folio;

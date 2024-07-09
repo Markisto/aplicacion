@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 
 
 import { C_Pacientes } from '../../classes/clase_pacientes';
-import { C_Responsable } from '../../classes/clase_responsable';
+import { C_Responsable, Consignatarios } from '../../classes/clase_responsable';
 import { FormsModule } from '@angular/forms';
 import { C_Direccion } from '../../classes/clase_direccion';
 import { ClientesService } from './clientes.service';
@@ -22,16 +22,17 @@ import validateRfc from 'validate-rfc';
   styleUrl: './clientes.component.css'
 })
 export class ClientesComponent implements OnInit {
- 
+
 
   user : C_Usuario = new C_Usuario("","","","","");
   vista = "consulta";
+  //vista = "nuevo";
   pacientes : C_Pacientes[] = [];
   inittable = 1;
   ncliente = new C_Responsable();
- 
+
   direcciones_entrega : C_Direccion[]=[];
-  direcciones_facturacion : C_Direccion[]=[];  
+  direcciones_facturacion : C_Direccion[]=[];
   list_usos_cfdi : any[] = [];
   regimenes_fiscales : any[] = [];
   tipos_pago : any[] = [];
@@ -43,7 +44,7 @@ export class ClientesComponent implements OnInit {
   btn_guardando = false;
 
 
-  list_clientes : C_Responsable[] = []; 
+  list_clientes : C_Responsable[] = [];
   mcliente = new C_Responsable();
   modificar = false;
   muestra_btn_modificar = false;
@@ -52,7 +53,7 @@ export class ClientesComponent implements OnInit {
   rfc_ok = true;
 
   constructor(private service : ClientesService) {
-    
+
    }
 
   ngOnInit(): void {
@@ -73,9 +74,11 @@ export class ClientesComponent implements OnInit {
 
   // ==========================================   FUNCIONES NUEVO CLIENTE ================================
   Nuevo_Cliente(){
+    this.ncliente = new C_Responsable();
     this.vista = "nuevo";
+    this.modificar = false;
     this.ncliente.cve_cliente = 1;
-    this.ncliente.persona_fisica = true;    
+    this.ncliente.persona_fisica = true;
   }
 
   comp(tipo_persona : string){
@@ -96,7 +99,7 @@ export class ClientesComponent implements OnInit {
       next: (res: any) => {
         if(res.code == 0){
           this.list_usos_cfdi = res.data;
-          
+
         }
       },
       error: (err) => {
@@ -115,7 +118,7 @@ export class ClientesComponent implements OnInit {
       next: (res: any) => {
         if(res.code == 0){
           this.regimenes_fiscales = res.data;
-          
+
         }
       },
       error: (err) => {
@@ -135,7 +138,7 @@ export class ClientesComponent implements OnInit {
       next: (res: any) => {
         if(res.code == 0){
           this.tipos_pago = res.data;
-          
+
         }
       },
       error: (err) => {
@@ -155,7 +158,7 @@ export class ClientesComponent implements OnInit {
       next: (res: any) => {
         if(res.code == 0){
           this.clases_cliente = res.data;
-          
+
         }
       },
       error: (err) => {
@@ -173,7 +176,7 @@ export class ClientesComponent implements OnInit {
     this.service.Cargar_Medicos(this.user.cve_usuario).subscribe({
       next: (res: any) => {
         if(res.code == 0){
-          this.lista_medicos = res.data;          
+          this.lista_medicos = res.data;
         }
       },
       error: (err) => {
@@ -204,7 +207,7 @@ export class ClientesComponent implements OnInit {
             dir.index = i+1;
             this.direcciones_entrega.push(dir);
           }
-         
+
         }
       },
       error: (err) => {
@@ -219,8 +222,10 @@ export class ClientesComponent implements OnInit {
   }
 
   Buscar_Dir_Facturacion(){
+    // console.log("codigo postal");
+    // console.log(this.ncliente.codigo_postal_facturacion);
     this.direcciones_facturacion = [];
-    this.service.Obtener_Direcciones(this.ncliente.codigo_postal_facturacion).subscribe({
+    this.service.Obtener_Direcciones(this.ncliente.codigo_postal_facturacion.toString()).subscribe({
       next: (res: any) => {
         if(res.code == 0){
           let data = res.data;
@@ -234,7 +239,7 @@ export class ClientesComponent implements OnInit {
             dir.index = i+1;
             this.direcciones_facturacion.push(dir);
           }
-         
+
         }
       },
       error: (err) => {
@@ -249,7 +254,7 @@ export class ClientesComponent implements OnInit {
   }
 
   Establecer_Dir_Entrega($event:any){
-    let index = $event.target.value;  
+    let index = $event.target.value;
     let dir = this.direcciones_entrega.find(x => x.index == index);
     this.ncliente.set_direccion_entrega(dir!);
   }
@@ -338,16 +343,23 @@ export class ClientesComponent implements OnInit {
     }
   }
 
-  Producto_select_1($event: any){ 
+  Producto_select_1($event: any){
     let producto = $event.option.value;
+
     this.ncliente.cve_producto_paciente_1 = producto.cve_producto;
     this.ncliente.producto_paciente_1 = producto.descripcion;
+    this.mcliente.cve_producto_paciente_1 = producto.cve_producto;
+    this.mcliente.producto_paciente_1 = producto.descripcion
+
   }
-  
-  Producto_select_2($event: any){ 
+
+  Producto_select_2($event: any){
     let producto = $event.option.value;
+  
     this.ncliente.cve_producto_paciente_2 = producto.cve_producto;
     this.ncliente.producto_paciente_2 = producto.descripcion;
+    this.mcliente.cve_producto_paciente_2 = producto.cve_producto;
+    this.mcliente.producto_paciente_2 = producto.descripcion;
   }
 
   Validar_RFC(){
@@ -365,13 +377,55 @@ export class ClientesComponent implements OnInit {
     }
   }
 
+  Agregar_Direccion(){
+    Swal.fire({
+      title: 'Agregar Dirección',
+      html: `<input id="swal-inputn1" class="swal2-input" placeholder="Nombre Referencia" onKeyUp="this.value = this.value.toUpperCase();">
+      <input id="swal-input1" class="swal2-input" placeholder="Calle y Número" onKeyUp="this.value = this.value.toUpperCase();">
+
+        <input id="swal-input2" class="swal2-input" placeholder="Colonia" onKeyUp="this.value = this.value.toUpperCase();">
+        <input id="swal-input3" class="swal2-input" placeholder="Código Postal">
+        <input id="swal-input4" class="swal2-input" placeholder="Población" onKeyUp="this.value = this.value.toUpperCase();">
+        <input id="swal-input5" class="swal2-input" placeholder="Delegación/Municipio" onKeyUp="this.value = this.value.toUpperCase();">`,
+      focusConfirm: false,
+      preConfirm: () => {
+        let nombre = (document.getElementById('swal-inputn1') as HTMLInputElement).value;
+        let calle = (document.getElementById('swal-input1') as HTMLInputElement).value;
+        let colonia = (document.getElementById('swal-input2') as HTMLInputElement).value;
+        let cp = (document.getElementById('swal-input3') as HTMLInputElement).value;
+        let poblacion = (document.getElementById('swal-input4') as HTMLInputElement).value;
+        let delegacion = (document.getElementById('swal-input5') as HTMLInputElement).value;
+
+        if(calle == "" || colonia == "" || cp == "" || poblacion == "" || delegacion == ""){
+          Swal.showValidationMessage(
+            `Todos los campos son obligatorios`
+          )
+        }else{
+          let dir = new Consignatarios();
+          dir.Nombre = nombre;
+          dir.Calle_No = calle;
+          dir.Colonia = colonia;
+          dir.CP = cp;
+          dir.Cve_Poblacion = poblacion;
+          dir.Del_Municipio = delegacion;
+          this.ncliente.direcciones.push(dir);
+        }
+
+      }
+    });
+  }
+
+  Quitar_N_Direccion(index : Consignatarios){
+    let i = this.ncliente.direcciones.indexOf(index);
+    this.ncliente.direcciones.splice(i,1);
+  }
+
   Guardar_Nuevo_Cliente(){
     console.log(this.ncliente);
     let enviar = true;
-    if(this.ncliente.nombre == "" || 
+    if(this.ncliente.nombre == "" ||
       this.ncliente.nombre_contacto == "" ||
-       this.ncliente.calle_numero_entrega == "" || 
-       this.ncliente.codigo_postal_entrega == "" || 
+
       this.ncliente.cve_clase_cte == "" || this.ncliente.cve_medico == "" ||  this.ncliente.tipo_pago == "" ){
       Swal.fire({
         title: 'Error!',
@@ -379,18 +433,18 @@ export class ClientesComponent implements OnInit {
         icon: 'error',
         confirmButtonText: 'Ok'
       });
-    
+
       enviar = false;
       return;
     }
 
     if(this.ncliente.facturacion == true){
-      if(this.ncliente.razon_social_facturacion == "" || 
-      this.ncliente.codigo_postal_facturacion == "" || 
-      this.ncliente.calle_facturacion == "" || 
-      this.ncliente.rfc_facturacion == "" || 
+      if(this.ncliente.razon_social_facturacion == "" ||
+      this.ncliente.codigo_postal_facturacion == "" ||
+      this.ncliente.calle_facturacion == "" ||
+      this.ncliente.rfc_facturacion == "" ||
       this.ncliente.uso_cfdi_facturacion == "" ||
-      this.ncliente.regimen_fiscal_facturacion == "" 
+      this.ncliente.regimen_fiscal_facturacion == ""
      ){
         Swal.fire({
           title: 'Error!',
@@ -403,11 +457,22 @@ export class ClientesComponent implements OnInit {
       }
     }
 
-    if(( this.ncliente.cve_producto_paciente_1 =="" || this.ncliente.docis_paciente_1 == 0 || this.ncliente.cartucho_paciente_1 ==0 || this.ncliente.compra_paciente_1 == 0 ) && 
+    if(( this.ncliente.cve_producto_paciente_1 =="" || this.ncliente.docis_paciente_1 == 0 || this.ncliente.cartucho_paciente_1 ==0 || this.ncliente.compra_paciente_1 == 0 ) &&
       (this.ncliente.cve_producto_paciente_2 == "" || this.ncliente.docis_paciente_2 == 0 || this.ncliente.cartucho_paciente_2 == 0 || this.ncliente.compra_paciente_2 == 0 )){
       Swal.fire({
         title: 'Error!',
         text: "Debe agregar al menos una receta para el paciente",
+        icon: 'error',
+        confirmButtonText: 'Ok'
+      });
+      enviar = false;
+      return;
+    }
+
+    if(this.ncliente.direcciones.length == 0){
+      Swal.fire({
+        title: 'Error!',
+        text: "Debe agregar al menos una dirección de entrega",
         icon: 'error',
         confirmButtonText: 'Ok'
       });
@@ -426,8 +491,8 @@ export class ClientesComponent implements OnInit {
               icon: 'success',
               confirmButtonText: 'Ok'
             }).then((result) => {
-                         
-              this.Nuevo_Cliente();
+
+
               this.productos_1 = [];
               this.productos_2 = [];
               this.direcciones_entrega = [];
@@ -436,9 +501,10 @@ export class ClientesComponent implements OnInit {
               this.tipos_pago = [];
               this.clases_cliente  = [];
               this.lista_medicos = [];
-              this.vista = "nuevo";   
+              this.vista = "nuevo";
+              this.Nuevo_Cliente();
             });
-            this.Nuevo_Cliente();
+
           }else{
             Swal.fire({
               title: 'Error!',
@@ -479,13 +545,13 @@ export class ClientesComponent implements OnInit {
     let valor = $event.target.value;
     let respons: C_Responsable[] = [];
     if (valor.length > 3) {
-      this.buscando_lista = true;  
+      this.buscando_lista = true;
       this.service.Buscar_Clientes(valor, this.user.cve_usuario).subscribe({
         next: (res: any) => {
           this.list_clientes = [];
           this.muestra_btn_modificar = false;
           if (res.code == 0) {
-            let data = res.data;          
+            let data = res.data;
             for (let i = 0; i < data.length; i++) {
               let r = new C_Responsable();
               r.cve_responsable = data[i].Cve_Cliente;
@@ -496,7 +562,7 @@ export class ClientesComponent implements OnInit {
               r.tipo_pago = data[i].FormPago_Factura;
               r.cve_clase_cte = data[i].Cve_Clase_Cte;
               r.cve_medico = data[i].Cve_Ruta;
-              r.facturacion = (data[i].RFC != "" && data[i].RFC != null && data[i].RFC != undefined) == true ? true : false;  
+              r.facturacion = (data[i].RFC != "" && data[i].RFC != null && data[i].RFC != undefined) == true ? true : false;
               r.persona_fisica =true;
               r.persona_moral = false;
               r.razon_social_facturacion = data[i].Razon_Social;
@@ -546,13 +612,13 @@ export class ClientesComponent implements OnInit {
               r.set_cubre_2();
               r.set_cubre_total_2();
               r.folio_zaizen = data[i].zaizen;
-             this.list_clientes.push(r);                                            
+             this.list_clientes.push(r);
             }
 
-           
+
 
           } else {
-           
+
           }
 
         },
@@ -563,9 +629,9 @@ export class ClientesComponent implements OnInit {
             icon: 'error',
             confirmButtonText: 'Aceptar'
           });
-          this.buscando_lista = false;  
+          this.buscando_lista = false;
         },complete: () => {
-          this.buscando_lista = false;  
+          this.buscando_lista = false;
         }
       });
     }
@@ -581,9 +647,35 @@ export class ClientesComponent implements OnInit {
     this.mcliente = new C_Responsable();
     let cliente = $event.option.value;
     this.mcliente = cliente;
+
+    this.Cargar_Direcciones_Registradas(this.mcliente.cve_responsable);
+
     this.muestra_btn_modificar = true;
-   
+
   }
+
+  Cargar_Direcciones_Registradas(cve_cliente : string){
+    this.mcliente.direcciones = [];
+    this.service.Cargar_Direcciones(cve_cliente).subscribe({
+      next: (res: any) => {
+        if(res.code==0){
+          let data = res.data;
+          for(let i = 0; i < data.length; i++){
+            let dir = new Consignatarios();
+            dir.Cve_Consignatario = data[i].Cve_Consignatario;
+            dir.Nombre = data[i].Nombre;
+            dir.Calle_No = data[i].Calle_No;
+            dir.Colonia = data[i].Colonia;
+            dir.CP = data[i].CP;
+            dir.Cve_Poblacion = data[i].Cve_Poblacion;
+            dir.Del_Municipio = data[i].Del_Municipio;
+            this.mcliente.direcciones.push(dir);
+          }
+        }
+      }
+    });
+  }
+
 
   Cancelar_Modificacion(){
     this.mcliente = new C_Responsable();
@@ -593,10 +685,10 @@ export class ClientesComponent implements OnInit {
 
   Guardar_Modificacion(){
     let enviar = true;
-    if(this.mcliente.nombre == "" || 
+    if(this.mcliente.nombre == "" ||
       this.mcliente.nombre_contacto == "" ||
-       this.mcliente.calle_numero_entrega == "" || 
-       this.mcliente.codigo_postal_entrega == "" || 
+       this.mcliente.calle_numero_entrega == "" ||
+       this.mcliente.codigo_postal_entrega == "" ||
       this.mcliente.cve_clase_cte == "" || this.mcliente.cve_medico == "" ||  this.mcliente.tipo_pago == "" ){
       Swal.fire({
         title: 'Error!',
@@ -604,16 +696,16 @@ export class ClientesComponent implements OnInit {
         icon: 'error',
         confirmButtonText: 'Ok'
       });
-    
+
       enviar = false;
       return;
     }
 
     if(this.mcliente.facturacion == true){
-      if(this.mcliente.razon_social_facturacion == "" || 
-      this.mcliente.codigo_postal_facturacion == "" || 
-      this.mcliente.calle_facturacion == "" || 
-      this.mcliente.rfc_facturacion == "" || 
+      if(this.mcliente.razon_social_facturacion == "" ||
+      this.mcliente.codigo_postal_facturacion == "" ||
+      this.mcliente.calle_facturacion == "" ||
+      this.mcliente.rfc_facturacion == "" ||
       this.mcliente.uso_cfdi_facturacion == "" ||
       this.mcliente.regimen_fiscal_facturacion == ""
       ){
@@ -627,9 +719,9 @@ export class ClientesComponent implements OnInit {
           return;
         }
       }
-    
 
-    if(( this.mcliente.cve_producto_paciente_1 =="" || this.mcliente.docis_paciente_1 == 0 || this.mcliente.cartucho_paciente_1 ==0 || this.mcliente.compra_paciente_1 == 0 ) && 
+
+    if(( this.mcliente.cve_producto_paciente_1 =="" || this.mcliente.docis_paciente_1 == 0 || this.mcliente.cartucho_paciente_1 ==0 || this.mcliente.compra_paciente_1 == 0 ) &&
       (this.mcliente.cve_producto_paciente_2 == "" || this.mcliente.docis_paciente_2 == 0 || this.mcliente.cartucho_paciente_2 == 0 || this.mcliente.compra_paciente_2 == 0 ))
       {
       Swal.fire({
@@ -653,7 +745,7 @@ export class ClientesComponent implements OnInit {
               icon: 'success',
               confirmButtonText: 'Ok'
             }).then((result) => {
-                         
+
               this.Cancelar_Modificacion();
               this.productos_1 = [];
               this.productos_2 = [];
@@ -663,7 +755,7 @@ export class ClientesComponent implements OnInit {
               this.tipos_pago = [];
               this.clases_cliente  = [];
               this.lista_medicos = [];
-              this.vista = "consulta";   
+              this.vista = "consulta";
               this.modificar = false;
               this.Cargar_Parametros();
             });
@@ -695,9 +787,114 @@ export class ClientesComponent implements OnInit {
 
   }
 
+  Agregar_Direccion_Update(){
+    Swal.fire({
+      title: 'Agregar Dirección',
+      html: `<input id="swal-inputn1" class="swal2-input" placeholder="Nombre Referencia" onKeyUp="this.value = this.value.toUpperCase();">
+      <input id="swal-input1" class="swal2-input" placeholder="Calle y Número" onKeyUp="this.value = this.value.toUpperCase();">
 
+        <input id="swal-input2" class="swal2-input" placeholder="Colonia" onKeyUp="this.value = this.value.toUpperCase();">
+        <input id="swal-input3" class="swal2-input" placeholder="Código Postal">
+        <input id="swal-input4" class="swal2-input" placeholder="Población" onKeyUp="this.value = this.value.toUpperCase();">
+        <input id="swal-input5" class="swal2-input" placeholder="Delegación/Municipio" onKeyUp="this.value = this.value.toUpperCase();">`,
+      focusConfirm: false,
+      preConfirm: () => {
+        let nombre = (document.getElementById('swal-inputn1') as HTMLInputElement).value;
+        let calle = (document.getElementById('swal-input1') as HTMLInputElement).value;
+        let colonia = (document.getElementById('swal-input2') as HTMLInputElement).value;
+        let cp = (document.getElementById('swal-input3') as HTMLInputElement).value;
+        let poblacion = (document.getElementById('swal-input4') as HTMLInputElement).value;
+        let delegacion = (document.getElementById('swal-input5') as HTMLInputElement).value;
+
+        if(calle == "" || colonia == "" || cp == "" || poblacion == "" || delegacion == ""){
+          Swal.showValidationMessage(
+            `Todos los campos son obligatorios`
+          )
+        }else{
+          let dir = new Consignatarios();
+          dir.Nombre = nombre;
+          dir.Calle_No = calle;
+          dir.Colonia = colonia;
+          dir.CP = cp;
+          dir.Cve_Poblacion = poblacion;
+          dir.Del_Municipio = delegacion;
+          this.service.Agregar_Direccion_Update(this.mcliente.cve_responsable, dir).subscribe({
+            next: (res: any) => {
+              if(res.code == 0){
+                Swal.fire({
+                  title: 'Exito!',
+                  text: "Dirección agregada correctamente",
+                  icon: 'success',
+                  confirmButtonText: 'Ok'
+                });
+                this.Cargar_Direcciones_Registradas(this.mcliente.cve_responsable);
+              }else{
+                Swal.fire({
+                  title: 'Error!',
+                  text: res.message,
+                  icon: 'error',
+                  confirmButtonText: 'Ok'
+                });
+              }
+            },
+            error: (err) => {
+              Swal.fire({
+                title: 'Error!',
+                text: err.message,
+                icon: 'error',
+                confirmButtonText: 'Ok'
+              });
+            }
+          });
+          ;
+        }
+
+      }
+    });
+  }
+
+  Quitar_N_Direccion_Update(item : Consignatarios){
+    Swal.fire({
+      title: 'Eliminar Dirección',
+      text: "¿Está seguro de eliminar la dirección?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Si',
+      cancelButtonText: 'No'
+    }).then((result) => {
+      if(result.isConfirmed){
+        this.service.Quitar_Direccion_Update(this.mcliente.cve_responsable, item.Cve_Consignatario).subscribe({
+          next: (res: any) => {
+            if(res.code == 0){
+              Swal.fire({
+                title: 'Exito!',
+                text: "Dirección eliminada correctamente",
+                icon: 'success',
+                confirmButtonText: 'Ok'
+              });
+            this.Cargar_Direcciones_Registradas(this.mcliente.cve_responsable);
+            }else{
+              Swal.fire({
+                title: 'Error!',
+                text: res.message,
+                icon: 'error',
+                confirmButtonText: 'Ok'
+              });
+            }
+          },
+          error: (err) => {
+            Swal.fire({
+              title: 'Error!',
+              text: err.message,
+              icon: 'error',
+              confirmButtonText: 'Ok'
+            });
+          }
+        });
+      }
+    });
+  }
 
 
 
 }
- 

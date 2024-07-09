@@ -22,7 +22,7 @@ export class C_Responsable{
     //---datos de entrega
 
     nombre_contacto ="";
-    calle_numero_entrega = "";  
+    calle_numero_entrega = "";
     codigo_postal_entrega = "";
     private direccion_entrega = new C_Direccion();
     poblacion_entrega = "";
@@ -47,22 +47,22 @@ export class C_Responsable{
     uso_cfdi_facturacion = "";
     regimen_fiscal_facturacion = "";
     tipo_pago = "";
-    
+
     fecha_recompra = "";
-    
+
     //---datos extra
 
     cve_medico : string = "";
     nombre_medico : string = "";
 
-    //---datos Paciente 1         
+    //---datos Paciente 1
 
     nombre_paciente_1 : string = "";
     cubre_1 : string = "";
     pantalla_cubre_1 ="";
     edad_anyos_paciente_1 : string = "";
     edad_meses_paciente_1 : string = "";
-  
+
     fecha_nacimiento_paciente_1 : string = "";
 
     docis_paciente_1 : number = 0;
@@ -81,8 +81,8 @@ export class C_Responsable{
     pantalla_cubre_2 ="";
     edad_anyos_paciente_2 : string = "";
     edad_meses_paciente_2 : string = "";
-    
-    fecha_nacimiento_paciente_2 : string = ""; 
+
+    fecha_nacimiento_paciente_2 : string = "";
     docis_paciente_2 : number = 0;
     cartucho_paciente_2 : number = 0;
     compra_paciente_2 : number = 0;
@@ -95,6 +95,7 @@ export class C_Responsable{
 
     folio_zaizen : string = "";
 
+    direcciones :Consignatarios[] = [];
 
     set_direccion_entrega(dir : C_Direccion){
         this.direccion_entrega = dir;
@@ -103,7 +104,7 @@ export class C_Responsable{
         this.colonia_entrega = dir.colonia_poblacion;
     }
 
-    set_direccion_facturacion(dir : C_Direccion){   
+    set_direccion_facturacion(dir : C_Direccion){
         this.direccion_facturacion = dir;
         this.poblacion_facturacion = dir.estado;
         this.delegacion_facturacion = dir.municipio;
@@ -112,7 +113,7 @@ export class C_Responsable{
 
     set_cubre_1(){
         let carturho = Number(this.cartucho_paciente_1);
-        
+
         let dosis = Number(this.docis_paciente_1);
         let cubre = carturho / dosis;
         if(isNaN(cubre) || cubre == undefined || cubre == null){
@@ -127,11 +128,11 @@ export class C_Responsable{
         let compra = Number(this.compra_paciente_1);
         let cubre_total = cubre * compra;
         this.cubre_total_paciente_1 = cubre_total;
-        this.pantalla_cubre_total_1 = Number(this.cubre_total_paciente_1).toFixed(2) + " Días"; 
+        this.pantalla_cubre_total_1 = Number(this.cubre_total_paciente_1).toFixed(2) + " Días";
     }
 
-    set_cubre_2(){      
-        let carturho = Number(this.cartucho_paciente_2);        
+    set_cubre_2(){
+        let carturho = Number(this.cartucho_paciente_2);
         let dosis = Number(this.docis_paciente_2);
         let cubre = carturho / dosis;
         if(isNaN(cubre) || cubre == undefined || cubre == null){
@@ -142,7 +143,7 @@ export class C_Responsable{
 
     }
 
-    set_cubre_total_2(){    
+    set_cubre_total_2(){
         let cubre = Number(this.cubre_2);
         let compra = Number(this.compra_paciente_2);
         let cubre_total = cubre * compra;
@@ -153,4 +154,16 @@ export class C_Responsable{
 
 
 
+
+}
+
+export class Consignatarios{
+  Cve_Consignatario : string = "";
+  Nombre : string = "";
+  Calle_No : string = "";
+  Colonia : string = "";
+  Del_Municipio : string = "";
+  CP : string = "";
+  Cve_Poblacion : string = "";
+  Status : string = "";
 }

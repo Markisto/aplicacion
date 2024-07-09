@@ -74,6 +74,19 @@
           </select>
         </div>
       </div>
+
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Dirección De Envío</label>
+          <select class="form-select border-secundario border-2" aria-label="Default select example"
+            [(ngModel)]="nuevo_pedido.cve_consignatario">
+
+            <option value="{{item.Cve_Consignatario}}" *ngFor="let item of consignatarios">{{item.Cve_Consignatario +
+              '-' + item.Nombre}}</option>
+          </select>
+        </div>
+      </div>
+
       <div class="col-12 mb-2">
         <div class="form-group">
           <div class="form-check ">
@@ -148,6 +161,13 @@
       </div>
     </div>
     <div class="row">
+      <div class="col-12 mb-2">
+        <div class="form-group">
+          <label class="text-terciario">Observaciones</label>
+          <textarea class="form-control border-secundario border-2" [(ngModel)]="nuevo_pedido.observaciones"
+            rows="3"></textarea>
+        </div>
+      </div>
       <div class="col-12">
         <div class="card bg-primario">
           <div class="card-body text-light p-0">
@@ -286,6 +306,9 @@
               <span class="bold">Tipo: </span><span>{{pedido_consulta_select.nombre_tipo_envio}}</span>
               <span class="bold"> Fecha: </span><span>{{pedido_consulta_select.fecha_envio}}</span>
             </p>
+
+            <p class="d-flex justify-content-between p-0 bold">Dirección Entrega: <span>{{pedido_consulta_select.nombre_consignatario}}</span></p>
+           @if(pedido_consulta_select.guia != ''){ <p class="d-flex justify-content-between p-0 h5">Guía: <span>{{pedido_consulta_select.guia}}</span></p>}
             <p class="d-flex justify-content-between p-0"><span class="h5">Total de
                 pedidos:</span><span>{{pedido_consulta_select.number_productos()}}</span> </p>
             <p class="d-flex justify-content-between p-0"><span class="h5">Importe: </span> <span
@@ -368,18 +391,18 @@
 <!--modal de cargando-->
 
 <div class="modal" tabindex="-1" [ngClass]="{'d-block': loading}">
-  
+
   <div class="modal-dialog modal-fullscreen">
-    <div class="modal-content bg-black bg-opacity-50" >
-     
-      <div class="modal-body d-flex" >
+    <div class="modal-content bg-black bg-opacity-50">
+
+      <div class="modal-body d-flex">
         <div class="spinner-border text-light m-auto h1" role="status">
           <span class="visually-hidden">Loading...</span>
-          
+
         </div>
-       
+
       </div>
-     
+
     </div>
   </div>
 </div>

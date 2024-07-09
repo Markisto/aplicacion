@@ -81,6 +81,7 @@ export class PedidosComponent implements OnInit {
   con = new Conexion();
   boton_buscar = false;
   loading = false;
+  consignatarios: any[] = [];
 
   formatDate(date: Date) {
     let d = new Date(date),
@@ -141,6 +142,8 @@ export class PedidosComponent implements OnInit {
     this.nuevo_pedido.rfc = this.responsable_select.rfc;
     this.nuevo_pedido.razon_social = this.responsable_select.razon_social;
 
+
+
     if (this.nuevo_pedido.rfc == undefined || this.nuevo_pedido.rfc == "") {
       this.nuevo_pedido.factura = false;
       this.checkfactura.nativeElement.checked = false;
@@ -166,6 +169,35 @@ export class PedidosComponent implements OnInit {
       this.nuevo_pedido.cubre_select = this.responsable_select.cubre_2;
     }
 
+    this.buscar_consignatario(this.nuevo_pedido.cve_cliente);
+
+  }
+
+  buscar_consignatario(cve_cliente : string) {
+    this.consignatarios = [];
+    this.service.Obtener_Consignatarios(cve_cliente).subscribe({
+      next: (res: any) => {
+        if (res.code == 0) {
+          this.consignatarios = res.data;
+        } else {
+          Swal.fire({
+            title: 'Error!',
+            text: "No se encontraron direcciones de envio para este cliente por favor registre una nueva direccion de envio en el modulo de clientes",
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+          });
+          this.consignatarios = [];
+        }
+      },
+      error: (err) => {
+        Swal.fire({
+          title: 'Error!',
+          text: err.message,
+          icon: 'error',
+          confirmButtonText: 'Aceptar'
+        });
+      }
+    });
   }
 
   establece_paciente(paciente: string) {
@@ -470,8 +502,8 @@ export class PedidosComponent implements OnInit {
   }
 
   Guardar_Pedido() {
+    let send = true;
 
-    
     if (this.productos_pedir.length == 0) {
       Swal.fire({
         title: 'Error!',
@@ -479,6 +511,7 @@ export class PedidosComponent implements OnInit {
         icon: 'error',
         confirmButtonText: 'Aceptar'
       });
+      send = false;
       return;
     }
 
@@ -489,6 +522,7 @@ export class PedidosComponent implements OnInit {
         icon: 'error',
         confirmButtonText: 'Aceptar'
       });
+      send = false;
       return;
     }
 
@@ -501,6 +535,7 @@ export class PedidosComponent implements OnInit {
         icon: 'error',
         confirmButtonText: 'Aceptar'
       });
+      send = false;
       return;
     }
 
@@ -511,6 +546,7 @@ export class PedidosComponent implements OnInit {
         icon: 'error',
         confirmButtonText: 'Aceptar'
       });
+      send = false;
       return;
     }
 
@@ -521,6 +557,7 @@ export class PedidosComponent implements OnInit {
         icon: 'error',
         confirmButtonText: 'Aceptar'
       });
+      send = false;
       return;
     }
 
@@ -531,6 +568,7 @@ export class PedidosComponent implements OnInit {
         icon: 'error',
         confirmButtonText: 'Aceptar'
       });
+      send = false;
       return;
     }
 
@@ -541,6 +579,7 @@ export class PedidosComponent implements OnInit {
         icon: 'error',
         confirmButtonText: 'Aceptar'
       });
+      send = false;
       return;
     }
 
@@ -551,13 +590,33 @@ export class PedidosComponent implements OnInit {
         icon: 'error',
         confirmButtonText: 'Aceptar'
       });
+      send = false;
+      return;
+    }
+
+    if(this.nuevo_pedido.cve_consignatario == ""){
+      Swal.fire({
+        title: 'Error!',
+        text: "Debes seleccionar una direccion de envío",
+        icon: 'error',
+        confirmButtonText: 'Aceptar'
+      });
+      send = false;
       return;
     }
 
     this.nuevo_pedido.productos_pedir = this.productos_pedir;
     this.nuevo_pedido.status = "CT";
-   
+
+    if (send) {
+
+
     this.loading = true;
+
+    // console.log("nuevo pedido");
+    // console.log(this.nuevo_pedido);
+
+
     this.service.Guardar_Pedido(this.nuevo_pedido).subscribe({
       next: (res: any) => {
         if (res.code == 0) {
@@ -569,7 +628,7 @@ export class PedidosComponent implements OnInit {
           }).then((result) => {
 
             let data = res.data[0];
-          
+
             let pedido = new C_Pedido(data.Cve_Folio);
             pedido.fecha_documento = data.Capturado;
             pedido.rfc = data.RFC;
@@ -580,8 +639,8 @@ export class PedidosComponent implements OnInit {
             pedido.fecha_envio = data.Fecha_Envio;
             pedido.tipo_envio = data.Cve_Tipo_Envio;
             pedido.nombre_tipo_envio = data.Nombre_Tipo_Envio;
-            
-          
+
+
 
             this.Ver_Selected(pedido.cve_folio, Number(pedido.cve_sucursal), pedido);
             this.responsable_select = new C_Responsable();
@@ -595,7 +654,7 @@ export class PedidosComponent implements OnInit {
             this.mostrar_envio = false;
             this.vista = 'consulta';
           });
-         
+
 
         } else {
 
@@ -619,6 +678,7 @@ export class PedidosComponent implements OnInit {
         this.loading = false;
       }
     });
+    }
   }
 
 
@@ -691,6 +751,8 @@ export class PedidosComponent implements OnInit {
             pedido.fecha_envio = data[i].Fecha_Envio;
             pedido.tipo_envio = data[i].Cve_Tipo_Envio;
             pedido.nombre_tipo_envio = data[i].Nombre_Tipo_Envio;
+            pedido.nombre_consignatario = data[i].Consignatario;
+            pedido.guia = data[i].detalle;
             this.pedidos_consulta.push(pedido);
           }
 
@@ -719,7 +781,7 @@ export class PedidosComponent implements OnInit {
 
   }
 
-  
+
 
   Ver_Selected(folio = 0, sucursal = 0, pedido : any = null) {
     console.log("ver selected");
@@ -782,7 +844,7 @@ export class PedidosComponent implements OnInit {
       });
     }else if(folio != 0 && sucursal != 0){
       this.pedidos_consulta=[];
-      this.pedidos_consulta.push(pedido);      
+      this.pedidos_consulta.push(pedido);
       this.pedido_consulta_select = pedido;
       this.pedido_consulta_select.productos_pedir = [];
       this.selected_id = pedido.cve_folio.toString();
@@ -1028,5 +1090,5 @@ export class PedidosComponent implements OnInit {
   }
 
 
- 
+
 }

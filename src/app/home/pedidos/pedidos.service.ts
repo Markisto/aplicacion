@@ -201,5 +201,18 @@ export class PedidosService {
     )
   }
 
+  Obtener_Consignatarios(cve_cliente : string){
+    let res =  this.http.post(`${this.url}pedidos.php`, {"evento":"obtener_consignatarios", "cve_cliente": cve_cliente});
+    return res
+    .pipe(
+      tap((res: any) => {
+        return res;
+      }),
+      catchError((err) => {
+        return throwError(() => err);
+      })
+    )
+  }
+
 
 }

@@ -91,7 +91,7 @@ export class ClientesService {
     )
   }
 
-  
+
   Buscar_Productos(descripcion : string, cve_sucursal : string, tipo_cliente : string){
     let res =  this.http.post(`${this.url}pedidos.php`, {"evento":"buscar_productos", "descripcion": descripcion, "cve_sucursal": "", "tipo_cliente": ""});
     return res
@@ -135,6 +135,46 @@ export class ClientesService {
 
   Buscar_Clientes(valor : string, cve_usuario : string){
     let res =  this.http.post(`${this.url}clientes.php`, {"evento":"buscar_clientes", "valor": valor, "cve_usuario": cve_usuario});
+    return res
+    .pipe(
+      tap((res: any) => {
+        return res;
+      }),
+      catchError((err) => {
+        return throwError(() => err);
+      })
+    )
+  }
+
+  Cargar_Direcciones(cve_cliente : string){
+    let res =  this.http.post(`${this.url}clientes.php`, {"evento":"cargar_direcciones", "cve_cliente": cve_cliente});
+    return res
+    .pipe(
+      tap((res: any) => {
+        return res;
+      }),
+      catchError((err) => {
+        return throwError(() => err);
+      })
+    )
+  }
+
+
+  Agregar_Direccion_Update(cve_cliente : string, direccion : any){
+    let res =  this.http.post(`${this.url}clientes.php`, {"evento":"agregar_direccion_update", "cve_cliente": cve_cliente, "direccion": direccion});
+    return res
+    .pipe(
+      tap((res: any) => {
+        return res;
+      }),
+      catchError((err) => {
+        return throwError(() => err);
+      })
+    )
+  }
+
+  Quitar_Direccion_Update(cve_cliente : string , cve_consignatario : string){
+    let res =  this.http.post(`${this.url}clientes.php`, {"evento":"quitar_direccion_update", "cve_cliente": cve_cliente, "cve_consignatario": cve_consignatario});
     return res
     .pipe(
       tap((res: any) => {
